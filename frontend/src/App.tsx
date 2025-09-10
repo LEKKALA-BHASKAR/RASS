@@ -1,0 +1,173 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
+import Navbar from './components/layout/Navbar';
+import Home from './pages/Home';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import StudentDashboard from './pages/student/Dashboard';
+import InstructorDashboard from './pages/instructor/Dashboard';
+import AdminDashboard from './pages/admin/Dashboard';
+import CourseCatalog from './pages/courses/CourseCatalog';
+import CourseDetail from './pages/courses/CourseDetail';
+import CoursePlayer from './pages/courses/CoursePlayer';
+import Profile from './pages/Profile';
+import LiveSessions from './pages/student/LiveSessions';
+import Assignments from './pages/student/Assignments';
+import Certificates from './pages/student/Certificates';
+import Support from './pages/student/Support';
+import CourseManagement from './pages/instructor/CourseManagement';
+import Students from './pages/instructor/Students';
+import UserManagement from './pages/admin/UserManagement';
+import SupportManagement from './pages/admin/SupportManagement';
+import SupportTicketsPage from './pages/student/SupportTicketsPage';
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
+  children, 
+  roles 
+}) => {
+  const { isAuthenticated, user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && user && !roles.includes(user.role)) {
+    return <Navigate to="/" />;
+  }
+
+  return <>{children}</>;
+};
+
+const AppRoutes: React.FC = () => {
+  const { isAuthenticated, user } = useAuth();
+
+  const getDashboardRoute = () => {
+    if (!user) return '/';
+    switch (user.role) {
+      case 'admin':
+        return '/admin/dashboard';
+      case 'instructor':
+        return '/instructor/dashboard';
+      case 'student':
+        return '/student/dashboard';
+      default:
+        return '/';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/support-tickets" element={<SupportTicketsPage />} />
+        <Route path="/courses" element={<CourseCatalog />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
+        <Route path="/assignments/:courseId" element={<Assignments />} />
+        <Route 
+          path="/login" 
+          element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <Login />} 
+        />
+        <Route 
+          path="/register" 
+          element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <Register />} 
+        />
+        
+        {/* Protected Routes */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
+        
+        {/* Student Routes */}
+        <Route path="/student/dashboard" element={
+          <ProtectedRoute roles={['student']}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/learn/:courseId" element={
+          <ProtectedRoute roles={['student']}>
+            <CoursePlayer />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/certificates" element={
+          <ProtectedRoute roles={['student']}>
+            <Certificates />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/support" element={
+          <ProtectedRoute roles={['student']}>
+            <Support />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/sessions/:courseId" element={
+          <ProtectedRoute roles={['student']}>
+            <LiveSessions />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/assignments/:courseId" element={
+          <ProtectedRoute roles={['student']}>
+            <Assignments />
+          </ProtectedRoute>
+        } />
+        
+        {/* Instructor Routes */}
+        <Route path="/instructor/dashboard" element={
+          <ProtectedRoute roles={['instructor', 'admin']}>
+            <InstructorDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/instructor/courses" element={
+          <ProtectedRoute roles={['instructor', 'admin']}>
+            <CourseManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/instructor/students" element={
+          <ProtectedRoute roles={['instructor', 'admin']}>
+            <Students />
+          </ProtectedRoute>
+        } />
+        
+        {/* Admin Routes */}
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/users" element={
+          <ProtectedRoute roles={['admin']}>
+            <UserManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/support" element={
+          <ProtectedRoute roles={['admin']}>
+            <SupportManagement />
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
