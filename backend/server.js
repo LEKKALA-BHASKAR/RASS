@@ -12,6 +12,7 @@ import notificationRoutes from './routes/notifications.js';
 import liveSessionRoutes from './routes/liveSessions.js';
 import certificateRoutes from './routes/certificates.js';
 import supportTicketRoutes from './routes/supportTickets.js';
+import chatRoutes from './routes/chats.js';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/live-sessions', liveSessionRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/support-tickets', supportTicketRoutes);
+app.use('/api/chats', chatRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

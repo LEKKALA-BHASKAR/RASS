@@ -8,6 +8,8 @@ const router = express.Router();
 router.get('/course/:courseId', authenticate, async (req, res) => {
   try {
     const assignments = await Assignment.find({ course: req.params.courseId })
+      .populate('submissions.student', 'name email role')
+      .populate('submissions.gradedBy', 'name email role')
       .sort({ createdAt: -1 });
 
     res.json(assignments);
@@ -68,19 +70,12 @@ router.post('/:id/submit', authenticate, async (req, res) => {
 router.post('/:id/grade', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const { studentId, grade, feedback } = req.body;
-    
+
     const assignment = await Assignment.findById(req.params.id);
-    if (!assignment) {
-      return res.status(404).json({ message: 'Assignment not found' });
-    }
+    if (!assignment) return res.status(404).json({ message: 'Assignment not found' });
 
-    const submission = assignment.submissions.find(
-      sub => sub.student.toString() === studentId
-    );
-
-    if (!submission) {
-      return res.status(404).json({ message: 'Submission not found' });
-    }
+    const submission = assignment.submissions.find(sub => sub.student.toString() === studentId);
+    if (!submission) return res.status(404).json({ message: 'Submission not found' });
 
     submission.grade = grade;
     submission.feedback = feedback;
@@ -88,10 +83,14 @@ router.post('/:id/grade', authenticate, authorize('instructor', 'admin'), async 
     submission.gradedBy = req.user._id;
 
     await assignment.save();
-    res.json(assignment);
+
+    const updatedAssignment = await Assignment.findById(req.params.id)
+      .populate('submissions.student', 'name email role')
+      .populate('submissions.gradedBy', 'name email role');
+
+    res.json(updatedAssignment);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
 export default router;
