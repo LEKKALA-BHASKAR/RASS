@@ -51,13 +51,13 @@ const Home: React.FC = () => {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Bhaskar Lekkala",
       role: "Web Developer",
       content: "RASS Academy completely transformed my career. The courses are well-structured and the instructors are incredibly knowledgeable.",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
     },
     {
-      name: "Michael Chen",
+      name: "S Vamsi",
       role: "Data Scientist",
       content: "The hands-on projects helped me build a portfolio that landed me my dream job. The support from instructors was exceptional.",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
