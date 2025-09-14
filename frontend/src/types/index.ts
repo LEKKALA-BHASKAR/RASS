@@ -139,7 +139,7 @@ export interface Notification {
   recipient: string;
   title: string;
   message: string;
-  type: 'course' | 'assignment' | 'announcement' | 'payment' | 'system';
+  type: 'course' | 'assignment' | 'announcement' | 'payment' | 'system' | 'chat' | 'support' | 'discussion' | 'live-session';
   relatedId?: string;
   read: boolean;
   readAt?: string;

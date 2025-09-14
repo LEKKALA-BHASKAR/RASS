@@ -18,7 +18,7 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-type AuthAction = 
+type AuthAction =
   | { type: 'LOGIN_START' }
   | { type: 'LOGIN_SUCCESS'; payload: { user: User; token: string } }
   | { type: 'LOGIN_FAILURE' }
@@ -36,7 +36,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: action.payload.user,
         token: action.payload.token,
         loading: false,
-        isAuthenticated: true
+        isAuthenticated: true,
       };
     case 'LOGIN_FAILURE':
       return {
@@ -44,7 +44,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: null,
         token: null,
         loading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
     case 'LOGOUT':
       return {
@@ -52,17 +52,17 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         user: null,
         token: null,
         loading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
     case 'UPDATE_USER':
       return {
         ...state,
-        user: action.payload
+        user: action.payload,
       };
     case 'SET_LOADING':
       return {
         ...state,
-        loading: action.payload
+        loading: action.payload,
       };
     default:
       return state;
@@ -72,36 +72,45 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 const initialState: AuthState = {
   user: null,
   token: localStorage.getItem('token'),
-  loading: false,
-  isAuthenticated: false
+  loading: true, // ✅ start loading until token is checked
+  isAuthenticated: false,
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      authAPI.getCurrentUser()
-        .then(response => {
-          dispatch({
-            type: 'LOGIN_SUCCESS',
-            payload: { user: response.data.user, token }
-          });
-        })
-        .catch(() => {
-          localStorage.removeItem('token');
-          dispatch({ type: 'LOGIN_FAILURE' });
-        });
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    dispatch({ type: "LOGIN_FAILURE" });
+    return;
+  }
+
+  const fetchUser = async () => {
+    try {
+      const response = await authAPI.getCurrentUser();
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: { user: response.data.user, token },
+      });
+    } catch (error) {
+      localStorage.removeItem("token");
+      dispatch({ type: "LOGIN_FAILURE" });
     }
-  }, []);
+  };
+
+  fetchUser();
+}, []);
+
+
 
   const login = async (email: string, password: string) => {
     dispatch({ type: 'LOGIN_START' });
     try {
       const response = await authAPI.login(email, password);
       const { user, token } = response.data;
-      
+
       localStorage.setItem('token', token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
     } catch (error) {
@@ -115,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await authAPI.register(name, email, password, role);
       const { user, token } = response.data;
-      
+
       localStorage.setItem('token', token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
     } catch (error) {
@@ -139,13 +148,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{
-      ...state,
-      login,
-      register,
-      logout,
-      updateProfile
-    }}>
+    <AuthContext.Provider
+      value={{
+        ...state,
+        login,
+        register,
+        logout,
+        updateProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,8 @@
 import express from 'express';
 import SupportTicket from '../models/SupportTicket.js';
 import { authenticate, authorize } from '../middleware/auth.js';
+import Notification from "../models/Notification.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -20,7 +22,6 @@ router.get('/my-tickets', authenticate, async (req, res) => {
 
     res.json(tickets);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -46,7 +47,6 @@ router.get('/', authenticate, authorize('admin'), async (req, res) => {
 
     res.json(tickets);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -58,7 +58,6 @@ router.post('/', authenticate, async (req, res) => {
   try {
     const { subject, description, category, priority } = req.body;
 
-    // Validation
     if (!subject || !description || !category) {
       return res.status(400).json({ message: "Subject, description, and category are required" });
     }
@@ -80,9 +79,22 @@ router.post('/', authenticate, async (req, res) => {
       .populate('assignedTo', 'name email')
       .populate('messages.sender', 'name email role');
 
+    // 🔔 Notify all admins
+    const admins = await User.find({ role: "admin" }, "_id");
+    const notifications = admins.map(
+      (a) =>
+        new Notification({
+          recipient: a._id,
+          title: "New Support Ticket",
+          type: "support",
+          message: `New ticket "${subject}" created by ${req.user.name}`,
+          relatedId: ticket._id,
+        })
+    );
+    await Notification.insertMany(notifications);
+
     res.status(201).json(populatedTicket);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -120,9 +132,31 @@ router.post('/:id/message', authenticate, async (req, res) => {
       .populate('assignedTo', 'name email')
       .populate('messages.sender', 'name email role');
 
+    // 🔔 Notifications on new message
+    if (req.user.role === 'admin') {
+      // notify the student
+      await new Notification({
+        recipient: ticket.user,
+        title: "Support Ticket Reply",
+        type: "support",
+        message: `Your ticket "${ticket.subject}" has a reply from ${req.user.name}`,
+        relatedId: ticket._id,
+      }).save();
+    } else {
+      // notify assigned admin(s)
+      if (ticket.assignedTo) {
+        await new Notification({
+          recipient: ticket.assignedTo,
+          title: "Ticket Updated",
+          type: "support",
+          message: `Ticket "${ticket.subject}" has a new message from ${req.user.name}`,
+          relatedId: ticket._id,
+        }).save();
+      }
+    }
+
     res.json(updatedTicket);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -149,9 +183,17 @@ router.put('/:id/status', authenticate, authorize('admin'), async (req, res) => 
 
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
 
+    // 🔔 Notify student
+    await new Notification({
+      recipient: ticket.user,
+      title: "Ticket Status Updated",
+      type: "support",
+      message: `Your ticket "${ticket.subject}" status is now "${ticket.status}"`,
+      relatedId: ticket._id,
+    }).save();
+
     res.json(ticket);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -171,11 +213,13 @@ router.delete('/:id', authenticate, async (req, res) => {
     await ticket.remove();
     res.json({ message: "Ticket deleted successfully" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// --------------------
 // Add attachment to ticket
+// --------------------
 router.post('/:id/attachments', authenticate, async (req, res) => {
   try {
     const { filename, url } = req.body;
@@ -185,7 +229,6 @@ router.post('/:id/attachments', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'Ticket not found' });
     }
 
-    // Check if user can access this ticket
     if (ticket.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }

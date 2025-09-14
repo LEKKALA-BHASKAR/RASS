@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { courseAPI, enrollmentAPI, forumAPI } from '../../services/api';
 import { PlayCircle, CheckCircle, FileText, MessageCircle, Calendar } from 'lucide-react';
 import { Course, Enrollment, ForumPost } from '../../types';
-
+import DiscussionForum from '../student/DiscussionForum';
 const CoursePlayer: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<Course | null>(null);
@@ -189,7 +189,7 @@ const CoursePlayer: React.FC = () => {
           <div className="bg-white border-b border-gray-200">
             <div className="px-6">
               <div className="flex space-x-8">
-                {['overview', 'discussions', 'assignments'].map((tab) => (
+                {['overview', 'discussions'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab as any)}
@@ -236,42 +236,9 @@ const CoursePlayer: React.FC = () => {
             )}
 
             {activeTab === 'discussions' && (
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Course Discussions</h4>
-                {forumPosts.length > 0 ? (
-                  <div className="space-y-4">
-                    {forumPosts.slice(0, 5).map((post) => (
-                      <div key={post._id} className="border border-gray-200 rounded-lg p-4">
-                        <h5 className="font-medium text-gray-900 mb-2">{post.title}</h5>
-                        <p className="text-gray-600 text-sm mb-2">{post.content}</p>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <span>by {post.author.name}</span>
-                          <span className="mx-2">•</span>
-                          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                          <span className="mx-2">•</span>
-                          <span>{post.replies.length} replies</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-600">No discussions yet. Be the first to start one!</p>
-                  </div>
-                )}
-              </div>
+                <DiscussionForum courseId={course._id} />
             )}
 
-            {activeTab === 'assignments' && (
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Assignments</h4>
-                <div className="text-center py-8">
-                  <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">No assignments for this module</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

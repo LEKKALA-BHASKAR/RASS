@@ -151,7 +151,7 @@ const StudentDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Notifications & Recent Activity */}
+        {/* Notifications & Quick Actions */}
         <div className="space-y-6">
           {/* Notifications */}
           <div className="card">
@@ -177,25 +177,103 @@ const StudentDashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <Link to="/courses" className="block w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+          {/* Quick Links */}
+          {/* Quick Links */}
+          <div className="text-center my-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Links</h3>
+            <div className="flex flex-wrap gap-4 justify-center">
+
+              <Link
+                to="/courses"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
                 Browse Courses
               </Link>
-              <Link to="/profile" className="block w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+
+              <Link
+                to="/profile"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
                 Update Profile
               </Link>
-              <Link to="/support-tickets" className="block w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+
+              <Link
+                to="/support-tickets"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
                 Support Tickets
+                {notifications.filter((n) => !n.read && n.type === "support").length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {notifications.filter((n) => !n.read && n.type === "support").length}
+                  </span>
+                )}
               </Link>
 
-              <Link to="/assignments" className="block w-full text-left px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                View Assignments
+              <Link
+                to="/student/discussion-forum"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
+                Discussion Forum
+                {notifications.filter((n) => !n.read && n.type === "discussion").length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {notifications.filter((n) => !n.read && n.type === "discussion").length}
+                  </span>
+                )}
               </Link>
+
+              <Link
+                to="/student/notifications"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
+                Notifications
+                {notifications.some((n) => !n.read) && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5">
+                    {notifications.filter((n) => !n.read).length}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/student/chat"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
+                Chat with Mentor
+                {notifications.filter((n) => !n.read && n.type === "chat").length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {notifications.filter((n) => !n.read && n.type === "chat").length}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/student/live-sessions"
+                className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+              >
+                Join Live Class
+                {notifications.filter((n) => !n.read && n.type === "live-session").length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {notifications.filter((n) => !n.read && n.type === "live-session").length}
+                  </span>
+                )}
+              </Link>
+
+              {enrollments.length > 0 && (
+                <Link
+                  to={`/student/assignments/${enrollments[0].course._id}`}
+                  className="relative px-6 py-3 bg-primary-600 text-blue-900 rounded-lg shadow hover:bg-primary-700 transition"
+                >
+                  View Assignments
+                  {notifications.filter((n) => !n.read && n.type === "assignment").length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {notifications.filter((n) => !n.read && n.type === "assignment").length}
+                    </span>
+                  )}
+                </Link>
+              )}
+
             </div>
           </div>
+
         </div>
       </div>
     </div>
