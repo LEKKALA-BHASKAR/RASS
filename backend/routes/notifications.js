@@ -71,4 +71,29 @@ router.put("/read-all", authenticate, async (req, res) => {
   }
 });
 
+// 📌 Get unread notifications count
+router.get("/unread-count", authenticate, async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({ recipient: req.user._id, read: false });
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Get all live sessions for a student (all enrolled courses)
+router.get('/my-sessions', authenticate, async (req, res) => {
+  try {
+    const enrollments = await Enrollment.find({ student: req.user._id }).populate("course");
+    const courseIds = enrollments.map(e => e.course._id);
+
+    const sessions = await LiveSession.find({ course: { $in: courseIds } })
+      .populate("instructor", "name email")
+      .sort({ scheduledAt: 1 });
+
+    res.json(sessions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

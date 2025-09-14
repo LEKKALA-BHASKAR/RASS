@@ -1,10 +1,13 @@
 import express from 'express';
 import Forum from '../models/Forum.js';
 import { authenticate } from '../middleware/auth.js';
+import Notification from '../models/Notification.js';
+import Enrollment from '../models/Enrollment.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
-// Get forum posts for a course (with optional category filter)
+// 📌 Get forum posts for a course (with optional category filter)
 router.get('/course/:courseId', authenticate, async (req, res) => {
   try {
     const { category } = req.query;
@@ -23,7 +26,7 @@ router.get('/course/:courseId', authenticate, async (req, res) => {
   }
 });
 
-// Get single forum post by ID
+// 📌 Get single forum post by ID
 router.get('/:id', authenticate, async (req, res) => {
   try {
     const post = await Forum.findById(req.params.id)
@@ -37,7 +40,7 @@ router.get('/:id', authenticate, async (req, res) => {
   }
 });
 
-// Create forum post
+// 📌 Create forum post
 router.post('/', authenticate, async (req, res) => {
   try {
     const forumPost = new Forum({
@@ -50,13 +53,40 @@ router.post('/', authenticate, async (req, res) => {
     const populatedPost = await Forum.findById(forumPost._id)
       .populate('author', 'name profile.avatar role');
 
+    // 🔔 Notifications
+    if (req.body.course) {
+      const enrollments = await Enrollment.find({ course: req.body.course }).populate("student", "_id");
+      const courseStudents = enrollments.map(e => e.student._id);
+
+      const admins = await User.find({ role: "admin" }, "_id");
+      const course = await Forum.findById(forumPost._id).populate("course", "instructor");
+
+      const instructorId = course?.course?.instructor;
+
+      const recipients = [
+        ...courseStudents,
+        instructorId,
+        ...admins.map(a => a._id),
+      ].filter(Boolean);
+
+      const notifications = recipients.map(r => ({
+        recipient: r,
+        title: "New Discussion Started",
+        message: `${req.user.name} started a new discussion: "${req.body.title}"`,
+        type: "discussion",
+        relatedId: forumPost._id,
+      }));
+
+      await Notification.insertMany(notifications);
+    }
+
     res.status(201).json(populatedPost);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Add reply to forum post
+// 📌 Add reply to forum post
 router.post('/:id/reply', authenticate, async (req, res) => {
   try {
     const { content } = req.body;
@@ -76,13 +106,33 @@ router.post('/:id/reply', authenticate, async (req, res) => {
       .populate('author', 'name profile.avatar role')
       .populate('replies.author', 'name profile.avatar role');
 
+    // 🔔 Notifications
+    const participants = [
+      forumPost.author,
+      ...forumPost.replies.map(r => r.author),
+    ].map(id => id.toString());
+
+    const uniqueRecipients = [...new Set(participants)].filter(
+      id => id !== req.user._id.toString()
+    );
+
+    const replyNotifications = uniqueRecipients.map(r => ({
+      recipient: r,
+      title: "New Reply in Discussion",
+      message: `${req.user.name} replied to a discussion: "${forumPost.title}"`,
+      type: "discussion",
+      relatedId: forumPost._id,
+    }));
+
+    await Notification.insertMany(replyNotifications);
+
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Like/Unlike forum post
+// 📌 Like/Unlike forum post
 router.post('/:id/like', authenticate, async (req, res) => {
   try {
     const forumPost = await Forum.findById(req.params.id);
@@ -102,7 +152,7 @@ router.post('/:id/like', authenticate, async (req, res) => {
   }
 });
 
-// Like/Unlike reply
+// 📌 Like/Unlike reply
 router.post('/:forumId/reply/:replyId/like', authenticate, async (req, res) => {
   try {
     const forumPost = await Forum.findById(req.params.forumId);
@@ -125,7 +175,7 @@ router.post('/:forumId/reply/:replyId/like', authenticate, async (req, res) => {
   }
 });
 
-// Pin/Unpin post (admin/instructor only)
+// 📌 Pin/Unpin post (admin/instructor only)
 router.post('/:id/pin', authenticate, async (req, res) => {
   try {
     const forumPost = await Forum.findById(req.params.id);
@@ -140,7 +190,7 @@ router.post('/:id/pin', authenticate, async (req, res) => {
   }
 });
 
-// Lock/Unlock post (admin/instructor only)
+// 📌 Lock/Unlock post (admin/instructor only)
 router.post('/:id/lock', authenticate, async (req, res) => {
   try {
     const forumPost = await Forum.findById(req.params.id);

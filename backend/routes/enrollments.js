@@ -56,8 +56,14 @@ router.post('/', authenticate, async (req, res) => {
 router.get('/my-courses', authenticate, async (req, res) => {
   try {
     const enrollments = await Enrollment.find({ student: req.user._id })
-      .populate('course', 'title description thumbnail instructor totalDuration')
-      .populate('course.instructor', 'name')
+     .populate({
+       path: 'course',
+       select: 'title description thumbnail instructor totalDuration',
+       populate: {
+         path: 'instructor',
+         select: 'name _id role' // include id + role
+       }
+     })
       .sort({ enrolledAt: -1 });
 
     res.json(enrollments);

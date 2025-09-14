@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
@@ -22,6 +21,12 @@ import Students from './pages/instructor/Students';
 import UserManagement from './pages/admin/UserManagement';
 import SupportManagement from './pages/admin/SupportManagement';
 import SupportTicketsPage from './pages/student/SupportTicketsPage';
+import { NotificationProvider } from "./context/NotificationContext";
+
+// Student Pages
+import DiscussionForum from './pages/student/DiscussionForum';
+import Notifications from './pages/student/Notifications';
+import Chat from './pages/student/Chat';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -73,7 +78,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/support-tickets" element={<SupportTicketsPage />} />
         <Route path="/courses" element={<CourseCatalog />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
-        <Route path="/assignments/:courseId" element={<Assignments />} />
+        {/* Auth Routes */}
         <Route 
           path="/login" 
           element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <Login />} 
@@ -82,14 +87,14 @@ const AppRoutes: React.FC = () => {
           path="/register" 
           element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <Register />} 
         />
-        
-        {/* Protected Routes */}
+
+        {/* Profile */}
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
         } />
-        
+
         {/* Student Routes */}
         <Route path="/student/dashboard" element={
           <ProtectedRoute roles={['student']}>
@@ -111,7 +116,7 @@ const AppRoutes: React.FC = () => {
             <Support />
           </ProtectedRoute>
         } />
-        <Route path="/student/sessions/:courseId" element={
+        <Route path="/student/live-sessions" element={
           <ProtectedRoute roles={['student']}>
             <LiveSessions />
           </ProtectedRoute>
@@ -121,7 +126,22 @@ const AppRoutes: React.FC = () => {
             <Assignments />
           </ProtectedRoute>
         } />
-        
+        <Route path="/student/discussion-forum" element={
+          <ProtectedRoute roles={['student']}>
+            <DiscussionForum />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/notifications" element={
+          <ProtectedRoute roles={['student']}>
+            <Notifications />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/chat" element={
+          <ProtectedRoute roles={['student']}>
+            <Chat />
+          </ProtectedRoute>
+        } />
+
         {/* Instructor Routes */}
         <Route path="/instructor/dashboard" element={
           <ProtectedRoute roles={['instructor', 'admin']}>
@@ -138,7 +158,7 @@ const AppRoutes: React.FC = () => {
             <Students />
           </ProtectedRoute>
         } />
-        
+
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={
           <ProtectedRoute roles={['admin']}>
@@ -163,9 +183,11 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

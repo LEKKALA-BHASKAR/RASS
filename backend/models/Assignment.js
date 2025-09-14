@@ -41,7 +41,7 @@ const assignmentSchema = new mongoose.Schema({
   },
   module: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
+    required: false
   },
   dueDate: Date,
   maxPoints: {

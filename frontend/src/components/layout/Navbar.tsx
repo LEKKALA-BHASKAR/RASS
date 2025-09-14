@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BookOpen, User, Bell, LogOut, Menu, X, Search, ChevronDown } from 'lucide-react';
-
+import { useNotification } from "../../context/NotificationContext";
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -10,6 +10,9 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // ✅ use unreadCount from context
+  const { unreadCount } = useNotification();
 
   const handleLogout = () => {
     logout();
@@ -38,6 +41,21 @@ const Navbar: React.FC = () => {
       setSearchQuery('');
     }
   };
+  // inside Navbar component
+const getNotificationsLink = () => {
+  if (!user) return "/notifications"; // fallback
+  switch (user.role) {
+    case "student":
+      return "/student/notifications";
+    case "instructor":
+      return "/instructor/notifications";
+    case "admin":
+      return "/admin/notifications";
+    default:
+      return "/notifications";
+  }
+};
+
 
   return (
     <nav className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
@@ -82,13 +100,20 @@ const Navbar: React.FC = () => {
                   Dashboard
                 </Link>
                 
-                <button className="relative p-1 text-gray-600 hover:text-indigo-600 transition-colors">
+                {/* Desktop Notification Bell */}
+                <Link 
+                  to={getNotificationsLink()} 
+                  className="relative p-1 text-gray-600 hover:text-indigo-600 transition-colors"
+                >
                   <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-                
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Profile Dropdown */}
                 <div className="relative">
                   <button 
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -140,12 +165,14 @@ const Navbar: React.FC = () => {
           {/* Mobile menu button */}
           <div className="flex md:hidden items-center space-x-4">
             {isAuthenticated && (
-              <button className="relative p-1 text-gray-600">
+              <Link to="/notifications" className="relative p-1 text-gray-600">
                 <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  3
-                </span>
-              </button>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
             )}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -155,80 +182,6 @@ const Navbar: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            {/* Search Bar - Mobile */}
-            <form onSubmit={handleSearch} className="relative mb-4 px-2">
-              <input
-                type="text"
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              <button
-                type="submit"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-              >
-                <Search className="h-5 w-5" />
-              </button>
-            </form>
-            
-            <div className="flex flex-col space-y-1">
-              <Link 
-                to="/courses" 
-                className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Courses
-              </Link>
-              
-              {isAuthenticated ? (
-                <>
-                  <Link 
-                    to={getDashboardLink()} 
-                    className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium rounded-md transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link 
-                    to="/profile" 
-                    className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium rounded-md transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  <button 
-                    onClick={handleLogout}
-                    className="text-left px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium rounded-md transition-colors"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link 
-                    to="/login" 
-                    className="px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium rounded-md transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link 
-                    to="/register" 
-                    className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 transition-colors text-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );

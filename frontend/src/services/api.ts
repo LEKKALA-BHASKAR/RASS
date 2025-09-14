@@ -1,98 +1,88 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = "http://localhost:8000/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
-// Add auth token to requests
+// ✅ Attach token automatically
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Handle auth errors
+// ✅ Handle expired tokens safely
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
     }
-    return Promise.reject(error);
+    return Promise.reject(err);
   }
 );
 
+// --- APIs ---
 export const authAPI = {
-  login: (email: string, password: string) => 
-    apiClient.post('/auth/login', { email, password }),
-  register: (name: string, email: string, password: string, role: string) => 
-    apiClient.post('/auth/register', { name, email, password, role }),
-  getCurrentUser: () => 
-    apiClient.get('/auth/me'),
-  updateProfile: (data: any) => 
-    apiClient.put('/users/profile', data),
+  login: (email: string, password: string) => apiClient.post("/auth/login", { email, password }),
+  register: (name: string, email: string, password: string, role: string) =>
+    apiClient.post("/auth/register", { name, email, password, role }),
+  getCurrentUser: () => apiClient.get("/auth/me"),
+  updateProfile: (data: any) => apiClient.put("/users/profile", data),
 };
 
 export const courseAPI = {
-  getAllCourses: (params?: any) => 
-    apiClient.get('/courses', { params }),
-  getCourse: (id: string) => 
-    apiClient.get(`/courses/${id}`),
-  createCourse: (data: any) => 
-    apiClient.post('/courses', data),
-  updateCourse: (id: string, data: any) => 
-    apiClient.put(`/courses/${id}`, data),
-  getInstructorCourses: () => 
-    apiClient.get('/courses/instructor/my-courses'),
+  getAllCourses: (params?: any) => apiClient.get("/courses", { params }),
+  getCourse: (id: string) => apiClient.get(`/courses/${id}`),
+  createCourse: (data: any) => apiClient.post("/courses", data),
+  updateCourse: (id: string, data: any) => apiClient.put(`/courses/${id}`, data),
+  getInstructorCourses: () => apiClient.get("/courses/instructor/my-courses"),
 };
 
 export const enrollmentAPI = {
-  enrollInCourse: (courseId: string) => 
-    apiClient.post('/enrollments', { courseId }),
-  getMyEnrollments: () => 
-    apiClient.get('/enrollments/my-courses'),
-  updateProgress: (data: any) => 
-    apiClient.post('/enrollments/progress', data),
+  enrollInCourse: (courseId: string) => apiClient.post("/enrollments", { courseId }),
+  getMyEnrollments: () => apiClient.get("/enrollments/my-courses"),
+  updateProgress: (data: any) => apiClient.post("/enrollments/progress", data),
 };
 
 export const assignmentAPI = {
-  getCourseAssignments: (courseId: string) => 
-    apiClient.get(`/assignments/course/${courseId}`),
-  createAssignment: (data: any) => 
+  getCourseAssignments: (courseId: string) =>
+    apiClient.get(`/assignments/course/${courseId}`),  // ✅ not assigments
+  createAssignment: (data: any) =>
     apiClient.post('/assignments', data),
-  submitAssignment: (id: string, data: any) => 
-    apiClient.post(`/assignments/${id}/submit`, data),
-  gradeAssignment: (id: string, data: any) => 
+  submitAssignment: (id: string, data: any) =>
+    apiClient.post(`/assignments/${id}/submit`, data).then(res => res.data),
+  gradeAssignment: (id: string, data: any) =>
     apiClient.post(`/assignments/${id}/grade`, data),
 };
 
+
+
+// ✅ Updated Forum API (supports both global forum + course-specific forum)
 export const forumAPI = {
-  getCourseForums: (courseId: string, category?: string) => 
+  getCourseForums: (courseId: string, category?: string) =>
     apiClient.get(`/forums/course/${courseId}`, { params: { category } }),
-  createPost: (data: any) => 
+  createPost: (data: any) =>
     apiClient.post('/forums', data),
-  addReply: (postId: string, content: string) => 
+  addReply: (postId: string, content: string) =>
     apiClient.post(`/forums/${postId}/reply`, { content }),
-  likePost: (postId: string) => 
+  likePost: (postId: string) =>
     apiClient.post(`/forums/${postId}/like`),
 };
 
+
 export const notificationAPI = {
-  getNotifications: () => 
-    apiClient.get('/notifications'),
-  markAsRead: (id: string) => 
-    apiClient.put(`/notifications/${id}/read`),
-  markAllAsRead: () => 
-    apiClient.put('/notifications/read-all'),
+  getNotifications: () => apiClient.get("/notifications"),
+  markAsRead: (id: string) => apiClient.put(`/notifications/${id}/read`),
+  markAllAsRead: () => apiClient.put("/notifications/read-all"),
+  getUnreadCount: () => apiClient.get("/notifications/unread-count"), // 🔥 new
 };
+
 
 export const userAPI = {
   getAllUsers: (params?: any) => 
@@ -102,13 +92,14 @@ export const userAPI = {
 };
 
 export const liveSessionAPI = {
-  getCourseSessions: (courseId: string) => 
+  getCourseSessions: (courseId: string) =>
     apiClient.get(`/live-sessions/course/${courseId}`),
-  createSession: (data: any) => 
-    apiClient.post('/live-sessions', data),
-  joinSession: (sessionId: string) => 
+  getMySessions: () => apiClient.get("/live-sessions/my-sessions"), // ✅ ensure this exists
+  createSession: (data: any) =>
+    apiClient.post("/live-sessions", data),
+  joinSession: (sessionId: string) =>
     apiClient.post(`/live-sessions/${sessionId}/join`),
-  updateSessionStatus: (sessionId: string, status: string) => 
+  updateSessionStatus: (sessionId: string, status: string) =>
     apiClient.put(`/live-sessions/${sessionId}/status`, { status }),
 };
 
@@ -133,5 +124,27 @@ export const supportTicketAPI = {
   updateTicketStatus: (ticketId: string, status: string, assignedTo?: string) => 
     apiClient.put(`/support-tickets/${ticketId}/status`, { status, assignedTo }),
 };
+
+export const chatAPI = {
+  // Student sends to course (instructor + admins)
+  sendMessageToCourse: (courseId: string, content: string) =>
+    apiClient.post(`/chats/${courseId}`, { content }),
+
+  // Mentor/Admin sends to student
+  sendMessageToStudent: (courseId: string, studentId: string, content: string) =>
+    apiClient.post(`/chats/${courseId}/${studentId}`, { content }),
+
+  // Get student chats
+  getStudentChats: () => apiClient.get("/chats/student"),
+
+  // Get mentor/admin chats
+  getMentorChats: () => apiClient.get("/chats/mentor"),
+
+  // Get specific chat
+  getChatById: (chatId: string) => apiClient.get(`/chats/${chatId}`),
+};
+
+
+
 
 export default apiClient;

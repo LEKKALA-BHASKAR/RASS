@@ -1,49 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { liveSessionAPI } from '../../services/api';
-import { Calendar, Clock, Users, Video, ExternalLink } from 'lucide-react';
-import { LiveSession } from '../../types';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { liveSessionAPI } from "../../services/api";
+import { Calendar, Clock, Users, Video, ExternalLink } from "lucide-react";
+import { LiveSession } from "../../types";
+import { notificationAPI } from "../../services/api";
+import { useNotification } from "../../context/NotificationContext";
 
 const LiveSessions: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [sessions, setSessions] = useState<LiveSession[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const { resetUnread, decrementUnread } = useNotification();
+  
   useEffect(() => {
-    if (courseId) {
-      fetchSessions();
-    }
-  }, [courseId]);
+  if (courseId) {
+    fetchCourseSessions(courseId); // course-specific
+  } else {
+    fetchMySessions(); // all enrolled sessions
+  }
 
-  const fetchSessions = async () => {
+  markLiveSessionNotificationsAsRead();
+}, [courseId]);
+
+
+
+const markLiveSessionNotificationsAsRead = async () => {
+  try {
+    const res = await notificationAPI.getNotifications();
+    const liveNotifications = res.data.filter(
+      (n: any) => n.type === "live-session" && !n.read
+    );
+
+    for (const n of liveNotifications) {
+      await notificationAPI.markAsRead(n._id);
+      decrementUnread(); // update navbar count instantly
+    }
+  } catch (err) {
+    console.error("Error marking live-session notifications as read:", err);
+  }
+};
+
+  const fetchCourseSessions = async (id: string) => {
     try {
-      const response = await liveSessionAPI.getCourseSessions(courseId!);
+      const response = await liveSessionAPI.getCourseSessions(id);
       setSessions(response.data);
     } catch (error) {
-      console.error('Error fetching sessions:', error);
+      console.error("Error fetching sessions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMySessions = async () => {
+    try {
+      const response = await liveSessionAPI.getMySessions();
+      setSessions(response.data);
+    } catch (error) {
+      console.error("Error fetching my sessions:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleJoinSession = async (sessionId: string) => {
-    try {
-      const response = await liveSessionAPI.joinSession(sessionId);
-      if (response.data.meetingLink) {
-        window.open(response.data.meetingLink, '_blank');
-      }
-    } catch (error) {
-      console.error('Error joining session:', error);
+  try {
+    const response = await liveSessionAPI.joinSession(sessionId);
+    if (response.data.meetingLink) {
+      // ✅ Mark related notifications as read
+      await markLiveSessionNotificationsAsRead();
+
+      window.open(response.data.meetingLink, '_blank');
     }
-  };
+  } catch (error) {
+    console.error('Error joining session:', error);
+  }
+};
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'live': return 'bg-red-100 text-red-800';
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "live":
+        return "bg-red-100 text-red-800";
+      case "scheduled":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -68,24 +113,34 @@ const LiveSessions: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{session.title}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(session.status)}`}>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {session.title}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        session.status
+                      )}`}
+                    >
                       {session.status.toUpperCase()}
                     </span>
                   </div>
-                  
+
                   {session.description && (
                     <p className="text-gray-600 mb-3">{session.description}</p>
                   )}
-                  
+
                   <div className="flex items-center space-x-6 text-sm text-gray-600">
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-1" />
-                      <span>{new Date(session.scheduledAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(session.scheduledAt).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="flex items-center">
                       <Clock className="h-4 w-4 mr-1" />
-                      <span>{new Date(session.scheduledAt).toLocaleTimeString()}</span>
+                      <span>
+                        {new Date(session.scheduledAt).toLocaleTimeString()}
+                      </span>
                     </div>
                     <div className="flex items-center">
                       <Users className="h-4 w-4 mr-1" />
@@ -99,7 +154,7 @@ const LiveSessions: React.FC = () => {
                 </div>
 
                 <div className="ml-4">
-                  {session.status === 'live' && (
+                  {session.status === "live" && (
                     <button
                       onClick={() => handleJoinSession(session._id)}
                       className="btn-primary flex items-center animate-pulse"
@@ -108,7 +163,7 @@ const LiveSessions: React.FC = () => {
                       Join Live
                     </button>
                   )}
-                  {session.status === 'scheduled' && (
+                  {session.status === "scheduled" && (
                     <button
                       onClick={() => handleJoinSession(session._id)}
                       className="btn-secondary flex items-center"
@@ -117,12 +172,13 @@ const LiveSessions: React.FC = () => {
                       Get Link
                     </button>
                   )}
-                  {session.status === 'completed' && session.recording?.available && (
-                    <button className="btn-secondary flex items-center">
-                      <Video className="h-4 w-4 mr-2" />
-                      Watch Recording
-                    </button>
-                  )}
+                  {session.status === "completed" &&
+                    session.recording?.available && (
+                      <button className="btn-secondary flex items-center">
+                        <Video className="h-4 w-4 mr-2" />
+                        Watch Recording
+                      </button>
+                    )}
                 </div>
               </div>
             </div>
@@ -131,8 +187,12 @@ const LiveSessions: React.FC = () => {
       ) : (
         <div className="text-center py-12">
           <Video className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No live sessions scheduled</h3>
-          <p className="text-gray-600">Live sessions will appear here when scheduled by your instructor</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No live sessions scheduled
+          </h3>
+          <p className="text-gray-600">
+            Live sessions will appear here when scheduled by your instructor
+          </p>
         </div>
       )}
     </div>
