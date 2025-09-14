@@ -56,7 +56,7 @@ export const assignmentAPI = {
   createAssignment: (data: any) =>
     apiClient.post('/assignments', data),
   submitAssignment: (id: string, data: any) =>
-  apiClient.post(`/assignments/${id}/submit`, data).then(res => res.data),
+    apiClient.post(`/assignments/${id}/submit`, data).then(res => res.data),
   gradeAssignment: (id: string, data: any) =>
     apiClient.post(`/assignments/${id}/grade`, data),
 };
