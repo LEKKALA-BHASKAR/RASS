@@ -75,7 +75,7 @@ const AppRoutes: React.FC = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/support-tickets" element={<SupportTicketsPage />} />
+        <Route path="/support-tickets" element={<Support />} />
         <Route path="/courses" element={<CourseCatalog />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         {/* Auth Routes */}
