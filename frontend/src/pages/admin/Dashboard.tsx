@@ -50,7 +50,6 @@ const AdminDashboard: React.FC = () => {
   const totalEnrollments = courses.reduce((total, course) => total + course.enrollmentCount, 0);
   const totalRevenue = courses.reduce((total, course) => total + (course.price * course.enrollmentCount), 0);
   
-  // Calculate percentage changes (mock data for demonstration)
   const studentGrowth = 12.5;
   const revenueGrowth = 8.3;
   const enrollmentGrowth = 5.7;

@@ -70,13 +70,6 @@ const UserManagement: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600 mt-2">Manage platform users and their permissions</p>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="btn-primary flex items-center"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add User
-        </button>
       </div>
 
       {/* Filters */}
@@ -115,6 +108,9 @@ const UserManagement: React.FC = () => {
                   User
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User Id
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Role
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -122,9 +118,6 @@ const UserManagement: React.FC = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Joined
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
                 </th>
               </tr>
             </thead>
@@ -146,6 +139,11 @@ const UserManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                      {user._id}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
                       {user.role}
                     </span>
                   </td>
@@ -158,20 +156,6 @@ const UserManagement: React.FC = () => {
                     Jan 15, 2024
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedUser(user)}
-                        className="text-primary-600 hover:text-primary-900"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleStatusToggle(user.id, true)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Shield className="h-4 w-4" />
-                      </button>
-                    </div>
                   </td>
                 </tr>
               ))}
