@@ -122,6 +122,11 @@ const AppRoutes: React.FC = () => {
             <LiveSessions />
           </ProtectedRoute>
         } />
+        <Route path="/student/assignments" element={
+          <ProtectedRoute roles={['student']}>
+            <Assignments />
+          </ProtectedRoute>
+        } />
         <Route path="/student/assignments/:courseId" element={
           <ProtectedRoute roles={['student']}>
             <Assignments />

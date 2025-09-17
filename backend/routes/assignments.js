@@ -6,7 +6,7 @@ import Enrollment from "../models/Enrollment.js";
 
 const router = express.Router();
 
-// Get assignments for a course
+// 🔹 Get assignments for a course
 router.get('/course/:courseId', authenticate, async (req, res) => {
   try {
     const assignments = await Assignment.find({ course: req.params.courseId })
@@ -18,14 +18,13 @@ router.get('/course/:courseId', authenticate, async (req, res) => {
   }
 });
 
-
-// ✅ Create assignment (Instructor/Admin only)
+// 🔹 Create assignment
 router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const assignment = new Assignment(req.body);
     await assignment.save();
 
-    // 🔔 Notify all students enrolled in this course
+    // Notify all students enrolled in this course
     const enrollments = await Enrollment.find({ course: assignment.course });
     for (const e of enrollments) {
       await Notification.create({
@@ -43,8 +42,40 @@ router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res
   }
 });
 
-// Submit assignment
-// Submit assignment
+// 🔹 Update assignment
+router.put('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const updatedAssignment = await Assignment.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedAssignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.json(updatedAssignment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 🔹 Delete assignment
+router.delete('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const assignment = await Assignment.findByIdAndDelete(req.params.id);
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.json({ message: "Assignment deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 🔹 Submit assignment
 router.post('/:id/submit', authenticate, async (req, res) => {
   try {
     const { content, fileUrl } = req.body;
@@ -54,7 +85,7 @@ router.post('/:id/submit', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'Assignment not found' });
     }
 
-    // 🔎 Check if student already submitted
+    // Check if student already submitted
     const existingSubmission = assignment.submissions.find(
       (sub) => sub.student.toString() === req.user._id.toString()
     );
@@ -74,18 +105,16 @@ router.post('/:id/submit', authenticate, async (req, res) => {
 
     await assignment.save();
 
-    // ✅ Populate before sending back
     const updatedAssignment = await Assignment.findById(req.params.id)
       .populate('submissions.student', '_id name email role');
 
-    res.json(updatedAssignment);  // 🔥 Always send populated
+    res.json(updatedAssignment);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-
-// ✅ Grade assignment (Instructor/Admin only)
+// 🔹 Grade assignment
 router.post('/:id/grade', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const { studentId, grade, feedback } = req.body;
@@ -103,7 +132,7 @@ router.post('/:id/grade', authenticate, authorize('instructor', 'admin'), async 
 
     await assignment.save();
 
-    // 🔔 Notify student about grading
+    // Notify student
     await Notification.create({
       recipient: studentId,
       title: "Assignment Graded",

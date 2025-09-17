@@ -6,7 +6,7 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// 🔹 Get live sessions for a specific course
+// 🔹 Get sessions for a course
 router.get('/course/:courseId', authenticate, async (req, res) => {
   try {
     const sessions = await LiveSession.find({ course: req.params.courseId })
@@ -19,10 +19,9 @@ router.get('/course/:courseId', authenticate, async (req, res) => {
   }
 });
 
-// 🔹 Get all sessions for logged-in student (for dashboard quick link)
+// 🔹 Get all sessions for logged-in student
 router.get('/my', authenticate, async (req, res) => {
   try {
-    // find courses where user is enrolled
     const enrollments = await Enrollment.find({ student: req.user._id }).select("course");
     const courseIds = enrollments.map((e) => e.course);
 
@@ -36,23 +35,8 @@ router.get('/my', authenticate, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-// Get all sessions for enrolled courses (Student)
-router.get('/my-sessions', authenticate, async (req, res) => {
-  try {
-    const enrollments = await Enrollment.find({ student: req.user._id }).select("course");
-    const courseIds = enrollments.map(e => e.course);
 
-    const sessions = await LiveSession.find({ course: { $in: courseIds } })
-      .populate("instructor", "name email")
-      .sort({ scheduledAt: 1 });
-
-    res.json(sessions);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// 🔹 Create live session (Instructor/Admin only)
+// 🔹 Create live session
 router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const sessionData = {
@@ -63,7 +47,7 @@ router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res
     const session = new LiveSession(sessionData);
     await session.save();
 
-    // 🔔 Notify enrolled students
+    // Notify enrolled students
     const enrolledStudents = await Enrollment.find({ course: req.body.course }).populate("student");
     const notifications = enrolledStudents.map(
       (enroll) =>
@@ -85,7 +69,40 @@ router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res
   }
 });
 
-// 🔹 Join live session
+// 🔹 Update live session
+router.put('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const updatedSession = await LiveSession.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedSession) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    res.json(updatedSession);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 🔹 Delete live session
+router.delete('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const session = await LiveSession.findByIdAndDelete(req.params.id);
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    res.json({ message: "Live session deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 🔹 Join session
 router.post('/:id/join', authenticate, async (req, res) => {
   try {
     const session = await LiveSession.findById(req.params.id);
@@ -93,7 +110,6 @@ router.post('/:id/join', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'Session not found' });
     }
 
-    // Check if already joined
     const existingAttendee = session.attendees.find(
       (a) => a.student.toString() === req.user._id.toString()
     );
@@ -112,7 +128,7 @@ router.post('/:id/join', authenticate, async (req, res) => {
   }
 });
 
-// 🔹 Update session status
+// 🔹 Update session status (e.g. go LIVE)
 router.put('/:id/status', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const { status } = req.body;
@@ -127,7 +143,6 @@ router.put('/:id/status', authenticate, authorize('instructor', 'admin'), async 
       return res.status(404).json({ message: 'Session not found' });
     }
 
-    // 🔔 Optional: Notify students when session goes LIVE
     if (status === "live") {
       const enrolledStudents = await Enrollment.find({ course: session.course }).populate("student");
       const notifications = enrolledStudents.map(
