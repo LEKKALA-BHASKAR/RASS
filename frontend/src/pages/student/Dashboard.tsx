@@ -220,7 +220,7 @@ const StudentDashboard: React.FC = () => {
                   </div>
                   <span className="text-sm font-medium text-gray-700">Browse Courses</span>
                 </Link>
-
+            
                 <Link
                   to="/profile"
                   className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-all transform hover:-translate-y-1"
@@ -253,13 +253,27 @@ const StudentDashboard: React.FC = () => {
                   <div className="p-2 bg-purple-100 rounded-lg mb-2">
                     <Users className="h-6 w-6 text-purple-600" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Forum</span>
+                  <span className="text-sm font-medium text-gray-700">Discussions</span>
                   {notifications.filter((n) => !n.read && n.type === "discussion").length > 0 && (
                     <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
                       {notifications.filter((n) => !n.read && n.type === "discussion").length}
                     </span>
                   )}
                 </Link>
+                <Link
+  to="/student/assignments"
+  className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
+>
+  <div className="p-2 bg-purple-100 rounded-lg mb-2">
+    <Users className="h-6 w-6 text-purple-600" />
+  </div>
+  <span className="text-sm font-medium text-gray-700">Assignments</span>
+  {notifications.filter((n) => !n.read && n.type === "assignment").length > 0 && (
+    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
+      {notifications.filter((n) => !n.read && n.type === "assignment").length}
+    </span>
+  )}
+</Link>
 
                 <Link
                   to="/student/chat"

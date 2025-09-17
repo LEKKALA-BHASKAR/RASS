@@ -1,5 +1,4 @@
 export interface User {
-  [x: string]: string;
   _id: string;
   id: string;
   name: string;
@@ -56,9 +55,10 @@ export interface Module {
 }
 
 export interface Resource {
+  _id: string;
   title: string;
   url: string;
-  type: 'pdf' | 'doc' | 'link' | 'other';
+  type: 'pdf' | 'doc' | 'link' | 'video' | 'other';
 }
 
 export interface Enrollment {

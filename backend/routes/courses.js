@@ -5,6 +5,8 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
+/* -------------------- Courses -------------------- */
+
 // Get all courses
 router.get('/', async (req, res) => {
   try {
@@ -35,7 +37,8 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
-      .populate('instructor', 'name email profile');
+      .populate('instructor', 'name email profile')
+      .populate('modules'); // include modules
 
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
@@ -47,7 +50,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create course (Instructor/Admin only)
+// Create course
 router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const courseData = {
@@ -72,12 +75,9 @@ router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res
 router.put('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
-    
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
-    }
+    if (!course) return res.status(404).json({ message: 'Course not found' });
 
-    // Check if user owns the course or is admin
+    // Check ownership
     if (req.user.role !== 'admin' && course.instructor.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to update this course' });
     }
@@ -106,5 +106,58 @@ router.get('/instructor/my-courses', authenticate, authorize('instructor', 'admi
     res.status(500).json({ message: error.message });
   }
 });
+
+/* -------------------- Modules -------------------- */
+
+// ---- Module Management ---- //
+
+// Add a module
+router.post('/:courseId/modules', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    course.modules.push(req.body);
+    await course.save();
+
+    res.status(201).json(course.modules);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update a module
+router.put('/:courseId/modules/:moduleId', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    const module = course.modules.id(req.params.moduleId);
+    if (!module) return res.status(404).json({ message: 'Module not found' });
+
+    Object.assign(module, req.body);
+    await course.save();
+
+    res.json(module);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete a module
+router.delete('/:courseId/modules/:moduleId', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    course.modules = course.modules.filter((m) => m._id.toString() !== req.params.moduleId);
+    await course.save();
+
+    res.json({ message: 'Module deleted successfully', modules: course.modules });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 export default router;
