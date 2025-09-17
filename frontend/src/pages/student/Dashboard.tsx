@@ -289,7 +289,6 @@ const StudentDashboard: React.FC = () => {
                     </span>
                   )}
                 </Link>
->>>>>>> 99292ee63c267b0eb141cc6944f54ad61f500e9c
                 <Link
                   to="/student/chat"
                   className="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl hover:bg-pink-100 transition-all transform hover:-translate-y-1 relative"
