@@ -261,7 +261,8 @@ const StudentDashboard: React.FC = () => {
                   )}
                 </Link>
                 <Link
-                  to={`/student/assignments/${enrollments[0]?.course._id || ''}`}
+
+                  to="/student/assignments"
                   className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
                 >
                   <div className="p-2 bg-purple-100 rounded-lg mb-2">
@@ -274,6 +275,8 @@ const StudentDashboard: React.FC = () => {
                     </span>
                   )}
                 </Link>
+
+                  
                 <Link
                   to="/student/chat"
                   className="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl hover:bg-pink-100 transition-all transform hover:-translate-y-1 relative"
