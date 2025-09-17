@@ -27,7 +27,8 @@ import { NotificationProvider } from "./context/NotificationContext";
 import DiscussionForum from './pages/student/DiscussionForum';
 import Notifications from './pages/student/Notifications';
 import Chat from './pages/student/Chat';
-
+import AddUserPage from './pages/admin/AddUserPage';
+import AddCoursePage from "./pages/admin/AddCoursePage";
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
   roles 
@@ -170,6 +171,14 @@ const AppRoutes: React.FC = () => {
             <AdminDashboard />
           </ProtectedRoute>
         } />
+        <Route path="/admin/add-user" element={
+          <ProtectedRoute roles={['admin']}>
+            <AddUserPage  />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/admin/add-course" element={<AddCoursePage />} />
+
         <Route path="/admin/users" element={
           <ProtectedRoute roles={['admin']}>
             <UserManagement />

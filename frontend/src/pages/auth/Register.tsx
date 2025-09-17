@@ -191,36 +191,14 @@ const Register: React.FC = () => {
                     />
                     <label
                       htmlFor="student"
-                      className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                      className={`flex flex-row items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${
                         formData.role === 'student'
                           ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                           : 'border-gray-300 text-gray-700 hover:border-indigo-300'
                       }`}
                     >
-                      <GraduationCap className="h-5 w-5 mr-2" />
-                      Student
-                    </label>
-                  </div>
-                  <div>
-                    <input
-                      type="radio"
-                      id="instructor"
-                      name="role"
-                      value="instructor"
-                      checked={formData.role === 'instructor'}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="sr-only"
-                    />
-                    <label
-                      htmlFor="instructor"
-                      className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${
-                        formData.role === 'instructor'
-                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                          : 'border-gray-300 text-gray-700 hover:border-indigo-300'
-                      }`}
-                    >
-                      <Shield className="h-5 w-5 mr-2" />
-                      Instructor
+                      <GraduationCap className="h-5 w-5 mb-2" />
+                      <span className="text-center">Student</span>
                     </label>
                   </div>
                 </div>

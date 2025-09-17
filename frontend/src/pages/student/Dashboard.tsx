@@ -261,6 +261,7 @@ const StudentDashboard: React.FC = () => {
                   )}
                 </Link>
                 <Link
+<<<<<<< HEAD
   to="/student/assignments"
   className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
 >
@@ -275,6 +276,21 @@ const StudentDashboard: React.FC = () => {
   )}
 </Link>
 
+=======
+                  to={`/student/assignments/${enrollments[0]?.course._id || ''}`}
+                  className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
+                >
+                  <div className="p-2 bg-purple-100 rounded-lg mb-2">
+                    <Users className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">Assignments</span>
+                  {notifications.filter((n) => !n.read && n.type === "assignment").length > 0 && (
+                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
+                      {notifications.filter((n) => !n.read && n.type === "assignment").length}
+                    </span>
+                  )}
+                </Link>
+>>>>>>> 99292ee63c267b0eb141cc6944f54ad61f500e9c
                 <Link
                   to="/student/chat"
                   className="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl hover:bg-pink-100 transition-all transform hover:-translate-y-1 relative"
