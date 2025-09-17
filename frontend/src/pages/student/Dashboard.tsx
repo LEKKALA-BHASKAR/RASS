@@ -261,7 +261,7 @@ const StudentDashboard: React.FC = () => {
                   )}
                 </Link>
                 <Link
-<<<<<<< HEAD
+
   to="/student/assignments"
   className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
 >
@@ -276,7 +276,6 @@ const StudentDashboard: React.FC = () => {
   )}
 </Link>
 
-=======
                   to={`/student/assignments/${enrollments[0]?.course._id || ''}`}
                   className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
                 >
