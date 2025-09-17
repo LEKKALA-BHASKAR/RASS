@@ -48,25 +48,34 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create course (Instructor/Admin only)
-router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res) => {
+router.post('/', authenticate, authorize('admin'), async (req, res) => {
   try {
+    const { instructor, ...rest } = req.body;
+    if (!instructor) {
+      return res.status(400).json({ message: "Instructor ID is required" });
+    }
+
     const courseData = {
-      ...req.body,
-      instructor: req.user._id
+      ...rest,
+      instructor,
     };
 
     const course = new Course(courseData);
     await course.save();
 
-    // Add to instructor's created courses
-    req.user.createdCourses.push(course._id);
-    await req.user.save();
+    await User.findByIdAndUpdate(instructor, { $push: { createdCourses: course._id } });
 
     res.status(201).json(course);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
+
+
 
 // Update course
 router.put('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {

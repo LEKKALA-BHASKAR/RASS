@@ -26,28 +26,31 @@ const AddCoursePage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const payload = {
-        ...formData,
-        price: Number(formData.price),
-        tags: formData.tags.split(",").map((tag) => tag.trim()),
-        requirements: formData.requirements.split(",").map((req) => req.trim()),
-        learningOutcomes: formData.learningOutcomes.split(",").map((outcome) => outcome.trim()),
-      };
+  try {
+   const payload = {
+  ...formData,
+  instructor: formData.instructor,
+  price: Number(formData.price),
+  tags: formData.tags.split(",").map(tag => tag.trim()),
+  requirements: formData.requirements.split(",").map(req => req.trim()),
+  learningOutcomes: formData.learningOutcomes.split(",").map(outcome => outcome.trim()),
+};
 
-      await courseAPI.createCourse(payload);
-      alert("✅ Course created successfully!");
-      navigate("/admin/courses");
-    } catch (error) {
-      console.error(error);
-      alert("❌ Failed to create course.");
-    } finally {
-      setLoading(false);
-    }
-  };
+
+    await courseAPI.createCourse(payload);
+    alert("✅ Course created successfully!");
+    navigate("/admin/courses");
+  } catch (error) {
+    console.error("❌ Failed to create course:", error);
+    alert("❌ Failed to create course.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8">

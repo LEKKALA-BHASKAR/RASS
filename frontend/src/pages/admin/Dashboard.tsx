@@ -92,27 +92,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         </header>
 
-        {/* Tabs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              {['overview', 'courses', 'reports', 'analytics'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === tab
-                      ? 'border-indigo-500 text-indigo-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
-
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -298,9 +277,9 @@ const AdminDashboard: React.FC = () => {
                   <div className="bg-gray-100 p-3 rounded-xl group-hover:bg-gray-200 transition-colors">
                     <Settings className="h-6 w-6 text-gray-600" />
                   </div>
-                  <h3 className="text-md font-semibold text-gray-900 ml-3">Platform Settings</h3>
+                  <h3 className="text-md font-semibold text-gray-900 ml-3">Support tickets</h3>
                 </div>
-                <p className="text-sm text-gray-600">Configure platform-wide settings</p>
+                <p className="text-sm text-gray-600">Manage user inquiries and issues</p>
               </button>
             </div>
           </div>
