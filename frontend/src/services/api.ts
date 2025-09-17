@@ -95,12 +95,6 @@ export const notificationAPI = {
   getUnreadCount: () => apiClient.get("/notifications/unread-count"),
 };
 
-<<<<<<< HEAD
-/* ---------------- USERS ---------------- */
-export const userAPI = {
-  getAllUsers: (params?: any) => apiClient.get("/users", { params }),
-  updateUserStatus: (id: string, isActive: boolean) =>
-=======
 
 //export const userAPI = {
 //  getAllUsers: (params?: any) => 
@@ -131,10 +125,10 @@ export const userAPI = {
   getAllUsers: (params?: any) => 
     apiClient.get('/users', { params }),
   updateUserStatus: (id: string, isActive: boolean) => 
->>>>>>> 99292ee63c267b0eb141cc6944f54ad61f500e9c
     apiClient.put(`/users/${id}/status`, { isActive }),
   
   // Other user API methods...
+  // For example:
 };
 
 /* ---------------- LIVE SESSIONS ---------------- */
