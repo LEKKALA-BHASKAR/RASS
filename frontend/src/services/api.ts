@@ -84,11 +84,38 @@ export const notificationAPI = {
 };
 
 
+//export const userAPI = {
+//  getAllUsers: (params?: any) => 
+//    apiClient.get('/users', { params }),
+//  updateUserStatus: (id: string, isActive: boolean) => 
+//    apiClient.put(`/users/${id}/status`, { isActive }),
+//  
+//};
+
 export const userAPI = {
+  createUser: async (userData: any) => {
+    try {
+      const response = await apiClient.post('/users', userData);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) {
+        // The server responded with an error status
+        throw error;
+      } else if (error.request) {
+        // The request was made but no response was received
+        throw new Error('Network error. Please check your connection.');
+      } else {
+        // Something happened in setting up the request
+        throw new Error('An unexpected error occurred.');
+      }
+    }
+  },
   getAllUsers: (params?: any) => 
     apiClient.get('/users', { params }),
   updateUserStatus: (id: string, isActive: boolean) => 
     apiClient.put(`/users/${id}/status`, { isActive }),
+  
+  // Other user API methods...
 };
 
 export const liveSessionAPI = {

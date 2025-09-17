@@ -115,4 +115,23 @@ router.post('/progress', authenticate, async (req, res) => {
   }
 });
 
+router.post("/create-order/:courseId", async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    const options = {
+      amount: course.price * 100, // paise
+      currency: "INR",
+      receipt: `order_rcptid_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json(order); // ✅ must return JSON
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 export default router;

@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import slugify from "slugify";
+
+
 
 const moduleSchema = new mongoose.Schema({
   title: {
@@ -7,7 +10,7 @@ const moduleSchema = new mongoose.Schema({
   },
   description: String,
   videoUrl: String,
-  duration: Number, // in minutes
+  duration: Number,
   order: {
     type: Number,
     required: true
@@ -53,7 +56,7 @@ const courseSchema = new mongoose.Schema({
   },
   thumbnail: String,
   modules: [moduleSchema],
-  totalDuration: Number, // calculated field
+  totalDuration: Number,
   enrollmentCount: {
     type: Number,
     default: 0
@@ -68,9 +71,14 @@ const courseSchema = new mongoose.Schema({
       default: 0
     }
   },
+  slug: {
+  type: String,
+  unique: true,
+  trim: true
+},
   isPublished: {
     type: Boolean,
-    default: false
+    default: true
   },
   tags: [String],
   requirements: [String],
@@ -79,8 +87,12 @@ const courseSchema = new mongoose.Schema({
   timestamps: true
 });
 
-courseSchema.pre('save', function() {
+courseSchema.pre("save", function(next) {
+  if (!this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
   this.totalDuration = this.modules.reduce((total, module) => total + (module.duration || 0), 0);
+  next();
 });
 
 export default mongoose.model('Course', courseSchema);
