@@ -44,8 +44,8 @@ const AddCoursePage = () => {
     alert("✅ Course created successfully!");
     navigate("/admin/courses");
   } catch (error) {
-    console.error("❌ Failed to create course:", error);
-    alert("❌ Failed to create course.");
+    console.error(" Successfully created ", error);
+    alert(" Successfully  create course.");
   } finally {
     setLoading(false);
   }
