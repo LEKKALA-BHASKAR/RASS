@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, User, Bell, LogOut, Menu, X, Search, ChevronDown } from 'lucide-react';
+import {
+  BookOpen,
+  User,
+  Bell,
+  LogOut,
+  Menu,
+  X,
+  Search,
+  ChevronDown,
+} from 'lucide-react';
 import { useNotification } from "../../context/NotificationContext";
 
 const Navbar: React.FC = () => {
@@ -10,9 +19,10 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
-  // ✅ use unreadCount from context
-  const { unreadCount } = useNotification();
+  // ✅ use unreadCount + notifications list from context
+  const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotification();
 
   const handleLogout = () => {
     logout();
@@ -41,21 +51,20 @@ const Navbar: React.FC = () => {
       setSearchQuery('');
     }
   };
-  // inside Navbar component
-const getNotificationsLink = () => {
-  if (!user) return "/notifications"; // fallback
-  switch (user.role) {
-    case "student":
-      return "/student/notifications";
-    case "instructor":
-      return "/instructor/notifications";
-    case "admin":
-      return "/admin/notifications";
-    default:
-      return "/notifications";
-  }
-};
 
+  const getNotificationsLink = () => {
+    if (!user) return "/notifications"; // fallback
+    switch (user.role) {
+      case "student":
+        return "/student/notifications";
+      case "instructor":
+        return "/instructor/notifications";
+      case "admin":
+        return "/admin/notifications";
+      default:
+        return "/notifications";
+    }
+  };
 
   return (
     <nav className="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
@@ -90,19 +99,25 @@ const getNotificationsLink = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/courses" className="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+            <Link
+              to="/courses"
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+            >
               Courses
             </Link>
-            
+
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <Link to={getDashboardLink()} className="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+              <div className="flex items-center space-x-4 relative">
+                <Link
+                  to={getDashboardLink()}
+                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                >
                   Dashboard
                 </Link>
-                
+
                 {/* Desktop Notification Bell */}
-                <Link 
-                  to={getNotificationsLink()} 
+                <button
+                  onClick={() => setShowNotifDropdown((p) => !p)}
                   className="relative p-1 text-gray-600 hover:text-indigo-600 transition-colors"
                 >
                   <Bell className="h-5 w-5" />
@@ -111,11 +126,58 @@ const getNotificationsLink = () => {
                       {unreadCount}
                     </span>
                   )}
-                </Link>
+                </button>
+
+                {/* Notification Dropdown */}
+                {showNotifDropdown && (
+                  <div className="absolute right-0 top-10 w-80 bg-white shadow-lg rounded-lg border max-h-96 overflow-y-auto z-50">
+                    <div className="flex justify-between items-center px-4 py-2 border-b">
+                      <span className="font-semibold text-gray-700">Notifications</span>
+                      <button
+                        onClick={async () => {
+                          await markAllAsRead();
+                        }}
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        Mark all as read
+                      </button>
+                    </div>
+                    {notifications.length === 0 ? (
+                      <p className="p-4 text-sm text-gray-500">No notifications</p>
+                    ) : (
+                      <ul className="divide-y">
+                        {notifications.map((n) => (
+                          <li
+                            key={n._id}
+                            className={`p-3 cursor-pointer hover:bg-gray-50 ${
+                              !n.read ? "bg-blue-50" : ""
+                            }`}
+                            onClick={async () => {
+                              await markAsRead(n._id);
+                              if (n.type === "chat") navigate("/instructor/chats");
+                              if (n.type === "support") navigate("/instructor/tickets");
+                              if (n.type === "forum") navigate("/instructor/discussions");
+                              if (n.type === "assignment")
+                                navigate("/instructor/courses?tab=assignments");
+                              if (n.type === "enrollment") navigate("/instructor/courses");
+                              setShowNotifDropdown(false);
+                            }}
+                          >
+                            <p className="text-sm font-medium">{n.title}</p>
+                            <p className="text-xs text-gray-500">{n.message}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {new Date(n.createdAt).toLocaleString()}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
 
                 {/* Profile Dropdown */}
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 transition-colors"
                   >
@@ -123,23 +185,27 @@ const getNotificationsLink = () => {
                       <User className="h-5 w-5 text-indigo-600" />
                     </div>
                     <span className="font-medium">{user?.name}</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${
+                        isProfileDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
-                  
+
                   {isProfileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                         <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                       </div>
-                      <Link 
-                        to="/profile" 
+                      <Link
+                        to="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                         onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         Profile
                       </Link>
-                      <button 
+                      <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors flex items-center"
                       >
@@ -152,10 +218,16 @@ const getNotificationsLink = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                >
                   Login
                 </Link>
-                <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                <Link
+                  to="/register"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                >
                   Sign Up
                 </Link>
               </div>
@@ -165,14 +237,17 @@ const getNotificationsLink = () => {
           {/* Mobile menu button */}
           <div className="flex md:hidden items-center space-x-4">
             {isAuthenticated && (
-              <Link to="/notifications" className="relative p-1 text-gray-600">
+              <button
+                onClick={() => setShowNotifDropdown((p) => !p)}
+                className="relative p-1 text-gray-600"
+              >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
-              </Link>
+              </button>
             )}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

@@ -61,7 +61,10 @@ export const enrollmentAPI = {
     apiClient.post("/enrollments", { courseId }),
   getMyEnrollments: () => apiClient.get("/enrollments/my-courses"),
   updateProgress: (data: any) => apiClient.post("/enrollments/progress", data),
+  getCourseEnrollments: (courseId: string) =>
+    apiClient.get(`/enrollments/course/${courseId}`),
 };
+
 
 /* ---------------- ASSIGNMENTS ---------------- */
 export const assignmentAPI = {
@@ -77,14 +80,19 @@ export const assignmentAPI = {
     apiClient.post(`/assignments/${id}/grade`, data),
 };
 
-/* ---------------- FORUM ---------------- */
+/* ---------------- FORUM (Discussions) ---------------- */
 export const forumAPI = {
   getCourseForums: (courseId: string, category?: string) =>
     apiClient.get(`/forums/course/${courseId}`, { params: { category } }),
+  getForumById: (id: string) => apiClient.get(`/forums/${id}`),
   createPost: (data: any) => apiClient.post("/forums", data),
   addReply: (postId: string, content: string) =>
     apiClient.post(`/forums/${postId}/reply`, { content }),
   likePost: (postId: string) => apiClient.post(`/forums/${postId}/like`),
+  likeReply: (forumId: string, replyId: string) =>
+    apiClient.post(`/forums/${forumId}/reply/${replyId}/like`),
+  pinPost: (postId: string) => apiClient.post(`/forums/${postId}/pin`),
+  lockPost: (postId: string) => apiClient.post(`/forums/${postId}/lock`),
 };
 
 /* ---------------- NOTIFICATIONS ---------------- */
@@ -95,56 +103,48 @@ export const notificationAPI = {
   getUnreadCount: () => apiClient.get("/notifications/unread-count"),
 };
 
-
-//export const userAPI = {
-//  getAllUsers: (params?: any) => 
-//    apiClient.get('/users', { params }),
-//  updateUserStatus: (id: string, isActive: boolean) => 
-//    apiClient.put(`/users/${id}/status`, { isActive }),
-//  
-//};
-
+/* ---------------- USERS ---------------- */
 export const userAPI = {
   createUser: async (userData: any) => {
     try {
-      const response = await apiClient.post('/users', userData);
+      const response = await apiClient.post("/users", userData);
       return response.data;
     } catch (error: any) {
-      if (error.response) {
-        // The server responded with an error status
-        throw error;
-      } else if (error.request) {
-        // The request was made but no response was received
-        throw new Error('Network error. Please check your connection.');
-      } else {
-        // Something happened in setting up the request
-        throw new Error('An unexpected error occurred.');
-      }
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("An unexpected error occurred.");
     }
   },
-  getAllUsers: (params?: any) => 
-    apiClient.get('/users', { params }),
-  updateUserStatus: (id: string, isActive: boolean) => 
+  getAllUsers: (params?: any) => apiClient.get("/users", { params }),
+  updateUserStatus: (id: string, isActive: boolean) =>
     apiClient.put(`/users/${id}/status`, { isActive }),
-  
-  // Other user API methods...
-  // For example:
 };
 
-/* ---------------- LIVE SESSIONS ---------------- */
+/* ---------------- LIVE SESSIONS ---------------- */// ✅ make sure this import exists at top
+
 export const liveSessionAPI = {
   getCourseSessions: (courseId: string) =>
     apiClient.get(`/live-sessions/course/${courseId}`),
+
   getMySessions: () => apiClient.get("/live-sessions/my"),
-  createSession: (data: any) => apiClient.post("/live-sessions", data),
+
+  createSession: (courseId: string, data: any) =>
+    apiClient.post(`/live-sessions/course/${courseId}`, data),
+
   updateSession: (id: string, data: any) =>
     apiClient.put(`/live-sessions/${id}`, data),
-  deleteSession: (id: string) => apiClient.delete(`/live-sessions/${id}`),
+
+  deleteSession: (id: string) =>
+    apiClient.delete(`/live-sessions/${id}`),
+
   joinSession: (sessionId: string) =>
     apiClient.post(`/live-sessions/${sessionId}/join`),
+
   updateSessionStatus: (sessionId: string, status: string) =>
     apiClient.put(`/live-sessions/${sessionId}/status`, { status }),
 };
+
+
 
 /* ---------------- CERTIFICATES ---------------- */
 export const certificateAPI = {
@@ -159,6 +159,7 @@ export const certificateAPI = {
 export const supportTicketAPI = {
   getMyTickets: () => apiClient.get("/support-tickets/my-tickets"),
   getAllTickets: (params?: any) => apiClient.get("/support-tickets", { params }),
+  getInstructorTickets: () => apiClient.get("/support-tickets/instructor"), // ✅ NEW
   createTicket: (data: any) => apiClient.post("/support-tickets", data),
   addMessage: (ticketId: string, message: string) =>
     apiClient.post(`/support-tickets/${ticketId}/message`, { message }),
@@ -166,14 +167,24 @@ export const supportTicketAPI = {
     apiClient.put(`/support-tickets/${ticketId}/status`, { status, assignedTo }),
 };
 
+
 /* ---------------- CHAT ---------------- */
 export const chatAPI = {
+  // 📌 Student → Instructor + Admins
   sendMessageToCourse: (courseId: string, content: string) =>
     apiClient.post(`/chats/${courseId}`, { content }),
+
+  // 📌 Instructor/Admin → Student
   sendMessageToStudent: (courseId: string, studentId: string, content: string) =>
     apiClient.post(`/chats/${courseId}/${studentId}`, { content }),
+
+  // 📌 Get chats for Student
   getStudentChats: () => apiClient.get("/chats/student"),
+
+  // 📌 Get chats for Mentor/Instructor/Admin
   getMentorChats: () => apiClient.get("/chats/mentor"),
+
+  // 📌 Get a single chat by ID (for refreshing after sending a message)
   getChatById: (chatId: string) => apiClient.get(`/chats/${chatId}`),
 };
 

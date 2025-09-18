@@ -14,8 +14,8 @@ interface NotificationContextProps {
   notifications: Notification[];
   unreadCount: number;
   fetchNotifications: () => Promise<void>;
-  decrementUnread: () => void;
-  resetUnread: () => void;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined);
@@ -36,15 +36,38 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchNotifications, 30000); // refresh every 30s
     return () => clearInterval(interval);
   }, []);
 
-  const decrementUnread = () => setUnreadCount((prev) => Math.max(0, prev - 1));
-  const resetUnread = () => setUnreadCount(0);
+  // ✅ Mark a single notification as read
+  const markAsRead = async (id: string) => {
+    try {
+      await notificationAPI.markAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
+  };
+
+  // ✅ Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      await notificationAPI.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error("Error marking all notifications as read:", err);
+    }
+  };
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, fetchNotifications, decrementUnread, resetUnread }}>
+    <NotificationContext.Provider
+      value={{ notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead }}
+    >
       {children}
     </NotificationContext.Provider>
   );

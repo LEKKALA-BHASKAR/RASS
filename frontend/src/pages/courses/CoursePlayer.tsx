@@ -6,9 +6,12 @@ import {
   PlayCircle,
   CheckCircle,
   FileText,
+  Video,
+  Calendar,
+  Clock,
 } from "lucide-react";
 
-import { courseAPI, enrollmentAPI, forumAPI } from "../../services/api";
+import { courseAPI, enrollmentAPI, forumAPI, liveSessionAPI } from "../../services/api";
 import { Course, Enrollment, ForumPost } from "../../types";
 import DiscussionForum from "../student/DiscussionForum";
 
@@ -17,11 +20,12 @@ const CoursePlayer: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [currentModule, setCurrentModule] = useState(0);
-  const [activeTab, setActiveTab] = useState<"overview" | "discussions">(
+  const [activeTab, setActiveTab] = useState<"overview" | "discussions" | "live-sessions" | "resources">(
     "overview"
   );
   const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sessions, setSessions] = useState<any[]>([]);
 
   useEffect(() => {
     if (courseId) {
@@ -30,25 +34,30 @@ const CoursePlayer: React.FC = () => {
   }, [courseId]);
 
   const fetchCourseData = async () => {
-    try {
-      const [courseRes, enrollmentsRes, forumRes] = await Promise.all([
-        courseAPI.getCourse(courseId!),
-        enrollmentAPI.getMyEnrollments(),
-        forumAPI.getCourseForums(courseId!),
-      ]);
+  try {
+    const [courseRes, enrollmentsRes, forumRes, sessionsRes] = await Promise.all([
+      courseAPI.getCourse(courseId!),
+      enrollmentAPI.getMyEnrollments(),
+      forumAPI.getCourseForums(courseId!),
+      liveSessionAPI.getCourseSessions(courseId!) // ✅ fetch sessions for this course
+    ]);
 
-      setCourse(courseRes.data);
-      const userEnrollment = enrollmentsRes.data.find(
-        (e: Enrollment) => e.course._id === courseId
-      );
-      setEnrollment(userEnrollment || null);
-      setForumPosts(forumRes.data);
-    } catch (error) {
-      console.error("Error fetching course data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setCourse(courseRes.data);
+
+    const userEnrollment = enrollmentsRes.data.find(
+      (e: Enrollment) => e.course._id === courseId
+    );
+    setEnrollment(userEnrollment || null);
+
+    setForumPosts(forumRes.data);
+    setSessions(sessionsRes.data || []);  // ✅ store sessions
+  } catch (error) {
+    console.error("Error fetching course data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleModuleComplete = async (moduleId: string) => {
     try {
@@ -211,23 +220,29 @@ const CoursePlayer: React.FC = () => {
           </div>
 
           {/* Tabs */}
-          <div className="bg-white border-b">
-            <div className="px-6 flex space-x-8">
-              {["overview", "discussions"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab as any)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === tab
-                      ? "border-primary-500 text-primary-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
+            <div className="bg-white border-b">
+              <div className="px-6 flex space-x-8">
+                {[
+                  { key: "overview", label: "Overview" },
+                  { key: "discussions", label: "Discussions" },
+                  { key: "live-sessions", label: "Live Sessions" },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key as any)}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === tab.key
+                        ? "border-primary-500 text-primary-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+
+
 
           {/* Tab Content */}
           <motion.div
@@ -276,6 +291,50 @@ const CoursePlayer: React.FC = () => {
             {activeTab === "discussions" && (
               <DiscussionForum courseId={course._id} />
             )}
+            {activeTab === "live-sessions" && (
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Live Sessions</h4>
+                {sessions.length > 0 ? (
+                  <div className="space-y-4">
+                    {sessions.map((session) => (
+                      <div
+                        key={session._id}
+                        className="p-4 border rounded-lg hover:shadow transition"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h5 className="font-medium text-gray-900 flex items-center">
+                              <Video className="h-5 w-5 text-red-500 mr-2" />
+                              {session.title}
+                            </h5>
+                            <p className="text-sm text-gray-600 mt-1">{session.description}</p>
+                            <p className="text-xs text-gray-500 mt-1 flex items-center">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {new Date(session.scheduledAt).toLocaleString()}
+                            </p>
+                            <p className="text-xs text-gray-500 flex items-center mt-1">
+                              <Clock className="h-4 w-4 mr-1" />
+                              Duration: {session.duration} mins
+                            </p>
+                          </div>
+                          <a
+                            href={session.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-primary-600 text-green-500 rounded-lg shadow hover:bg-primary-700 transition"
+                          >
+                            Join
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-600">No live sessions scheduled for this course.</p>
+                )}
+              </div>
+            )}
+
           </motion.div>
         </div>
       </div>

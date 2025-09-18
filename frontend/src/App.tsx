@@ -22,13 +22,15 @@ import UserManagement from './pages/admin/UserManagement';
 import SupportManagement from './pages/admin/SupportManagement';
 import SupportTicketsPage from './pages/student/SupportTicketsPage';
 import { NotificationProvider } from "./context/NotificationContext";
-
-// Student Pages
 import DiscussionForum from './pages/student/DiscussionForum';
 import Notifications from './pages/student/Notifications';
 import Chat from './pages/student/Chat';
 import AddUserPage from './pages/admin/AddUserPage';
 import AddCoursePage from "./pages/admin/AddCoursePage";
+import InstructorDiscussions from './pages/instructor/InstructorDiscussions';
+import InstructorChats from './pages/instructor/InstructorChats';
+import InstructorTickets from './pages/instructor/InstructorTickets';
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
   roles 
@@ -164,6 +166,10 @@ const AppRoutes: React.FC = () => {
             <Students />
           </ProtectedRoute>
         } />
+        <Route path="/instructor/chats" element={<InstructorChats />} />
+        <Route path="/instructor/discussions" element={<InstructorDiscussions />} />
+        <Route path="/instructor/tickets" element={<InstructorTickets />} />
+
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={

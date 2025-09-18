@@ -1,14 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { enrollmentAPI, notificationAPI } from '../../services/api';
-import { BookOpen, Calendar, Award, Bell, Play, Clock, ChevronRight, TrendingUp, Users, FileText, MessageSquare, Video } from 'lucide-react';
-import { Enrollment, Notification } from '../../types';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import {
+  enrollmentAPI,
+  notificationAPI,
+  assignmentAPI,
+} from "../../services/api";
+import {
+  BookOpen,
+  Calendar,
+  Award,
+  Bell,
+  Play,
+  Clock,
+  ChevronRight,
+  Users,
+  FileText,
+  MessageSquare,
+  Video,
+} from "lucide-react";
+import { Enrollment, Notification, Assignment } from "../../types";
+import { motion } from "framer-motion";
 
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,13 +37,22 @@ const StudentDashboard: React.FC = () => {
     try {
       const [enrollmentsRes, notificationsRes] = await Promise.all([
         enrollmentAPI.getMyEnrollments(),
-        notificationAPI.getNotifications()
+        notificationAPI.getNotifications(),
       ]);
 
       setEnrollments(enrollmentsRes.data);
       setNotifications(notificationsRes.data.slice(0, 5));
+
+      // Load assignments for all enrolled courses
+      const assignmentsAll: Assignment[] = [];
+      for (const e of enrollmentsRes.data) {
+        const courseId = typeof e.course === "string" ? e.course : e.course._id;
+        const res = await assignmentAPI.getCourseAssignments(courseId);
+        assignmentsAll.push(...res.data);
+      }
+      setAssignments(assignmentsAll);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -42,10 +69,12 @@ const StudentDashboard: React.FC = () => {
     );
   }
 
-  const completedCourses = enrollments.filter(e => e.completed);
-  const inProgressCourses = enrollments.filter(e => !e.completed);
-  const totalWatchTime = enrollments.reduce((total, enrollment) => {
-    return total + enrollment.progress.reduce((sum, progress) => sum + progress.watchTime, 0);
+  const completedCourses = enrollments.filter((e) => e.completed);
+  const inProgressCourses = enrollments.filter((e) => !e.completed);
+  const totalWatchTime = enrollments.reduce((total, e) => {
+    return (
+      total + e.progress.reduce((sum, p) => sum + (p.watchTime || 0), 0)
+    );
   }, 0);
 
   return (
@@ -53,65 +82,72 @@ const StudentDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 pt-4">
-          <h1 className="text-4xl font-bold text-gray-900">Welcome back, {user?.name}!</h1>
-          <p className="text-lg text-gray-600 mt-2">Continue your learning journey</p>
-          
-          {/* Date and quick stats */}
+          <h1 className="text-4xl font-bold text-gray-900">
+            Welcome back, {user?.name}!
+          </h1>
+          <p className="text-lg text-gray-600 mt-2">
+            Continue your learning journey
+          </p>
+
           <div className="flex items-center mt-4 text-gray-500">
             <Calendar className="h-5 w-5 mr-2" />
-            <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+            <span>
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
-            <div className="flex items-center">
-              <div className="p-3 rounded-xl bg-blue-100">
-                <BookOpen className="h-8 w-8 text-blue-600" />
+          {[
+            {
+              icon: <BookOpen className="h-8 w-8 text-blue-600" />,
+              bg: "bg-blue-100",
+              label: "Enrolled Courses",
+              value: enrollments.length,
+            },
+            {
+              icon: <Play className="h-8 w-8 text-green-600" />,
+              bg: "bg-green-100",
+              label: "In Progress",
+              value: inProgressCourses.length,
+            },
+            {
+              icon: <Award className="h-8 w-8 text-amber-600" />,
+              bg: "bg-amber-100",
+              label: "Completed",
+              value: completedCourses.length,
+            },
+            {
+              icon: <Clock className="h-8 w-8 text-indigo-600" />,
+              bg: "bg-indigo-100",
+              label: "Watch Time",
+              value: `${Math.round(totalWatchTime / 3600)}h`,
+            },
+          ].map((stat, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.05 }}
+              className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+            >
+              <div className="flex items-center">
+                <div className={`p-3 rounded-xl ${stat.bg}`}>{stat.icon}</div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">
+                    {stat.label}
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.value}
+                  </p>
+                </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Enrolled Courses</p>
-                <p className="text-2xl font-bold text-gray-900">{enrollments.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
-            <div className="flex items-center">
-              <div className="p-3 rounded-xl bg-green-100">
-                <Play className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">In Progress</p>
-                <p className="text-2xl font-bold text-gray-900">{inProgressCourses.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
-            <div className="flex items-center">
-              <div className="p-3 rounded-xl bg-amber-100">
-                <Award className="h-8 w-8 text-amber-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">{completedCourses.length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 transform transition-all hover:scale-105 hover:shadow-xl">
-            <div className="flex items-center">
-              <div className="p-3 rounded-xl bg-indigo-100">
-                <Clock className="h-8 w-8 text-indigo-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Watch Time</p>
-                <p className="text-2xl font-bold text-gray-900">{Math.round(totalWatchTime / 3600)}h</p>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -119,8 +155,13 @@ const StudentDashboard: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Continue Learning</h2>
-                <Link to="/courses" className="text-primary-600 hover:text-primary-700 font-medium flex items-center">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Continue Learning
+                </h2>
+                <Link
+                  to="/courses"
+                  className="text-primary-600 hover:text-primary-700 font-medium flex items-center"
+                >
                   Browse All Courses
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -128,44 +169,101 @@ const StudentDashboard: React.FC = () => {
 
               {inProgressCourses.length > 0 ? (
                 <div className="space-y-4">
-                  {inProgressCourses.slice(0, 3).map((enrollment) => (
-                    <div key={enrollment._id} className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-white to-blue-50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-lg">{enrollment.course.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1">
-                            by {enrollment.course.instructor.name}
-                          </p>
-                          <div className="mt-4">
-                            <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                              <span>Progress</span>
-                              <span>{enrollment.completionPercentage}%</span>
+                  {inProgressCourses.slice(0, 3).map((e) => {
+                    const course =
+                      typeof e.course === "string" ? { _id: e.course } : e.course;
+
+                    // Completed assignments count
+                    const completedAssignments = assignments.filter((a) =>
+                      a.submissions.some(
+                        (s) =>
+                          typeof s.student !== "string" &&
+                          typeof e.student !== "string" &&
+                          s.student._id === e.student._id
+                      )
+                    ).length;
+
+                    return (
+                      <motion.div
+                        key={e._id}
+                        whileHover={{ scale: 1.02 }}
+                        className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-white to-blue-50"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 text-lg">
+                              {(course as any).title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mt-1">
+                              by {(course as any).instructor?.name}
+                            </p>
+
+                            {/* Progress bar */}
+                            <div className="mt-4">
+                              <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>{e.completionPercentage}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                <div
+                                  className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full"
+                                  style={{ width: `${e.completionPercentage}%` }}
+                                ></div>
+                              </div>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2.5">
-                              <div 
-                                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full"
-                                style={{ width: `${enrollment.completionPercentage}%` }}
-                              ></div>
+
+                            {/* Stats row */}
+                            <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+                              <div>
+                                <Clock className="h-4 w-4 mx-auto text-gray-500" />
+                                <p className="text-xs text-gray-600">
+                                  {Math.floor(
+                                    e.progress.reduce(
+                                      (t, p) => t + (p.watchTime || 0),
+                                      0
+                                    ) / 3600
+                                  )}
+                                  h
+                                </p>
+                              </div>
+                              <div>
+                                <Award className="h-4 w-4 mx-auto text-gray-500" />
+                                <p className="text-xs text-gray-600">
+                                  {completedAssignments}/{assignments.length}
+                                </p>
+                              </div>
+                              <div>
+                                <MessageSquare className="h-4 w-4 mx-auto text-gray-500" />
+                                <p className="text-xs text-gray-600">
+                                  Last active: 2d ago
+                                </p>
+                              </div>
                             </div>
                           </div>
+
+                          <Link
+                            to={`/learn/${course._id}`}
+                            className="ml-6 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all"
+                          >
+                            Continue
+                          </Link>
                         </div>
-                        <Link 
-                          to={`/learn/${enrollment.course._id}`}
-                          className="ml-6 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all"
-                        >
-                          Continue
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-10">
                   <div className="inline-flex items-center justify-center p-4 bg-blue-100 rounded-full mb-5">
                     <BookOpen className="h-12 w-12 text-blue-600" />
                   </div>
-                  <p className="text-gray-600 mb-6 text-lg">No courses in progress</p>
-                  <Link to="/courses" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all inline-flex items-center">
+                  <p className="text-gray-600 mb-6 text-lg">
+                    No courses in progress
+                  </p>
+                  <Link
+                    to="/courses"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all inline-flex items-center"
+                  >
                     Browse Courses
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Link>
@@ -174,36 +272,43 @@ const StudentDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Sidebar */}
+          {/* Sidebar */}
           <div className="space-y-6">
             {/* Notifications */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Notifications</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Recent Notifications
+                </h3>
                 <div className="flex items-center">
                   <Bell className="h-5 w-5 text-gray-400 mr-2" />
-                  <Link to="/student/notifications" className="text-sm text-primary-600 hover:text-primary-700">
+                  <Link
+                    to="/student/notifications"
+                    className="text-sm text-primary-600 hover:text-primary-700"
+                  >
                     View All
                   </Link>
                 </div>
               </div>
-              
               {notifications.length > 0 ? (
                 <div className="space-y-4">
-                  {notifications.map((notification) => (
-                    <div key={notification._id} className="border-l-4 border-primary-400 pl-4 py-3 bg-blue-50 rounded-r-lg">
-                      <p className="text-sm font-medium text-gray-900">{notification.title}</p>
-                      <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
+                  {notifications.map((n) => (
+                    <div
+                      key={n._id}
+                      className="border-l-4 border-primary-400 pl-4 py-3 bg-blue-50 rounded-r-lg"
+                    >
+                      <p className="text-sm font-medium text-gray-900">
+                        {n.title}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">{n.message}</p>
                       <p className="text-xs text-gray-400 mt-2">
-                        {new Date(notification.createdAt).toLocaleDateString()}
+                        {new Date(n.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">No new notifications</p>
-                </div>
+                <p className="text-center text-gray-500">No new notifications</p>
               )}
             </div>
 
@@ -314,4 +419,5 @@ const StudentDashboard: React.FC = () => {
   );
 };
 //test;
+
 export default StudentDashboard;

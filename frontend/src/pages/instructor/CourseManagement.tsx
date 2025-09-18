@@ -177,30 +177,29 @@ const CourseManagement: React.FC = () => {
   };
 
   // ---- CRUD: Sessions ---- //
-  const handleCreateOrUpdateSession = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCourse) return;
-    try {
-      if (editSession) {
-        await liveSessionAPI.updateSession(editSession._id, {
-          ...newSession,
-          course: selectedCourse._id,
-        });
-      } else {
-        await liveSessionAPI.createSession({
-          ...newSession,
-          course: selectedCourse._id,
-        });
-      }
-      setShowSessionModal(false);
-      setEditSession(null);
-      resetSessionForm();
-      fetchCourseData(selectedCourse._id);
-    } catch (error) {
-      console.error("Error saving session:", error);
-      alert("❌ Failed to save session.");
+const handleCreateOrUpdateSession = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!selectedCourse) return;
+
+    if (editSession) {
+      await liveSessionAPI.updateSession(editSession._id, {
+        ...newSession,
+        course: selectedCourse._id,
+      });
+    } else {
+      const res = await liveSessionAPI.createSession(selectedCourse._id, newSession);
+      console.log("✅ Session created:", res.data);
     }
-  };
+
+    alert("✅ Session saved successfully!");
+
+    setShowSessionModal(false);
+    setEditSession(null);
+    resetSessionForm();
+    fetchCourseData(selectedCourse._id);
+  
+};
+
 
   const handleDeleteSession = async (id: string) => {
     if (!selectedCourse) return;
@@ -666,12 +665,23 @@ const CourseManagement: React.FC = () => {
                 onChange={(e) => setNewSession({ ...newSession, description: e.target.value })}
               />
               <input
-                type="datetime-local"
-                required
-                className="input-field"
-                value={newSession.scheduledAt}
-                onChange={(e) => setNewSession({ ...newSession, scheduledAt: e.target.value })}
-              />
+  type="datetime-local"
+  required
+  className="input-field"
+  value={
+    newSession.scheduledAt
+      ? new Date(newSession.scheduledAt).toISOString().slice(0, 16) // ✅ for input
+      : ""
+  }
+  onChange={(e) =>
+    setNewSession({
+      ...newSession,
+      scheduledAt: new Date(e.target.value).toISOString(), // ✅ store as ISO
+    })
+  }
+/>
+
+
               <input
                 type="number"
                 placeholder="Duration (min)"

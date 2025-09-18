@@ -6,6 +6,46 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.post(
+  '/course/:courseId',
+  authenticate,
+  authorize('instructor', 'admin'),
+  async (req, res) => {
+    try {
+      const sessionData = {
+        ...req.body,
+        course: req.params.courseId,   // ✅ course from URL
+        instructor: req.user._id,      // ✅ instructor from token
+      };
+
+      const session = new LiveSession(sessionData);
+      await session.save();
+
+      // 🔔 Notify enrolled students
+const enrolledStudents = await Enrollment.find({ course: req.params.courseId }).populate("student");
+const notifications = enrolledStudents.map(
+  (enroll) =>
+    new Notification({
+      recipient: enroll.student._id,
+      title: "New Live Session Scheduled",
+      type: "live-session",
+      message: `A live session "${session.title}" has been scheduled for your course.`,
+      relatedId: session._id,
+    })
+);
+
+if (notifications.length > 0) {
+  await Notification.insertMany(notifications);
+}
+      return res.status(201).json({ success: true, session });
+    } catch (error) {
+      console.error("❌ Error creating session:", error);
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+
 // 🔹 Get sessions for a course
 router.get('/course/:courseId', authenticate, async (req, res) => {
   try {
@@ -35,40 +75,6 @@ router.get('/my', authenticate, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-// 🔹 Create live session
-router.post('/', authenticate, authorize('instructor', 'admin'), async (req, res) => {
-  try {
-    const sessionData = {
-      ...req.body,
-      instructor: req.user._id,
-    };
-
-    const session = new LiveSession(sessionData);
-    await session.save();
-
-    // Notify enrolled students
-    const enrolledStudents = await Enrollment.find({ course: req.body.course }).populate("student");
-    const notifications = enrolledStudents.map(
-      (enroll) =>
-        new Notification({
-          recipient: enroll.student._id,
-          title: "New Live Session Scheduled",
-          type: "live-session",
-          message: `A live session "${session.title}" has been scheduled for your course.`,
-          relatedId: session._id,
-        })
-    );
-    if (notifications.length > 0) {
-      await Notification.insertMany(notifications);
-    }
-
-    res.status(201).json(session);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // 🔹 Update live session
 router.put('/:id', authenticate, authorize('instructor', 'admin'), async (req, res) => {
   try {
@@ -165,5 +171,6 @@ router.put('/:id/status', authenticate, authorize('instructor', 'admin'), async 
     res.status(500).json({ message: error.message });
   }
 });
+
 
 export default router;

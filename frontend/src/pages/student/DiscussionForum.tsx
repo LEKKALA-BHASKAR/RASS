@@ -132,7 +132,6 @@ const DiscussionForum: React.FC<DiscussionForumProps> = ({ courseId }) => {
       fetchCoursePosts(finalCourseId);
     } catch (err) {
       console.error("Error creating post:", err);
-      alert("Failed to create post. Please try again.");
     } finally {
       setCreatingPost(false);
     }

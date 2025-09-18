@@ -11,12 +11,15 @@ const messageSchema = new mongoose.Schema(
 
 const chatSchema = new mongoose.Schema(
   {
+    course: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true }, // added
     student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // instructor + admins
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     messages: [messageSchema],
   },
   { timestamps: true }
 );
+
+
 
 const Chat = mongoose.model("Chat", chatSchema);
 export default Chat;

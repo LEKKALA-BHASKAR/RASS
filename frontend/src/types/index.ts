@@ -63,7 +63,12 @@ export interface Resource {
 
 export interface Enrollment {
   _id: string;
-  student: string;
+  student: {
+    _id: string;
+    name: string;
+    email: string;
+    role?: string;
+  }; // ✅ always an object now
   course: Course;
   enrolledAt: string;
   progress: ModuleProgress[];
@@ -71,9 +76,10 @@ export interface Enrollment {
   completedAt?: string;
   certificateIssued: boolean;
   certificateUrl?: string;
-  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
+  paymentStatus: "pending" | "completed" | "failed" | "refunded";
   completionPercentage: number;
 }
+
 
 export interface ModuleProgress {
   moduleId: string;
