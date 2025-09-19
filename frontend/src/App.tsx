@@ -30,6 +30,9 @@ import AddCoursePage from "./pages/admin/AddCoursePage";
 import InstructorDiscussions from './pages/instructor/InstructorDiscussions';
 import InstructorChats from './pages/instructor/InstructorChats';
 import InstructorTickets from './pages/instructor/InstructorTickets';
+import LandingPage from './pages/LandingPage';
+import Companies from './pages/Companies';
+import UniversitiesPage from './pages/UniversitiesPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -77,6 +80,9 @@ const AppRoutes: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/" element={<Home />} />
         <Route path="/support-tickets" element={<Support />} />
         <Route path="/courses" element={<CourseCatalog />} />
@@ -195,6 +201,7 @@ const AppRoutes: React.FC = () => {
             <SupportManagement />
           </ProtectedRoute>
         } />
+    
       </Routes>
     </div>
   );

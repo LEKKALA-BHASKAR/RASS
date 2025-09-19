@@ -42,7 +42,14 @@ export interface Course {
   learningOutcomes: string[];
   createdAt: string;
   updatedAt: string;
+
+  // 🔹 Extra fields for new CourseDetail sections
+  tools?: { name: string; logo: string }[];
+  testimonials?: { name: string; title: string; quote: string; avatar?: string }[];
+  companies?: { name: string; logo: string }[];
+  faqs?: { question: string; answer: string }[];
 }
+
 
 export interface Module {
   _id: string;

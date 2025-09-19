@@ -20,6 +20,7 @@ const Navbar: React.FC = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  
 
   // ✅ use unreadCount + notifications list from context
   const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotification();
@@ -113,6 +114,18 @@ const Navbar: React.FC = () => {
                   className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
                 >
                   Dashboard
+                </Link>
+                <Link
+                  to="/companies"
+                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                >
+                  Companies
+                </Link>
+                  <Link
+                  to="/universities"
+                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                >
+                  Universities
                 </Link>
 
                 {/* Desktop Notification Bell */}
