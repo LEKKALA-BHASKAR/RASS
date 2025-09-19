@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Users, Award, Video, MessageCircle, Calendar, ChevronRight, Star, TrendingUp, Clock, Heart, Target, Globe } from 'lucide-react';
+import { HeroCarousel } from './publicpages/HeroSection';
+import { ClientsSection } from './publicpages/ClientSection';
+import CourseShowcase from './publicpages/CourseShowcase';
+import Footer from '../components/layout/Footer';
+import Navbar from '../components/layout/Navbar';
+import CertificationCourses from './publicpages/CertificationCourses';
+import PartnerWithUs from './publicpages/PartnerWithUs';
+import CompaniesPage from './publicpages/CompaniesPage';
 
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -71,121 +79,19 @@ const Home: React.FC = () => {
   ];
 
   return (
+    <div>
+      <Navbar/>
+   
     <div className="min-h-screen overflow-hidden bg-white">
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-slate-50 to-indigo-50 py-20 md:py-28">
-        <div className="absolute top-0 right-0 -mt-16 mr-24 opacity-10">
-          <Globe className="h-64 w-64 text-indigo-700" />
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="flex flex-col lg:flex-row items-center">
-            <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Learn Without <span className="text-indigo-600">Limits</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                Start, switch, or advance your career with 200+ courses from RASS Academy, 
-                the leading online learning platform for tech and business skills.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link 
-                  to="/register" 
-                  className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                >
-                  Join Free <ChevronRight size={20} />
-                </Link>
-                <Link 
-                  to="/courses" 
-                  className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-indigo-600 hover:text-indigo-600 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
-                >
-                  Explore Courses
-                </Link>
-              </div>
-            </div>
-            <div className="lg:w-1/2 flex justify-center">
-              <div className="relative">
-                <div className="bg-indigo-100 rounded-2xl p-8 w-full max-w-md shadow-xl">
-                  <div className="bg-white rounded-xl p-4 shadow-md mb-6">
-                    <div className="flex items-center">
-                      <div className="bg-indigo-100 p-3 rounded-lg mr-4">
-                        <Video className="h-6 w-6 text-indigo-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Live Interactive Classes</h3>
-                        <p className="text-sm text-gray-500">Join now</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-xl p-4 shadow-md mb-6">
-                    <div className="flex items-center">
-                      <div className="bg-green-100 p-3 rounded-lg mr-4">
-                        <Award className="h-6 w-6 text-green-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Get Certified</h3>
-                        <p className="text-sm text-gray-500">Industry-recognized</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-xl p-4 shadow-md">
-                    <div className="flex items-center">
-                      <div className="bg-amber-100 p-3 rounded-lg mr-4">
-                        <Users className="h-6 w-6 text-amber-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">Peer Learning</h3>
-                        <p className="text-sm text-gray-500">Community support</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
-                  <div className="flex items-center">
-                    <div className="bg-indigo-600 text-white p-2 rounded-full mr-3">
-                      <TrendingUp size={16} />
-                    </div>
-                    <div>
-                      <p className="font-bold">+235%</p>
-                      <p className="text-xs text-gray-500">Career growth</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      
+     
+<HeroCarousel/>
       {/* Stats Section */}
       <section className="py-16 bg-indigo-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div 
-                key={index} 
-                className="text-center p-6 bg-white/10 rounded-xl backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
-              >
-                <div className="flex justify-center mb-3">
-                  <div className="bg-white/20 p-3 rounded-full">
-                    {stat.icon}
-                  </div>
-                </div>
-                <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                <div className="text-indigo-100">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+       <ClientsSection/>
       </section>
-
+      <CourseShowcase/>
+      <CertificationCourses/>
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -219,7 +125,8 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
+      <PartnerWithUs/>
+      <CompaniesPage/>
       {/* Testimonial Section */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -288,7 +195,9 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+    <Footer/>
     </div>
+     </div>
   );
 };
 
