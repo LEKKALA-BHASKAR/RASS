@@ -30,6 +30,10 @@ import AddCoursePage from "./pages/admin/AddCoursePage";
 import InstructorDiscussions from './pages/instructor/InstructorDiscussions';
 import InstructorChats from './pages/instructor/InstructorChats';
 import InstructorTickets from './pages/instructor/InstructorTickets';
+import HelpCenter from './pages/publicpages/Help';
+import BlogPage from './pages/publicpages/Blog';
+import About from './pages/publicpages/About';
+import ContactUs from './pages/publicpages/Contact';
 import LandingPage from './pages/LandingPage';
 import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
@@ -78,13 +82,17 @@ const AppRoutes: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/" element={<Home />} />
+        <Route path="/blog" element={<BlogPage/>} />
+        <Route path="/about" element={<About />} />
         <Route path="/support-tickets" element={<Support />} />
+        <Route path="/contact" element={<ContactUs/>}/>
+        <Route path="/faq" element={<HelpCenter/>}/>
         <Route path="/courses" element={<CourseCatalog />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         {/* Auth Routes */}
@@ -103,7 +111,7 @@ const AppRoutes: React.FC = () => {
             <Profile />
           </ProtectedRoute>
         } />
-
+        <Route path="/help-center" element={<HelpCenter/>} />
         {/* Student Routes */}
         <Route path="/student/dashboard" element={
           <ProtectedRoute roles={['student']}>
