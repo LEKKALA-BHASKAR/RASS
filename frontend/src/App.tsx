@@ -84,7 +84,7 @@ const AppRoutes: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/" element={<Home />} />
