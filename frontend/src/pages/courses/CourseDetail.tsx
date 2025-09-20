@@ -26,6 +26,7 @@ import googleLogo from "../../assets/companies/google.png";
 import microsoftLogo from "../../assets/companies/microsoft.png";
 import amazonLogo from "../../assets/companies/amazon.png";
 import wiproLogo from "../../assets/companies/wipro.png";
+
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
@@ -64,12 +65,88 @@ const CourseDetail: React.FC = () => {
 
   const handleEnroll = async () => {
     if (!isAuthenticated || !course) return;
+
+    // 🆓 Free course → enroll directly
+    if (course.price === 0) {
+      try {
+        await enrollmentAPI.enrollInCourse(course._id);
+        await fetchCourseData();
+        navigate(`/learn/${course._id}`);
+      } catch (error) {
+        console.error("Error enrolling free course:", error);
+      }
+      return;
+    }
+
+    // 💳 Paid course → Razorpay flow
     try {
-      await enrollmentAPI.enrollInCourse(course._id);
-      await fetchCourseData();
-      navigate(`/learn/${course._id}`);
+      // 1. Create Razorpay order from backend
+      const res = await fetch("http://localhost:8000/api/payments/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ courseId: course._id }),
+      });
+
+      const { order } = await res.json();
+      if (!order) {
+        alert("Failed to create payment order");
+        return;
+      }
+
+      // 2. Open Razorpay checkout
+      const options = {
+        key: "rzp_test_RJqt4AZALMZEYE", // ✅ Test key
+        amount: order.amount,
+        currency: order.currency,
+        name: "RASS Academy",
+        description: `Payment for ${course.title}`,
+        order_id: order.id,
+        handler: async function (response: any) {
+          try {
+            // 3. Verify payment on backend
+            const verifyRes = await fetch(
+              "http://localhost:8000/api/payments/verify",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                  ...response,
+                  courseId: course._id,
+                }),
+              }
+            );
+
+            const result = await verifyRes.json();
+
+            if (result.success) {
+              await fetchCourseData();
+              navigate(`/learn/${course._id}`);
+            } else {
+              alert("Payment verified but enrollment failed.");
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Something went wrong verifying payment.");
+          }
+        },
+        prefill: {
+          name: "Student",
+          email: "student@example.com",
+        },
+        theme: { color: "#6366f1" },
+      };
+
+      const razor = new (window as any).Razorpay(options);
+      razor.open();
     } catch (error) {
-      console.error("Error enrolling:", error);
+      console.error("Payment error:", error);
+      alert("Something went wrong during payment.");
     }
   };
 
@@ -103,26 +180,25 @@ const CourseDetail: React.FC = () => {
   ];
 
   const testimonials =
-  (course as any).testimonials?.map((t: any) => ({
-    name: t.name,
-    role: t.role || t.title || "Student", // ✅ normalize field
-    quote: t.quote,
-    avatar: t.avatar,
-  })) || [
-    {
-      name: "Aditi Sharma",
-      role: "Frontend Engineer",
-      quote:
-        "This course gave me the confidence and skills to land my first developer role.",
-    },
-    {
-      name: "Rohit Mehta",
-      role: "Data Analyst",
-      quote:
-        "The projects and mentorship were game-changing for my career transition.",
-    },
-  ];
-
+    (course as any).testimonials?.map((t: any) => ({
+      name: t.name,
+      role: t.role || t.title || "Student", // ✅ normalize field
+      quote: t.quote,
+      avatar: t.avatar,
+    })) || [
+      {
+        name: "Aditi Sharma",
+        role: "Frontend Engineer",
+        quote:
+          "This course gave me the confidence and skills to land my first developer role.",
+      },
+      {
+        name: "Rohit Mehta",
+        role: "Data Analyst",
+        quote:
+          "The projects and mentorship were game-changing for my career transition.",
+      },
+    ];
 
   const learningJourney = course?.["learningJourney"] || [
     { step: "Enroll", desc: "Join the program and unlock your dashboard." },
@@ -158,26 +234,30 @@ const CourseDetail: React.FC = () => {
   return (
     <div>
       <Navbar />
-    <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
-      <CourseHero course={course} enrollment={enrollment} onEnroll={handleEnroll} />
-      <CourseDetails course={course} />
-      <LearningOutcomes outcomes={course.learningOutcomes} />
-      <CourseHighlights highlights={highlights} />
-      <CourseCurriculum modules={course.modules} />
-      <ToolsTechnologies tools={tools} />
-      <InstructorCard instructor={course.instructor} />
-      <AlumniSpeaks testimonials={testimonials} />
-      <LearningJourney journey={learningJourney} />
-      <CourseDescription description={course.description} />
-      <DreamCompanies companies={companies} />
-      <FeeRegistration
-        course={course}
-        enrollment={enrollment}
-        onEnroll={handleEnroll}
-      />
-      <FAQSection faqs={faqs} />
-    </div>
-    <Footer />
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
+        <CourseHero
+          course={course}
+          enrollment={enrollment}
+          onEnroll={handleEnroll}
+        />
+        <CourseDetails course={course} />
+        <LearningOutcomes outcomes={course.learningOutcomes} />
+        <CourseHighlights highlights={highlights} />
+        <CourseCurriculum modules={course.modules} />
+        <ToolsTechnologies tools={tools} />
+        <InstructorCard instructor={course.instructor} />
+        <AlumniSpeaks testimonials={testimonials} />
+        <LearningJourney journey={learningJourney} />
+        <CourseDescription description={course.description} />
+        <DreamCompanies companies={companies} />
+        <FeeRegistration
+          course={course}
+          enrollment={enrollment}
+          onEnroll={handleEnroll}
+        />
+        <FAQSection faqs={faqs} />
+      </div>
+      <Footer />
     </div>
   );
 };
