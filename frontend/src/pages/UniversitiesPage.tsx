@@ -11,6 +11,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 const benefits = [
   {
@@ -75,6 +77,8 @@ const onboardingSteps = [
 
 const UniversitiesPage: React.FC = () => {
   return (
+    <div>
+      <Navbar />
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
@@ -172,6 +176,8 @@ const UniversitiesPage: React.FC = () => {
           </Link>
         </div>
       </section>
+    </div>
+    <Footer />
     </div>
   );
 };

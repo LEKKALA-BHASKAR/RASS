@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Mail, Phone, Calendar, BookOpen, Award, Edit3, Save, X, GraduationCap, Briefcase } from 'lucide-react';
-
+import Footer from '../components/layout/Footer';
+import Navbar from '../components/layout/Navbar';
 const Profile: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
@@ -27,6 +28,8 @@ const Profile: React.FC = () => {
   };
 
   return (
+    <div>
+      <Navbar />
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -281,6 +284,8 @@ const Profile: React.FC = () => {
           </form>
         </div>
       </div>
+    </div>
+      <Footer />
     </div>
   );
 };

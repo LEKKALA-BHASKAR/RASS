@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { courseAPI, enrollmentAPI } from "../../services/api";
 import { Course, Enrollment } from "../../types";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 // Components
 import CourseHero from "../../components/course/CourseHero";
@@ -154,6 +156,8 @@ const CourseDetail: React.FC = () => {
   ];
 
   return (
+    <div>
+      <Navbar />
     <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
       <CourseHero course={course} enrollment={enrollment} onEnroll={handleEnroll} />
       <CourseDetails course={course} />
@@ -172,6 +176,8 @@ const CourseDetail: React.FC = () => {
         onEnroll={handleEnroll}
       />
       <FAQSection faqs={faqs} />
+    </div>
+    <Footer />
     </div>
   );
 };

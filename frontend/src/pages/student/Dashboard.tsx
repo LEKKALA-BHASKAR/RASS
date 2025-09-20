@@ -15,12 +15,16 @@ import {
   Clock,
   ChevronRight,
   Users,
-  FileText,
   MessageSquare,
   Video,
+  FileText,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Enrollment, Notification, Assignment } from "../../types";
 import { motion } from "framer-motion";
+import Footer from "../../components/layout/Footer";
+import Navbar from "../../components/layout/Navbar";
 
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -28,6 +32,7 @@ const StudentDashboard: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsOpen, setStatsOpen] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
@@ -43,7 +48,6 @@ const StudentDashboard: React.FC = () => {
       setEnrollments(enrollmentsRes.data);
       setNotifications(notificationsRes.data.slice(0, 5));
 
-      // Load assignments for all enrolled courses
       const assignmentsAll: Assignment[] = [];
       for (const e of enrollmentsRes.data) {
         const courseId = typeof e.course === "string" ? e.course : e.course._id;
@@ -62,7 +66,7 @@ const StudentDashboard: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
           <p className="mt-4 text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
@@ -71,25 +75,30 @@ const StudentDashboard: React.FC = () => {
 
   const completedCourses = enrollments.filter((e) => e.completed);
   const inProgressCourses = enrollments.filter((e) => !e.completed);
-  const totalWatchTime = enrollments.reduce((total, e) => {
-    return (
-      total + e.progress.reduce((sum, p) => sum + (p.watchTime || 0), 0)
-    );
-  }, 0);
+  const totalWatchTime = enrollments.reduce(
+    (total, e) =>
+      total + e.progress.reduce((sum, p) => sum + (p.watchTime || 0), 0),
+    0
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div>
+      <Navbar />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-10">
         {/* Header */}
-        <div className="mb-8 pt-4">
-          <h1 className="text-4xl font-bold text-gray-900">
+        <header className="text-center sm:text-left">
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-bold text-gray-900"
+          >
             Welcome back, {user?.name}!
-          </h1>
+          </motion.h1>
           <p className="text-lg text-gray-600 mt-2">
-            Continue your learning journey
+            Track your progress and continue learning
           </p>
-
-          <div className="flex items-center mt-4 text-gray-500">
+          <div className="flex justify-center sm:justify-start items-center mt-4 text-gray-500">
             <Calendar className="h-5 w-5 mr-2" />
             <span>
               {new Date().toLocaleDateString("en-US", {
@@ -100,324 +109,200 @@ const StudentDashboard: React.FC = () => {
               })}
             </span>
           </div>
-        </div>
+        </header>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {[
-            {
-              icon: <BookOpen className="h-8 w-8 text-blue-600" />,
-              bg: "bg-blue-100",
-              label: "Enrolled Courses",
-              value: enrollments.length,
-            },
-            {
-              icon: <Play className="h-8 w-8 text-green-600" />,
-              bg: "bg-green-100",
-              label: "In Progress",
-              value: inProgressCourses.length,
-            },
-            {
-              icon: <Award className="h-8 w-8 text-amber-600" />,
-              bg: "bg-amber-100",
-              label: "Completed",
-              value: completedCourses.length,
-            },
-            {
-              icon: <Clock className="h-8 w-8 text-indigo-600" />,
-              bg: "bg-indigo-100",
-              label: "Watch Time",
-              value: `${Math.round(totalWatchTime / 3600)}h`,
-            },
-          ].map((stat, idx) => (
-            <motion.div
-              key={idx}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+        {/* Quick Links*/}
+          <section>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { name: "Courses", icon: BookOpen, path: "/courses", type: null },
+                { name: "Profile", icon: Users, path: "/profile", type: null },
+                { name: "Assignments", icon: FileText, path: "/student/assignments", type: "assignment" },
+                { name: "Support", icon: MessageSquare, path: "/support-tickets", type: "support" },
+                { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", type: "discussion" },
+                { name: "Chat", icon: MessageSquare, path: "/student/chat", type: "chat" },
+                { name: "Live Sessions", icon: Video, path: "/student/live-sessions", type: "live-session" },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                const unreadCount = item.type
+                  ? notifications.filter((n) => !n.read && n.type === item.type).length
+                  : 0;
+
+                return (
+                  <Link
+                    key={idx}
+                    to={item.path}
+                    className="relative flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:bg-indigo-50 transition"
+                  >
+                    <Icon className="h-5 w-5 text-indigo-600" />
+                    <span className="text-sm font-medium text-gray-700">{item.name}</span>
+
+                    {/* Unread Notification Badge */}
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full shadow">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+
+        {/* Stats - collapsible KPI bar */}
+        <section>
+          <div className="bg-white rounded-xl shadow p-4">
+            <div
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => setStatsOpen(!statsOpen)}
             >
-              <div className="flex items-center">
-                <div className={`p-3 rounded-xl ${stat.bg}`}>{stat.icon}</div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.label}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                </div>
+              <h3 className="text-sm font-semibold text-gray-800">Your Stats</h3>
+              {statsOpen ? (
+                <ChevronUp className="h-5 w-5 text-gray-500" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-500" />
+              )}
+            </div>
+            {statsOpen && (
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  {
+                    icon: <BookOpen className="h-6 w-6 text-blue-600" />,
+                    label: "Enrolled",
+                    value: enrollments.length,
+                  },
+                  {
+                    icon: <Play className="h-6 w-6 text-green-600" />,
+                    label: "In Progress",
+                    value: inProgressCourses.length,
+                  },
+                  {
+                    icon: <Award className="h-6 w-6 text-amber-600" />,
+                    label: "Completed",
+                    value: completedCourses.length,
+                  },
+                  {
+                    icon: <Clock className="h-6 w-6 text-indigo-600" />,
+                    label: "Watch Time",
+                    value: `${Math.round(totalWatchTime / 3600)}h`,
+                  },
+                ].map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center bg-gray-50 rounded-lg p-3"
+                  >
+                    {stat.icon}
+                    <p className="mt-1 text-xs text-gray-500">{stat.label}</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {stat.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-            </motion.div>
-          ))}
-        </div>
+            )}
+          </div>
+        </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Continue Learning */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Continue Learning
-                </h2>
-                <Link
-                  to="/courses"
-                  className="text-primary-600 hover:text-primary-700 font-medium flex items-center"
-                >
-                  Browse All Courses
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
+        {/* Continue Learning */}
+        <section>
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Continue Learning</h2>
+              <Link
+                to="/courses"
+                className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center"
+              >
+                Browse All
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Link>
+            </div>
 
-              {inProgressCourses.length > 0 ? (
-                <div className="space-y-4">
-                  {inProgressCourses.slice(0, 3).map((e) => {
-                    const course =
-                      typeof e.course === "string" ? { _id: e.course } : e.course;
+            {inProgressCourses.length > 0 ? (
+              <div className="space-y-4">
+                {inProgressCourses.slice(0, 2).map((e) => {
+                  const course =
+                    typeof e.course === "string" ? { _id: e.course } : e.course;
 
-                    // Completed assignments count
-                    const completedAssignments = assignments.filter((a) =>
-                      a.submissions.some(
-                        (s) =>
-                          typeof s.student !== "string" &&
-                          typeof e.student !== "string" &&
-                          s.student._id === e.student._id
-                      )
-                    ).length;
+                  return (
+                    <motion.div
+                      key={e._id}
+                      whileHover={{ scale: 1.02 }}
+                      className="border border-gray-200 rounded-lg p-5 hover:shadow-md bg-gradient-to-r from-white to-indigo-50"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 text-lg">
+                            {(course as any).title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mt-1">
+                            by {(course as any).instructor?.name}
+                          </p>
 
-                    return (
-                      <motion.div
-                        key={e._id}
-                        whileHover={{ scale: 1.02 }}
-                        className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-white to-blue-50"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 text-lg">
-                              {(course as any).title}
-                            </h3>
-                            <p className="text-sm text-gray-600 mt-1">
-                              by {(course as any).instructor?.name}
-                            </p>
-
-                            {/* Progress bar */}
-                            <div className="mt-4">
-                              <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                                <span>Progress</span>
-                                <span>{e.completionPercentage}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                <div
-                                  className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full"
-                                  style={{ width: `${e.completionPercentage}%` }}
-                                ></div>
-                              </div>
+                          {/* Progress bar */}
+                          <div className="mt-4">
+                            <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
+                              <span>Progress</span>
+                              <span>{e.completionPercentage}%</span>
                             </div>
-
-                            {/* Stats row */}
-                            <div className="grid grid-cols-3 gap-4 mt-4 text-center">
-                              <div>
-                                <Clock className="h-4 w-4 mx-auto text-gray-500" />
-                                <p className="text-xs text-gray-600">
-                                  {Math.floor(
-                                    e.progress.reduce(
-                                      (t, p) => t + (p.watchTime || 0),
-                                      0
-                                    ) / 3600
-                                  )}
-                                  h
-                                </p>
-                              </div>
-                              <div>
-                                <Award className="h-4 w-4 mx-auto text-gray-500" />
-                                <p className="text-xs text-gray-600">
-                                  {completedAssignments}/{assignments.length}
-                                </p>
-                              </div>
-                              <div>
-                                <MessageSquare className="h-4 w-4 mx-auto text-gray-500" />
-                                <p className="text-xs text-gray-600">
-                                  Last active: 2d ago
-                                </p>
-                              </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-indigo-600 h-2 rounded-full"
+                                style={{ width: `${e.completionPercentage}%` }}
+                              ></div>
                             </div>
                           </div>
-
-                          <Link
-                            to={`/learn/${course._id}`}
-                            className="ml-6 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all"
-                          >
-                            Continue
-                          </Link>
                         </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-10">
-                  <div className="inline-flex items-center justify-center p-4 bg-blue-100 rounded-full mb-5">
-                    <BookOpen className="h-12 w-12 text-blue-600" />
-                  </div>
-                  <p className="text-gray-600 mb-6 text-lg">
-                    No courses in progress
-                  </p>
-                  <Link
-                    to="/courses"
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all inline-flex items-center"
-                  >
-                    Browse Courses
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Notifications */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Recent Notifications
-                </h3>
-                <div className="flex items-center">
-                  <Bell className="h-5 w-5 text-gray-400 mr-2" />
-                  <Link
-                    to="/student/notifications"
-                    className="text-sm text-primary-600 hover:text-primary-700"
-                  >
-                    View All
-                  </Link>
-                </div>
+                        <Link
+                          to={`/learn/${course._id}`}
+                          className="ml-6 px-5 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow hover:shadow-lg"
+                        >
+                          Continue
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
-              {notifications.length > 0 ? (
-                <div className="space-y-4">
-                  {notifications.map((n) => (
-                    <div
-                      key={n._id}
-                      className="border-l-4 border-primary-400 pl-4 py-3 bg-blue-50 rounded-r-lg"
-                    >
-                      <p className="text-sm font-medium text-gray-900">
-                        {n.title}
-                      </p>
-                      <p className="text-xs text-gray-600 mt-1">{n.message}</p>
-                      <p className="text-xs text-gray-400 mt-2">
-                        {new Date(n.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-gray-500">No new notifications</p>
-              )}
-            </div>
-
-            {/* Quick Links */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Quick Access</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <Link
-                  to="/courses"
-                  className="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all transform hover:-translate-y-1"
-                >
-                  <div className="p-2 bg-blue-100 rounded-lg mb-2">
-                    <BookOpen className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Browse Courses</span>
-                </Link>
-            
-                <Link
-                  to="/profile"
-                  className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-all transform hover:-translate-y-1"
-                >
-                  <div className="p-2 bg-green-100 rounded-lg mb-2">
-                    <Users className="h-6 w-6 text-green-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Update Profile</span>
-                </Link>
-
-                <Link
-                  to="/support-tickets"
-                  className="flex flex-col items-center justify-center p-4 bg-amber-50 rounded-xl hover:bg-amber-100 transition-all transform hover:-translate-y-1 relative"
-                >
-                  <div className="p-2 bg-amber-100 rounded-lg mb-2">
-                    <MessageSquare className="h-6 w-6 text-amber-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Support</span>
-                  {notifications.filter((n) => !n.read && n.type === "support").length > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
-                      {notifications.filter((n) => !n.read && n.type === "support").length}
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  to="/student/discussion-forum"
-                  className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
-                >
-                  <div className="p-2 bg-purple-100 rounded-lg mb-2">
-                    <Users className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Discussions</span>
-                  {notifications.filter((n) => !n.read && n.type === "discussion").length > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
-                      {notifications.filter((n) => !n.read && n.type === "discussion").length}
-                    </span>
-                  )}
-                </Link>
-                <Link
-
-                  to="/student/assignments"
-                  className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl hover:bg-purple-100 transition-all transform hover:-translate-y-1 relative"
-                >
-                  <div className="p-2 bg-purple-100 rounded-lg mb-2">
-                    <Users className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Assignments</span>
-                  {notifications.filter((n) => !n.read && n.type === "assignment").length > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
-                      {notifications.filter((n) => !n.read && n.type === "assignment").length}
-                    </span>
-                  )}
-                </Link>
-
-                  
-                <Link
-                  to="/student/chat"
-                  className="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl hover:bg-pink-100 transition-all transform hover:-translate-y-1 relative"
-                >
-                  <div className="p-2 bg-pink-100 rounded-lg mb-2">
-                    <MessageSquare className="h-6 w-6 text-pink-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Chat</span>
-                  {notifications.filter((n) => !n.read && n.type === "chat").length > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
-                      {notifications.filter((n) => !n.read && n.type === "chat").length}
-                    </span>
-                  )}
-                </Link>
-                <Link
-                  to="/student/live-sessions"
-                  className="flex flex-col items-center justify-center p-4 bg-red-50 rounded-xl hover:bg-red-100 transition-all transform hover:-translate-y-1 relative"
-                >
-                  <div className="p-2 bg-red-100 rounded-lg mb-2">
-                    <Video className="h-6 w-6 text-red-600" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Live Classes</span>
-                  {notifications.filter((n) => !n.read && n.type === "live-session").length > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full">
-                      {notifications.filter((n) => !n.read && n.type === "live-session").length}
-                    </span>
-                  )}
-                </Link>
-              </div>
-            </div>
+            ) : (
+              <p className="text-gray-500">No active courses right now.</p>
+            )}
           </div>
-        </div>
+        </section>
+
+        {/* Notifications */}
+        <section>
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Recent Notifications
+              </h3>
+              <Bell className="h-5 w-5 text-gray-400" />
+            </div>
+            {notifications.length > 0 ? (
+              <div className="space-y-4">
+                {notifications.map((n) => (
+                  <motion.div
+                    key={n._id}
+                    whileHover={{ scale: 1.01 }}
+                    className="p-4 border-l-4 border-indigo-500 bg-indigo-50 rounded-r-lg"
+                  >
+                    <p className="text-sm font-medium text-gray-900">{n.title}</p>
+                    <p className="text-xs text-gray-600 mt-1">{n.message}</p>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No new notifications</p>
+            )}
+          </div>
+        </section>
       </div>
+      </div>
+            <Footer />
     </div>
+
   );
 };
-//test;
 
 export default StudentDashboard;

@@ -307,5 +307,30 @@ router.get("/instructor", authenticate, authorize("instructor"), async (req, res
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+// --------------------
+// Get all support tickets (Admin only) with filters & pagination
+// --------------------
+router.get('/admin', authenticate, authorize('admin'), async (req, res) => {
+  try {
+    const { status, priority, category, page = 1, limit = 20 } = req.query;
+    let query = {};
+
+    if (status) query.status = status;
+    if (priority) query.priority = priority;
+    if (category) query.category = category;
+
+    const tickets = await SupportTicket.find(query)
+      .populate('user', 'name email role')
+      .populate('assignedTo', 'name email')
+      .sort({ createdAt: -1 })
+      .skip((+page - 1) * +limit)
+      .limit(+limit);
+
+    res.json(tickets);
+  } catch (error) {
+    console.error("Error fetching admin tickets:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 export default router;

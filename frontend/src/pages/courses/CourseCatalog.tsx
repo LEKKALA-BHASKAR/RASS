@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { courseAPI } from "../../services/api";
 import { BookOpen, Clock, Users, Star, Search } from "lucide-react";
 import { Course } from "../../types";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 const CourseCatalog: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -52,6 +54,8 @@ const CourseCatalog: React.FC = () => {
   }
 
   return (
+    <div>
+      <Navbar />
     <div className="max-w-7xl mx-auto px-6 py-12">
       {/* Hero Header */}
       <div className="text-center mb-12">
@@ -215,6 +219,8 @@ const CourseCatalog: React.FC = () => {
           <p className="text-gray-600">Try adjusting your filters or search</p>
         </div>
       )}
+    </div>
+      <Footer />
     </div>
   );
 };

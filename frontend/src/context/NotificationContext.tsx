@@ -16,6 +16,7 @@ interface NotificationContextProps {
   fetchNotifications: () => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
+  decrementUnread: () => void;
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined);
@@ -23,7 +24,9 @@ const NotificationContext = createContext<NotificationContextProps | undefined>(
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
+  const decrementUnread = () => {
+    setUnreadCount((prev) => (prev > 0 ? prev - 1 : 0));
+  };
   const fetchNotifications = async () => {
     try {
       const res = await notificationAPI.getNotifications();
@@ -66,7 +69,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   return (
     <NotificationContext.Provider
-      value={{ notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead }}
+      value={{ notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead, decrementUnread }}
     >
       {children}
     </NotificationContext.Provider>

@@ -9,6 +9,7 @@ import Navbar from '../components/layout/Navbar';
 import CertificationCourses from './publicpages/CertificationCourses';
 import PartnerWithUs from './publicpages/PartnerWithUs';
 import CompaniesPage from './publicpages/CompaniesPage';
+import CourseCatalog from './courses/CourseCatalog';
 
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -90,7 +91,6 @@ const Home: React.FC = () => {
       <section className="py-16 bg-indigo-600 text-white">
        <ClientsSection/>
       </section>
-      <CourseShowcase/>
       <CertificationCourses/>
       {/* Features Section */}
       <section className="py-20 bg-white">

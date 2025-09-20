@@ -34,7 +34,6 @@ import HelpCenter from './pages/publicpages/Help';
 import BlogPage from './pages/publicpages/Blog';
 import About from './pages/publicpages/About';
 import ContactUs from './pages/publicpages/Contact';
-import LandingPage from './pages/LandingPage';
 import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
 
@@ -84,7 +83,6 @@ const AppRoutes: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/" element={<Home />} />
@@ -204,11 +202,7 @@ const AppRoutes: React.FC = () => {
             <UserManagement />
           </ProtectedRoute>
         } />
-        <Route path="/admin/support" element={
-          <ProtectedRoute roles={['admin']}>
-            <SupportManagement />
-          </ProtectedRoute>
-        } />
+        <Route path="/admin/support" element={<SupportManagement />} />
     
       </Routes>
     </div>

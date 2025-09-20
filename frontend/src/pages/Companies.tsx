@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Users, Briefcase, CheckCircle, Phone } from "lucide-react";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 const directHireSteps = [
   {
@@ -79,6 +81,8 @@ const fadeUp = {
 
 const Companies: React.FC = () => {
   return (
+    <div>
+        <Navbar />
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <section className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-20">
@@ -248,6 +252,8 @@ const Companies: React.FC = () => {
           <Phone className="h-5 w-5" /> Schedule a Call
         </motion.a>
       </section>
+    </div>
+    <Footer />
     </div>
   );
 };

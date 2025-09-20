@@ -157,15 +157,24 @@ export const certificateAPI = {
 
 /* ---------------- SUPPORT TICKETS ---------------- */
 export const supportTicketAPI = {
+  // 📌 Student’s own tickets
   getMyTickets: () => apiClient.get("/support-tickets/my-tickets"),
-  getAllTickets: (params?: any) => apiClient.get("/support-tickets", { params }),
-  getInstructorTickets: () => apiClient.get("/support-tickets/instructor"), // ✅ NEW
   createTicket: (data: any) => apiClient.post("/support-tickets", data),
+
+  // 📌 Instructor – only tickets from courses they teach
+  getInstructorTickets: () => apiClient.get("/support-tickets/instructor"),
+
+  // 📌 Admin – all tickets across all users & courses
+  getAllTickets: (filters?: any) =>
+    apiClient.get("/support-tickets/admin", { params: filters }),
+
+  // 📌 Common actions
   addMessage: (ticketId: string, message: string) =>
     apiClient.post(`/support-tickets/${ticketId}/message`, { message }),
   updateTicketStatus: (ticketId: string, status: string, assignedTo?: string) =>
     apiClient.put(`/support-tickets/${ticketId}/status`, { status, assignedTo }),
 };
+
 
 
 /* ---------------- CHAT ---------------- */

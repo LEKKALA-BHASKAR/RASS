@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import ReactPlayer from "react-player";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 import {
   PlayCircle,
   CheckCircle,
@@ -110,6 +112,8 @@ const CoursePlayer: React.FC = () => {
       ?.completed || false;
 
   return (
+    <div>
+      <Navbar />
   <div className="min-h-screen bg-gray-50">
     <div className="grid grid-cols-1 lg:grid-cols-4">
       {/* Sidebar */}
@@ -410,6 +414,8 @@ const CoursePlayer: React.FC = () => {
       </div>
     </div>
   </div>
+      <Footer />
+    </div>
 );
 };
 

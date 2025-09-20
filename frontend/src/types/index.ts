@@ -1,4 +1,5 @@
 export interface User {
+  createdAt: string;
   _id: string;
   id: string;
   name: string;
@@ -15,6 +16,7 @@ export interface User {
 }
 
 export interface Course {
+  students: any[];
   _id: string;
   title: string;
   description: string;
@@ -161,6 +163,7 @@ export interface Notification {
 }
 
 export interface LiveSession {
+  materials: boolean;
   _id: string;
   title: string;
   description?: string;
