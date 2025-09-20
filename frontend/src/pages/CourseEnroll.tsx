@@ -24,7 +24,7 @@ const CourseEnroll = ({ courseId, course }: any) => {
         handler: async function (response: any) {
           // 3️⃣ Verify payment
           await axios.post(
-            "http://localhost:8000/api/payment/verify",
+            "https://rass-pi.vercel.app/api/payment/verify",
             { ...response, courseId },
             { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
           );
