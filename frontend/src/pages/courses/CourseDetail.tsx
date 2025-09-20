@@ -81,7 +81,7 @@ const CourseDetail: React.FC = () => {
     // 💳 Paid course → Razorpay flow
     try {
       // 1. Create Razorpay order from backend
-      const res = await fetch("https://rass-pi.vercel.app/api/payments/order", {
+      const res = await fetch("https://rass-h2s1.onrender.com/api/payments/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ const CourseDetail: React.FC = () => {
           try {
             // 3. Verify payment on backend
             const verifyRes = await fetch(
-              "http://localhost:8000/api/payments/verify",
+              "https://rass-h2s1.onrender.com/api/payments/verify",
               {
                 method: "POST",
                 headers: {
