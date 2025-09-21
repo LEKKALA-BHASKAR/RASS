@@ -278,7 +278,7 @@ const InstructorDashboard: React.FC = () => {
               </Link>
             </div>
             {upcomingSessions.length === 0 ? (
-              <p className="text-gray-500 text-center py-8"Manage Scheduled Live Sessions Here.</p>
+              <p className="text-gray-500 text-center py-8"> Manage Scheduled Live Sessions Here.</p>
             ) : (
               <ul className="space-y-3">
                 {upcomingSessions.map((s, i) => (
