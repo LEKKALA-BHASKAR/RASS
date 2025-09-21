@@ -98,6 +98,7 @@ const CourseDetail: React.FC = () => {
 
     // 💳 Paid course → Razorpay flow
     try {
+      // 1. Create Razorpay order from backend
       const res = await fetch("https://rass-h2s1.onrender.com/api/payments/order", {
         method: "POST",
         headers: {
