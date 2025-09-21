@@ -36,6 +36,7 @@ import About from './pages/publicpages/About';
 import ContactUs from './pages/publicpages/Contact';
 import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
+import AdminTicketsPage from './pages/admin/AdminTicketsPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -203,7 +204,7 @@ const AppRoutes: React.FC = () => {
             <UserManagement />
           </ProtectedRoute>
         } />
-        <Route path="/admin/support" element={<SupportManagement />} />
+        <Route path="/admin/support" element={<AdminTicketsPage />} />
     
       </Routes>
     </div>

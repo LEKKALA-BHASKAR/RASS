@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { courseAPI, enrollmentAPI } from "../../services/api";
@@ -26,6 +26,7 @@ import googleLogo from "../../assets/companies/google.png";
 import microsoftLogo from "../../assets/companies/microsoft.png";
 import amazonLogo from "../../assets/companies/amazon.png";
 import wiproLogo from "../../assets/companies/wipro.png";
+import { ClientsSection } from "../publicpages/ClientSection";
 
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +36,23 @@ const CourseDetail: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // ✅ Section Refs
+  const sectionRefs: Record<string, React.RefObject<HTMLDivElement>> = {
+    hero: useRef(null),
+    details: useRef(null),
+    outcomes: useRef(null),
+    highlights: useRef(null),
+    curriculum: useRef(null),
+    tools: useRef(null),
+    instructor: useRef(null),
+    alumni: useRef(null),
+    journey: useRef(null),
+    description: useRef(null),
+    companies: useRef(null),
+    fee: useRef(null),
+    faq: useRef(null),
+  };
 
   useEffect(() => {
     if (id) fetchCourseData();
@@ -80,8 +98,7 @@ const CourseDetail: React.FC = () => {
 
     // 💳 Paid course → Razorpay flow
     try {
-      // 1. Create Razorpay order from backend
-      const res = await fetch("http://localhost:8000/api/payments/order", {
+      const res = await fetch("https://rass-h2s1.onrender.com/api/payments/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +113,6 @@ const CourseDetail: React.FC = () => {
         return;
       }
 
-      // 2. Open Razorpay checkout
       const options = {
         key: "rzp_test_RJqt4AZALMZEYE", // ✅ Test key
         amount: order.amount,
@@ -106,9 +122,8 @@ const CourseDetail: React.FC = () => {
         order_id: order.id,
         handler: async function (response: any) {
           try {
-            // 3. Verify payment on backend
             const verifyRes = await fetch(
-              "http://localhost:8000/api/payments/verify",
+              "https://rass-h2s1.onrender.com/api/payments/verify",
               {
                 method: "POST",
                 headers: {
@@ -150,6 +165,17 @@ const CourseDetail: React.FC = () => {
     }
   };
 
+  const scrollToSection = (key: string) => {
+  const ref = sectionRefs[key]?.current;
+  if (ref) {
+    const topOffset = 100; // height of sticky nav
+    const elementPosition = ref.getBoundingClientRect().top + window.scrollY;
+    const offsetPosition = elementPosition - topOffset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+  }
+};
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -166,14 +192,14 @@ const CourseDetail: React.FC = () => {
     );
   }
 
-  // 🔹 Mock fallbacks if backend doesn’t provide fields
-  const highlights = course?.["highlights"] || [
+  // 🔹 Fallbacks for missing fields
+  const highlights = (course as any).highlights || [
     { title: "Hands-on Projects", desc: "Work on portfolio-ready projects." },
     { title: "Mentorship", desc: "Learn directly from industry experts." },
     { title: "Job Readiness", desc: "Resume building & mock interviews." },
   ];
 
-  const tools = course?.["tools"] || [
+  const tools = (course as any).tools || [
     { name: "React" },
     { name: "Node.js" },
     { name: "MongoDB" },
@@ -182,81 +208,100 @@ const CourseDetail: React.FC = () => {
   const testimonials =
     (course as any).testimonials?.map((t: any) => ({
       name: t.name,
-      role: t.role || t.title || "Student", // ✅ normalize field
+      role: t.role || t.title || "Student",
       quote: t.quote,
       avatar: t.avatar,
-    })) || [
-      {
-        name: "Aditi Sharma",
-        role: "Frontend Engineer",
-        quote:
-          "This course gave me the confidence and skills to land my first developer role.",
-      },
-      {
-        name: "Rohit Mehta",
-        role: "Data Analyst",
-        quote:
-          "The projects and mentorship were game-changing for my career transition.",
-      },
-    ];
+    })) || [];
 
-  const learningJourney = course?.["learningJourney"] || [
-    { step: "Enroll", desc: "Join the program and unlock your dashboard." },
-    { step: "Learn", desc: "Complete interactive modules and assignments." },
-    { step: "Build", desc: "Work on real-world projects." },
-    { step: "Get Hired", desc: "Leverage our career support & placements." },
-  ];
+  const learningJourney = (course as any).learningJourney || [];
 
-  const companies = course?.["companies"] || [
+  const companies = (course as any).companies || [
     { name: "Google", logo: googleLogo },
     { name: "Microsoft", logo: microsoftLogo },
     { name: "Amazon", logo: amazonLogo },
     { name: "Wipro", logo: wiproLogo },
   ];
 
-  const faqs = course?.["faqs"] || [
-    {
-      question: "Do I get a certificate after completion?",
-      answer: "Yes, you receive a shareable industry-recognized certificate.",
-    },
-    {
-      question: "Is placement support provided?",
-      answer:
-        "Absolutely, we provide resume prep, mock interviews, and connect you with hiring partners.",
-    },
-    {
-      question: "Are there live sessions?",
-      answer:
-        "Yes, the program includes both self-paced modules and live mentor sessions.",
-    },
-  ];
+  const faqs = (course as any).faqs || [];
 
   return (
     <div>
       <Navbar />
+
+      {/* ✅ Sticky Navigation */}
+        <div className="sticky top-16 bg-white shadow z-40 border-b">
+          <div className="max-w-7xl mx-auto flex items-center px-6 py-3 overflow-x-auto space-x-3 text-sm font-medium">
+            {[
+              { key: "description", label: "About Course" },
+              { key: "details", label: "Course Overview" },
+              { key: "outcomes", label: "Learning Outcomes" },
+              { key: "highlights", label: "Highlights" },
+              { key: "curriculum", label: "Curriculum" },
+              { key: "tools", label: "Tools & Tech" },
+              { key: "instructor", label: "Instructors" },
+              { key: "alumni", label: "Alumni Speaks" },
+              { key: "journey", label: "Admission Process" },
+              { key: "companies", label: "Dream Companies" },
+              { key: "fee", label: "Fee & Registration" },
+              { key: "faq", label: "FAQs" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => scrollToSection(tab.key)}
+                className="px-4 py-2 rounded-full border border-indigo-200 text-gray-700 bg-gray-50 hover:bg-indigo-100 hover:text-indigo-700 transition whitespace-nowrap"
+              >
+                {tab.label}
+              </button>
+            ))}
+
+          </div>
+        </div>
+
+
+      {/* ✅ Sections */}
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
-        <CourseHero
-          course={course}
-          enrollment={enrollment}
-          onEnroll={handleEnroll}
-        />
-        <CourseDetails course={course} />
-        <LearningOutcomes outcomes={course.learningOutcomes} />
-        <CourseHighlights highlights={highlights} />
-        <CourseCurriculum modules={course.modules} />
-        <ToolsTechnologies tools={tools} />
-        <InstructorCard instructor={course.instructor} />
-        <AlumniSpeaks testimonials={testimonials} />
-        <LearningJourney journey={learningJourney} />
-        <CourseDescription description={course.description} />
-        <DreamCompanies companies={companies} />
-        <FeeRegistration
-          course={course}
-          enrollment={enrollment}
-          onEnroll={handleEnroll}
-        />
-        <FAQSection faqs={faqs} />
+        <div ref={sectionRefs.hero}>
+          <CourseHero course={course} enrollment={enrollment} onEnroll={handleEnroll} />
+        </div>
+        <div ref={sectionRefs.description}>
+          <CourseDescription description={course.description || ""} />
+        </div>
+        <div ref={sectionRefs.details}>
+          <CourseDetails course={course} />
+        </div>
+        <div ref={sectionRefs.outcomes}>
+          <LearningOutcomes outcomes={course.learningOutcomes || []} />
+        </div>
+        <div ref={sectionRefs.highlights}>
+          <CourseHighlights highlights={highlights} />
+        </div>
+        <div ref={sectionRefs.curriculum}>
+          <CourseCurriculum modules={course.modules || []} />
+        </div>
+        <div ref={sectionRefs.tools}>
+          <ToolsTechnologies tools={tools} />
+        </div>
+        <div ref={sectionRefs.instructor}>
+          <InstructorCard instructor={course.instructor} />
+        </div>
+        <div ref={sectionRefs.alumni}>
+          <AlumniSpeaks testimonials={testimonials} />
+        </div>
+        <div ref={sectionRefs.journey}>
+          <LearningJourney journey={learningJourney} />
+        </div>
+        
+        <div ref={sectionRefs.companies}>
+          <ClientsSection/>
+        </div>
+        <div ref={sectionRefs.fee}>
+          <FeeRegistration course={course} enrollment={enrollment} onEnroll={handleEnroll} />
+        </div>
+        <div ref={sectionRefs.faq}>
+          <FAQSection faqs={faqs} />
+        </div>
       </div>
+
       <Footer />
     </div>
   );

@@ -16,6 +16,8 @@ export interface User {
 }
 
 export interface Course {
+  learningJourney: any[];
+  highlights: any[];
   students: any[];
   _id: string;
   title: string;

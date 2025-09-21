@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Award, Play, BookOpen } from "lucide-react";
+import { Award, Play, BookOpen, CheckCircle } from "lucide-react";
 import { Course, Enrollment } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 
@@ -18,7 +18,7 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
     if (!isAuthenticated || !onEnroll) return;
     setEnrolling(true);
     try {
-      await onEnroll(); // ✅ delegate to parent
+      await onEnroll();
     } catch (err) {
       console.error("Enroll error:", err);
     } finally {
@@ -27,16 +27,19 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
   };
 
   return (
-    <section className="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-2xl shadow-lg text-white p-8 text-center">
-      <h2 className="text-2xl font-bold mb-4">Course Fee & Registration</h2>
-      <div className="text-4xl font-extrabold mb-2">
+    <section className="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-2xl shadow-lg text-white p-10 text-center">
+      <h2 className="text-3xl font-bold mb-6">Course Fee & Registration</h2>
+
+      <div className="text-5xl font-extrabold mb-4">
         {course.price === 0 ? "Free" : `₹${course.price}`}
       </div>
       <p className="text-indigo-100 mb-6">
-        One-time payment. Lifetime access to course content and updates.
+        One-time payment. Lifetime access to content, projects, and placement
+        support.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-left mb-6">
+      {/* Perks */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-left mb-8">
         <div className="bg-white bg-opacity-10 rounded-lg p-4 flex items-center gap-2">
           <Play className="h-5 w-5" /> {course.modules?.length ?? 0} video modules
         </div>
@@ -51,7 +54,7 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
       {enrollment ? (
         <Link
           to={`/learn/${course._id}`}
-          className="inline-block px-6 py-3 bg-white text-indigo-700 rounded-lg font-semibold shadow hover:bg-gray-100 transition"
+          className="inline-block px-8 py-3 bg-white text-indigo-700 rounded-lg font-semibold shadow hover:bg-gray-100 transition"
         >
           Go to Course
         </Link>
@@ -59,11 +62,16 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
         <button
           onClick={handleEnrollClick}
           disabled={enrolling}
-          className="px-6 py-3 bg-white text-indigo-700 rounded-lg font-semibold shadow hover:bg-gray-100 transition disabled:opacity-60"
+          className="px-8 py-3 bg-white text-indigo-700 rounded-lg font-semibold shadow hover:bg-gray-100 transition disabled:opacity-60"
         >
           {enrolling ? "Enrolling..." : "Enroll Now"}
         </button>
       )}
+
+      {/* Guarantee */}
+      <p className="mt-6 flex items-center justify-center gap-2 text-sm text-indigo-100">
+        <CheckCircle className="h-4 w-4 text-green-300" /> 100% Refund if not satisfied in first 7 days
+      </p>
     </section>
   );
 };

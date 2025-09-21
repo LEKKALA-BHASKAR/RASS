@@ -21,7 +21,7 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
     if (!isAuthenticated || !onEnroll) return;
     setEnrolling(true);
     try {
-      await onEnroll(); // ✅ delegate to parent
+      await onEnroll();
     } catch (err) {
       console.error("Enroll error:", err);
     } finally {
@@ -39,43 +39,41 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="max-w-7xl mx-auto px-6 py-8"
+        className="max-w-7xl mx-auto px-6 py-10"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Left / Main */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+          {/* Left / Info */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900">
+            <h1 className="text-4xl font-extrabold text-gray-900 leading-snug">
               {course.title}
             </h1>
-
-            <p className="mt-4 text-gray-700 max-w-3xl leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 max-w-3xl leading-relaxed">
               {course.description}
             </p>
 
-            {/* quick stats */}
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+            {/* Stats */}
+            <div className="mt-6 flex flex-wrap items-center gap-5 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" /> {course.totalDuration} mins
+                <Clock className="h-5 w-5 text-indigo-600" /> {course.totalDuration} mins
               </div>
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" /> {course.enrollmentCount} students
+                <Users className="h-5 w-5 text-green-600" /> {course.enrollmentCount} students
               </div>
               <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-400" />
-                {rating.toFixed(1)} ({ratingCount})
+                <Star className="h-5 w-5 text-yellow-500" /> {rating.toFixed(1)} ({ratingCount})
               </div>
               <div className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
+                <BookOpen className="h-5 w-5 text-purple-600" />
                 <span className="capitalize">{course.level}</span>
               </div>
             </div>
 
-            {/* CTAs */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            {/* CTA */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
               {enrollment ? (
                 <Link
                   to={`/learn/${course._id}`}
-                  className="px-5 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow hover:bg-indigo-700 transition"
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow hover:bg-indigo-700 transition"
                 >
                   Continue Learning
                 </Link>
@@ -83,7 +81,7 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
                 <button
                   onClick={handleEnrollClick}
                   disabled={enrolling}
-                  className="px-5 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow hover:bg-indigo-700 transition disabled:opacity-60"
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow hover:bg-indigo-700 transition disabled:opacity-60"
                 >
                   {enrolling ? "Enrolling..." : "Enroll Now"}
                 </button>
@@ -91,24 +89,26 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
 
               <button
                 onClick={() => setShowPreview(true)}
-                className="px-4 py-3 border rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-2"
+                className="px-5 py-3 border rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-2"
               >
-                <Play className="h-4 w-4" /> Preview
+                <Play className="h-4 w-4" /> Preview Course
               </button>
             </div>
           </div>
 
           {/* Right / Price Box */}
           <aside>
-            <div className="bg-white rounded-2xl p-6 shadow border text-center">
-              <div className="text-3xl font-bold text-indigo-600 mb-4">
+            <div className="bg-white rounded-2xl p-8 shadow-md border text-center sticky top-24">
+              <div className="text-4xl font-bold text-indigo-600 mb-4">
                 {course.price === 0 ? "Free" : `₹${course.price}`}
               </div>
-
+              <p className="text-sm text-gray-600 mb-6">
+                Lifetime access, certificate, mentorship & placement support
+              </p>
               {enrollment ? (
                 <Link
                   to={`/learn/${course._id}`}
-                  className="w-full inline-block px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition"
+                  className="w-full inline-block px-5 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
                 >
                   Go to Course
                 </Link>
@@ -116,11 +116,19 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
                 <button
                   onClick={handleEnrollClick}
                   disabled={enrolling}
-                  className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 transition disabled:opacity-60"
+                  className="w-full px-5 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition disabled:opacity-60"
                 >
-                  {enrolling ? "Enrolling..." : "Enroll — Start Now"}
+                  {enrolling ? "Processing..." : "Enroll & Start Learning"}
                 </button>
               )}
+              <div className="mt-6 flex flex-col gap-2 text-sm text-gray-600">
+                <div className="flex items-center justify-center gap-2">
+                  <Award className="h-4 w-4 text-yellow-500" /> Industry Certificate
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <Users className="h-4 w-4 text-green-600" /> Community Support
+                </div>
+              </div>
             </div>
           </aside>
         </div>
@@ -130,7 +138,7 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
       {showPreview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4">
           <div className="w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-lg">
-            <div className="flex justify-between items-center p-3 border-b">
+            <div className="flex justify-between items-center p-4 border-b">
               <h3 className="text-lg font-medium">Course Preview</h3>
               <button
                 onClick={() => setShowPreview(false)}
@@ -145,9 +153,7 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
                   <ReactPlayer url={firstVideo} controls width="100%" height="100%" />
                 </div>
               ) : (
-                <p className="py-12 text-center text-gray-600">
-                  Preview not available.
-                </p>
+                <p className="py-12 text-center text-gray-600">Preview not available.</p>
               )}
             </div>
           </div>

@@ -5,7 +5,7 @@ const PaymentPage: React.FC = () => {
   const handlePayment = async () => {
     try {
       // 1️⃣ Create order from backend
-      const { data } = await axios.post("http://localhost:8000/api/payment/order", {
+      const { data } = await axios.post("https://rass-h2s1.onrender.com/api/payment/order", {
         amount: 500, // INR ₹500
       });
 
@@ -19,7 +19,7 @@ const PaymentPage: React.FC = () => {
         order_id: data.id,
         handler: async function (response: any) {
           // 3️⃣ Verify payment on backend
-          const verifyRes = await axios.post("http://localhost:8000/api/payment/verify", response);
+          const verifyRes = await axios.post("https://rass-h2s1.onrender.com/api/payment/verify", response);
           if (verifyRes.data.success) {
             alert("✅ Payment Successful! Course Enrolled.");
           } else {

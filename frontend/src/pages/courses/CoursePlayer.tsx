@@ -127,18 +127,7 @@ const CoursePlayer: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-4">
             {course.title}
           </h2>
-          <div className="mb-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Progress</span>
-              <span>{enrollment.completionPercentage}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-indigo-600 h-2 rounded-full transition-all"
-                style={{ width: `${enrollment.completionPercentage}%` }}
-              ></div>
-            </div>
-          </div>
+          
         </div>
 
         <div className="px-6 pb-6 space-y-2">

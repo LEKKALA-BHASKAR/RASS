@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { Clock, ChevronDown, ChevronUp, FileText, Play } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Module = {
   _id: string;
@@ -20,20 +21,20 @@ const CourseCurriculum: React.FC<Props> = ({ modules }) => {
   if (!modules || modules.length === 0) return null;
 
   return (
-    <section className="bg-white rounded-2xl shadow-sm border p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Course Curriculum</h2>
+    <section className="py-12">
+      <h2 className="text-3xl font-bold mb-8 text-center">Course Curriculum</h2>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {modules.map((module, index) => {
           const isOpen = openIndex === index;
           return (
             <div
               key={module._id || index}
-              className="border border-gray-200 rounded-lg overflow-hidden"
+              className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="w-full flex justify-between items-center px-4 py-3 text-left font-medium text-gray-900 bg-gray-50 hover:bg-gray-100"
+                className="w-full flex justify-between items-center px-6 py-4 text-left font-medium text-gray-900 hover:bg-gray-50"
               >
                 <div className="flex items-center gap-3">
                   <span className="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold">
@@ -41,7 +42,6 @@ const CourseCurriculum: React.FC<Props> = ({ modules }) => {
                   </span>
                   <span>{module.title}</span>
                 </div>
-
                 <div className="flex items-center gap-2 text-gray-600 text-sm">
                   <Clock className="h-4 w-4" />
                   {module.duration} min
@@ -53,27 +53,36 @@ const CourseCurriculum: React.FC<Props> = ({ modules }) => {
                 </div>
               </button>
 
-              {isOpen && (
-                <div className="px-6 py-4 bg-white text-gray-700 text-sm">
-                  {module.description || "No description available."}
-                  {module.resources && module.resources.length > 0 && (
-                    <ul className="mt-3 space-y-2">
-                      {module.resources.map((res, idx) => (
-                        <li key={idx}>
-                          <a
-                            href={res.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-indigo-600 hover:underline"
-                          >
-                            {res.title}
-                          </a>
-                        </li>
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="px-6 py-4 text-gray-700 text-sm bg-gray-50"
+                  >
+                    <p>{module.description || "No description available."}</p>
+                    <div className="mt-4 flex flex-wrap gap-4">
+                      {module.videoUrl && (
+                        <div className="flex items-center gap-2 text-indigo-600 text-sm">
+                          <Play className="h-4 w-4" /> Preview video available
+                        </div>
+                      )}
+                      {module.resources?.map((res, idx) => (
+                        <a
+                          key={idx}
+                          href={res.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-indigo-600 hover:underline"
+                        >
+                          <FileText className="h-4 w-4" /> {res.title}
+                        </a>
                       ))}
-                    </ul>
-                  )}
-                </div>
-              )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           );
         })}

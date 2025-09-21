@@ -6,7 +6,7 @@ const CourseEnroll = ({ courseId, course }: any) => {
     try {
       // 1️⃣ Create order
       const { data } = await axios.post(
-        "http://localhost:8000/api/payment/order",
+        "https://rass-h2s1.onrender.com/api/payment/order",
         { courseId },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -24,7 +24,7 @@ const CourseEnroll = ({ courseId, course }: any) => {
         handler: async function (response: any) {
           // 3️⃣ Verify payment
           await axios.post(
-            "http://localhost:8000/api/payment/verify",
+            "https://rass-h2s1.onrender.com/api/payment/verify",
             { ...response, courseId },
             { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
           );

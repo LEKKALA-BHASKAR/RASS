@@ -262,7 +262,7 @@ const AdminDashboard: React.FC = () => {
               desc: "Manage user inquiries and issues",
               icon: <Settings className="h-6 w-6 text-gray-600" />,
               color: "bg-gray-100",
-              action: () => navigate("/support-tickets/admin"),
+              action: () => navigate("/admin/support"),
             },
           ].map((action, i) => (
             <motion.button
