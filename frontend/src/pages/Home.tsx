@@ -10,6 +10,9 @@ import CertificationCourses from './publicpages/CertificationCourses';
 import PartnerWithUs from './publicpages/PartnerWithUs';
 import CompaniesPage from './publicpages/CompaniesPage';
 import CourseCatalog from './courses/CourseCatalog';
+import IntroCourse from './publicpages/IntroCourse';
+import AIInsightsDashboard from './publicpages/AIInsightsDashboard';
+import { motion } from 'framer-motion';
 
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -87,46 +90,100 @@ const Home: React.FC = () => {
       
      
 <HeroCarousel/>
-      {/* Stats Section */}
-      <section className="py-16 bg-indigo-600 text-white">
-       <ClientsSection/>
-      </section>
-      <CertificationCourses/>
+<ClientsSection/>
+<IntroCourse/>
+<AIInsightsDashboard/>
+<CertificationCourses/>
       {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              A Learning Experience <span className="text-indigo-600">Designed for Success</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our platform provides comprehensive tools for students, instructors, and administrators 
-              to create the best learning experience possible.
-            </p>
-          </div>
+     {/* Features Section */}
+<section className="py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50/30 relative overflow-hidden">
+  {/* Background Elements */}
+  <div className="absolute inset-0">
+    <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200/5 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-200/5 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-cyan-200/5 rounded-full blur-3xl"></div>
+  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div 
-                key={index} 
-                className="bg-slate-50 rounded-xl p-8 hover:bg-indigo-50 transition-all duration-300 group border border-transparent hover:border-indigo-100"
-              >
-                <div className="inline-flex items-center justify-center p-3 bg-white rounded-lg shadow-sm mb-6 group-hover:bg-indigo-100 transition-colors">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-indigo-700">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {feature.description}
-                </p>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    {/* Enhanced Header */}
+    <div className="text-center mb-20">
+      <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200/50 shadow-sm mb-6">
+        <span className="text-sm font-medium text-gray-600">✨ Premium Features</span>
+      </div>
+      
+      <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
+        Learning Experience{' '}
+        <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Perfected
+        </span>
+      </h2>
+      
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
+        Our platform provides comprehensive tools for students, instructors, and administrators 
+        to create the best learning experience possible.
+      </p>
+    </div>
+
+    {/* Enhanced Features Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {features.map((feature, index) => (
+        <motion.div 
+          key={index}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          className="group relative"
+        >
+          {/* Background Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200/50 shadow-sm hover:shadow-xl transition-all duration-500 group-hover:-translate-y-2 h-full flex flex-col">
+            
+            {/* Icon Container */}
+            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200/50 mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+              <div className="text-gray-700 group-hover:text-blue-600 transition-colors">
+                {React.cloneElement(feature.icon, { size: 28 })}
               </div>
-            ))}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 group-hover:text-gray-800 transition-colors">
+                {feature.title}
+              </h3>
+              
+              <p className="text-gray-600 leading-relaxed mb-6 flex-1">
+                {feature.description}
+              </p>
+
+              {/* Learn More Link */}
+
+            </div>
+
+            {/* Decorative Number */}
+            <div className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-semibold text-gray-400 group-hover:text-gray-600 transition-colors">
+              {index + 1}
+            </div>
           </div>
-        </div>
-      </section>
-      <PartnerWithUs/>
-      <CompaniesPage/>
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Bottom CTA */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      viewport={{ once: true }}
+      className="text-center mt-16"
+    >
+      <div className="inline-flex items-center gap-4 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl border border-gray-200/50 shadow-sm">
+        <span className="text-gray-600 font-medium">Ready to experience the difference?</span>
+      </div>
+    </motion.div>
+  </div>
+</section>
       {/* Testimonial Section */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
