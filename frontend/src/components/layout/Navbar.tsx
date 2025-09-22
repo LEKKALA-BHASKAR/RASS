@@ -61,13 +61,14 @@ const Navbar: React.FC = () => {
           <Link to="/" className="flex items-center space-x-2">
             <motion.div
               whileHover={{ rotate: 8, scale: 1.1 }}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 p-2 rounded-lg shadow"
+              
             >
-              <BookOpen className="h-6 w-6 text-white" />
             </motion.div>
-            <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              RASS ACADEMY
-            </span>
+            <img 
+  src="/logo.webp" 
+  alt="RASS Academy Logo" 
+  className="h-12 w-auto"
+/>
           </Link>
 
           {/* Search Bar - Desktop */}

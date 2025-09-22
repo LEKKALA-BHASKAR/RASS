@@ -8,7 +8,11 @@ const Footer = () => {
           
           {/* About Section */}
           <div>
-            <h3 className="text-white text-xl font-semibold mb-4">About RASS Academy</h3>
+                        <img 
+  src="/logo.webp" 
+  alt="RASS Academy Logo" 
+  className="h-12 w-auto"
+/>
             <p className="text-sm leading-relaxed">
               RASS Academy offers comprehensive LMS solutions, online courses, webinars, and community support  
               to help learners achieve their goals. Join us to unlock your potential.
