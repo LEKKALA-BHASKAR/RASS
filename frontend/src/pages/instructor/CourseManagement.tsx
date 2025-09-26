@@ -27,7 +27,7 @@ const CourseManagement: React.FC = () => {
   const [liveSessions, setLiveSessions] = useState<LiveSession[]>([]);
 
   const [activeTab, setActiveTab] = useState<"overview" | "assignments" | "sessions">("overview");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   /* Edit States */
   const [editModule, setEditModule] = useState<Module | null>(null);
@@ -50,6 +50,7 @@ const CourseManagement: React.FC = () => {
   const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
   const [grade, setGrade] = useState<number>(0);
   const [feedback, setFeedback] = useState("");
+  
 
   useEffect(() => {
     fetchCourses();

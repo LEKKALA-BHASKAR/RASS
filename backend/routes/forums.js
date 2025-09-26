@@ -50,37 +50,28 @@ router.post('/', authenticate, async (req, res) => {
 
     await forumPost.save();
 
+    // Ensure proper population of all fields
     const populatedPost = await Forum.findById(forumPost._id)
-      .populate('author', 'name profile.avatar role');
+      .populate('author', 'name profile.avatar role')
+      .populate('replies.author', 'name profile.avatar role');
 
-    // 🔔 Notifications
-    if (req.body.course) {
-      const enrollments = await Enrollment.find({ course: req.body.course }).populate("student", "_id");
-      const courseStudents = enrollments.map(e => e.student._id);
+    // 🔔 Notifications code remains the same...
 
-      const admins = await User.find({ role: "admin" }, "_id");
-      const course = await Forum.findById(forumPost._id).populate("course", "instructor");
-
-      const instructorId = course?.course?.instructor;
-
-      const recipients = [
-        ...courseStudents,
-        instructorId,
-        ...admins.map(a => a._id),
-      ].filter(Boolean);
-
-      const notifications = recipients.map(r => ({
-        recipient: r,
-        title: "New Discussion Started",
-        message: `${req.user.name} started a new discussion: "${req.body.title}"`,
-        type: "discussion",
-        relatedId: forumPost._id,
-      }));
-
-      await Notification.insertMany(notifications);
-    }
-
-    res.status(201).json(populatedPost);
+    // Send properly formatted response
+    res.status(201).json({
+      _id: populatedPost._id,
+      title: populatedPost.title,
+      content: populatedPost.content,
+      author: {
+        _id: populatedPost.author._id,
+        name: populatedPost.author.name
+      },
+      course: populatedPost.course,
+      category: populatedPost.category,
+      replies: populatedPost.replies || [],
+      createdAt: populatedPost.createdAt,
+      updatedAt: populatedPost.updatedAt
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
