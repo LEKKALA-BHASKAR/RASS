@@ -6,16 +6,13 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post(
-  '/course/:courseId',
-  authenticate,
-  authorize('instructor', 'admin'),
+router.post('/course/:courseId',authenticate,authorize('instructor', 'admin'),
   async (req, res) => {
     try {
       const sessionData = {
         ...req.body,
-        course: req.params.courseId,   // ✅ course from URL
-        instructor: req.user._id,      // ✅ instructor from token
+        course: req.params.courseId,
+        instructor: req.user._id,
       };
 
       const session = new LiveSession(sessionData);
@@ -23,8 +20,9 @@ router.post(
 
       // 🔔 Notify enrolled students
 const enrolledStudents = await Enrollment.find({ course: req.params.courseId }).populate("student");
-const notifications = enrolledStudents.map(
-  (enroll) =>
+const notifications = enrolledStudents
+  .filter(enroll => enroll.student)
+  .map(enroll =>
     new Notification({
       recipient: enroll.student._id,
       title: "New Live Session Scheduled",
@@ -32,15 +30,15 @@ const notifications = enrolledStudents.map(
       message: `A live session "${session.title}" has been scheduled for your course.`,
       relatedId: session._id,
     })
-);
+  );
 
 if (notifications.length > 0) {
   await Notification.insertMany(notifications);
 }
-      return res.status(201).json({ success: true, session });
+
+    return res.status(201).json({ success: true, session });
     } catch (error) {
       console.error("❌ Error creating session:", error);
-      return res.status(500).json({ success: false, message: error.message });
     }
   }
 );
