@@ -23,7 +23,7 @@ import {
   liveSessionAPI,
 } from "../../services/api";
 import { Course, Enrollment, ForumPost } from "../../types";
-import DiscussionForum from "../student/DiscussionForum";
+import DiscussionForum from "../student/diss";
 
 const CoursePlayer: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
