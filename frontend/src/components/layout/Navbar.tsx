@@ -98,6 +98,18 @@ const Navbar: React.FC = () => {
             >
               Courses
             </Link>
+            <Link
+              to="/companies"
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+            >
+              Companies
+            </Link>
+            <Link
+              to="/universities"
+              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+            >
+              Universities
+            </Link>
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4 relative">
@@ -106,18 +118,6 @@ const Navbar: React.FC = () => {
                   className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
                 >
                   Dashboard
-                </Link>
-                <Link
-                  to="/companies"
-                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
-                >
-                  Companies
-                </Link>
-                <Link
-                  to="/universities"
-                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
-                >
-                  Universities
                 </Link>
 
                 {/* Notification Bell */}

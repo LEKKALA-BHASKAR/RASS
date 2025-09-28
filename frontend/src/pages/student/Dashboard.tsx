@@ -20,9 +20,13 @@ import {
   FileText,
   ChevronDown,
   ChevronUp,
+  Sparkles,
+  TrendingUp,
+  Bookmark,
+  Zap,
 } from "lucide-react";
 import { Enrollment, Notification, Assignment } from "../../types";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
 
@@ -64,10 +68,21 @@ const StudentDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
-          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            className="rounded-full h-16 w-16 border-4 border-indigo-200 border-t-indigo-600"
+          ></motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-4 text-gray-600 font-medium"
+          >
+            Preparing your learning journey...
+          </motion.p>
         </div>
       </div>
     );
@@ -81,26 +96,44 @@ const StudentDashboard: React.FC = () => {
     0
   );
 
+  // Calculate achievement score based on progress
+  const achievementScore = Math.round(
+    (completedCourses.length / Math.max(enrollments.length, 1)) * 100
+  );
+
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-10">
-        {/* Header */}
-        <header className="text-center sm:text-left">
-          <motion.h1
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-bold text-gray-900"
-          >
-            Welcome back, {user?.name}!
-          </motion.h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Track your progress and continue learning
+      
+      {/* Animated background elements */}
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-r from-blue-400/5 to-indigo-400/5 pointer-events-none"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <motion.header
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm mb-4">
+            <Sparkles className="h-4 w-4 text-amber-500" />
+            <span className="text-sm font-medium text-gray-600">
+              Welcome back, {user?.name}!
+            </span>
+          </div>
+          
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
+            Your Learning Dashboard
+          </h1>
+          
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Continue your journey towards mastery. You're doing amazing!
           </p>
-          <div className="flex justify-center sm:justify-start items-center mt-4 text-gray-500">
-            <Calendar className="h-5 w-5 mr-2" />
-            <span>
+          
+          <div className="flex items-center justify-center gap-4 mt-6 text-gray-500">
+            <Calendar className="h-5 w-5" />
+            <span className="font-medium">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
@@ -109,199 +142,371 @@ const StudentDashboard: React.FC = () => {
               })}
             </span>
           </div>
-        </header>
+        </motion.header>
 
-        {/* Quick Links*/}
-          <section>
-            <div className="flex flex-wrap gap-3">
-              {[
-                { name: "Courses", icon: BookOpen, path: "/courses", type: null },
-                { name: "Profile", icon: Users, path: "/profile", type: null },
-                { name: "Assignments", icon: FileText, path: "/student/assignments", type: "assignment" },
-                { name: "Support", icon: MessageSquare, path: "/support-tickets", type: "support" },
-                { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", type: "discussion" },
-                { name: "Chat", icon: MessageSquare, path: "/student/chat", type: "chat" },
-                { name: "Live Sessions", icon: Video, path: "/student/live-sessions", type: "live-session" },
-              ].map((item, idx) => {
-                const Icon = item.icon;
-                const unreadCount = item.type
-                  ? notifications.filter((n) => !n.read && n.type === item.type).length
-                  : 0;
+        {/* Quick Actions Grid */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Zap className="h-6 w-6 text-amber-500" />
+            <h2 className="text-2xl font-bold text-gray-900">Quick Access</h2>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            {[
+              { name: "Courses", icon: BookOpen, path: "/courses", type: null, color: "blue" },
+              { name: "Profile", icon: Users, path: "/profile", type: null, color: "emerald" },
+              { name: "Assignments", icon: FileText, path: "/student/assignments", type: "assignment", color: "orange" },
+              { name: "Support", icon: MessageSquare, path: "/support-tickets", type: "support", color: "red" },
+              { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", type: "discussion", color: "purple" },
+              { name: "Chat", icon: MessageSquare, path: "/student/chat", type: "chat", color: "green" },
+              { name: "Live Sessions", icon: Video, path: "/student/live-sessions", type: "live-session", color: "pink" },
+            ].map((item, idx) => {
+              const Icon = item.icon;
+              const unreadCount = item.type
+                ? notifications.filter((n) => !n.read && n.type === item.type).length
+                : 0;
+              const colorClasses = {
+                blue: "from-blue-500 to-blue-600",
+                emerald: "from-emerald-500 to-emerald-600",
+                orange: "from-orange-500 to-orange-600",
+                red: "from-red-500 to-red-600",
+                purple: "from-purple-500 to-purple-600",
+                green: "from-green-500 to-green-600",
+                pink: "from-pink-500 to-pink-600",
+              }[item.color];
 
-                return (
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Link
-                    key={idx}
                     to={item.path}
-                    className="relative flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:bg-indigo-50 transition"
+                    className={`relative block p-4 bg-gradient-to-br ${colorClasses} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group`}
                   >
-                    <Icon className="h-5 w-5 text-indigo-600" />
-                    <span className="text-sm font-medium text-gray-700">{item.name}</span>
-
+                    <div className="flex flex-col items-center text-center">
+                      <Icon className="h-6 w-6 mb-2 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-semibold">{item.name}</span>
+                    </div>
+                    
                     {/* Unread Notification Badge */}
                     {unreadCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold h-5 w-5 flex items-center justify-center rounded-full shadow">
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-2 -right-2 bg-white text-red-600 text-xs font-bold h-6 w-6 flex items-center justify-center rounded-full shadow-lg border-2 border-current"
+                      >
                         {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
+                      </motion.span>
                     )}
+                    
+                    {/* Hover effect */}
+                    <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </Link>
-                );
-              })}
-            </div>
-          </section>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
 
-
-        {/* Stats - collapsible KPI bar */}
-        <section>
-          <div className="bg-white rounded-xl shadow p-4">
-            <div
+        {/* Stats & Progress Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6">
+            <motion.div
               className="flex items-center justify-between cursor-pointer"
               onClick={() => setStatsOpen(!statsOpen)}
+              whileHover={{ scale: 1.02 }}
             >
-              <h3 className="text-sm font-semibold text-gray-800">Your Stats</h3>
-              {statsOpen ? (
-                <ChevronUp className="h-5 w-5 text-gray-500" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-500" />
-              )}
-            </div>
-            {statsOpen && (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  {
-                    icon: <BookOpen className="h-6 w-6 text-blue-600" />,
-                    label: "Enrolled",
-                    value: enrollments.length,
-                  },
-                  {
-                    icon: <Play className="h-6 w-6 text-green-600" />,
-                    label: "In Progress",
-                    value: inProgressCourses.length,
-                  },
-                  {
-                    icon: <Award className="h-6 w-6 text-amber-600" />,
-                    label: "Completed",
-                    value: completedCourses.length,
-                  },
-                  {
-                    icon: <Clock className="h-6 w-6 text-indigo-600" />,
-                    label: "Watch Time",
-                    value: `${Math.round(totalWatchTime / 3600)}h`,
-                  },
-                ].map((stat, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col items-center bg-gray-50 rounded-lg p-3"
-                  >
-                    {stat.icon}
-                    <p className="mt-1 text-xs text-gray-500">{stat.label}</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {stat.value}
-                    </p>
-                  </div>
-                ))}
+              <div className="flex items-center gap-3">
+                <TrendingUp className="h-6 w-6 text-indigo-600" />
+                <h3 className="text-xl font-bold text-gray-900">Learning Analytics</h3>
               </div>
-            )}
+              <motion.div
+                animate={{ rotate: statsOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronUp className="h-5 w-5 text-gray-500" />
+              </motion.div>
+            </motion.div>
+            
+            <AnimatePresence>
+              {statsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="mt-6"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      {
+                        icon: <BookOpen className="h-8 w-8 text-blue-600" />,
+                        label: "Enrolled Courses",
+                        value: enrollments.length,
+                        gradient: "from-blue-50 to-blue-100",
+                      },
+                      {
+                        icon: <Play className="h-8 w-8 text-green-600" />,
+                        label: "In Progress",
+                        value: inProgressCourses.length,
+                        gradient: "from-green-50 to-green-100",
+                      },
+                      {
+                        icon: <Award className="h-8 w-8 text-amber-600" />,
+                        label: "Completed",
+                        value: completedCourses.length,
+                        gradient: "from-amber-50 to-amber-100",
+                      },
+                      {
+                        icon: <Clock className="h-8 w-8 text-indigo-600" />,
+                        label: "Total Watch Time",
+                        value: `${Math.round(totalWatchTime / 3600)}h`,
+                        gradient: "from-indigo-50 to-indigo-100",
+                      },
+                    ].map((stat, idx) => (
+                      <motion.div
+                        key={idx}
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        className={`bg-gradient-to-br ${stat.gradient} rounded-2xl p-6 shadow-lg border border-white/50`}
+                      >
+                        <div className="flex items-center justify-between">
+                          {stat.icon}
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="text-3xl font-bold text-gray-900"
+                          >
+                            {stat.value}
+                          </motion.div>
+                        </div>
+                        <p className="text-sm font-medium text-gray-600 mt-3">
+                          {stat.label}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Achievement Score */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-gray-900">Achievement Score</h4>
+                        <p className="text-sm text-gray-600">Based on your learning progress</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                          {achievementScore}%
+                        </span>
+                        <div className="w-24 bg-gray-200 rounded-full h-2 mt-2">
+                          <div
+                            className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${achievementScore}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </section>
+        </motion.section>
 
-        {/* Continue Learning */}
-        <section>
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Continue Learning</h2>
+        {/* Continue Learning Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Bookmark className="h-6 w-6 text-indigo-600" />
+                <h2 className="text-2xl font-bold text-gray-900">Continue Learning</h2>
+              </div>
               <Link
                 to="/courses"
-                className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center"
+                className="group flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors"
               >
-                Browse All
-                <ChevronRight className="h-4 w-4 ml-1" />
+                Browse All Courses
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
             {inProgressCourses.length > 0 ? (
-              <div className="space-y-4">
-                {inProgressCourses.slice(0, 2).map((e) => {
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {inProgressCourses.slice(0, 2).map((e, index) => {
                   const course =
                     typeof e.course === "string" ? { _id: e.course } : e.course;
 
                   return (
                     <motion.div
                       key={e._id}
-                      whileHover={{ scale: 1.02 }}
-                      className="border border-gray-200 rounded-lg p-5 hover:shadow-md bg-gradient-to-r from-white to-indigo-50"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.2 }}
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      className="group relative bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300"
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-semibold text-gray-900 text-lg">
+                      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-2">
                             {(course as any).title}
                           </h3>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-gray-600 mb-4">
                             by {(course as any).instructor?.name}
                           </p>
 
                           {/* Progress bar */}
-                          <div className="mt-4">
-                            <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                              <span>Progress</span>
-                              <span>{e.completionPercentage}%</span>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600">Progress</span>
+                              <span className="font-semibold text-indigo-600">
+                                {e.completionPercentage}%
+                              </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="bg-indigo-600 h-2 rounded-full"
-                                style={{ width: `${e.completionPercentage}%` }}
-                              ></div>
+                            <div className="w-full bg-gray-200 rounded-full h-3">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${e.completionPercentage}%` }}
+                                transition={{ duration: 1, delay: index * 0.3 }}
+                                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full shadow-inner"
+                              ></motion.div>
                             </div>
                           </div>
                         </div>
+                        
                         <Link
                           to={`/learn/${course._id}`}
-                          className="ml-6 px-5 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow hover:shadow-lg"
+                          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group-hover:from-indigo-700 group-hover:to-purple-700"
                         >
                           Continue
                         </Link>
                       </div>
+                      
+                      {/* Decorative element */}
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-bl-2xl rounded-tr-2xl"></div>
                     </motion.div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-gray-500">No active courses right now.</p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-12"
+              >
+                <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                  No active courses
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  Start your learning journey by enrolling in a course
+                </p>
+                <Link
+                  to="/courses"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Browse Courses
+                </Link>
+              </motion.div>
             )}
           </div>
-        </section>
+        </motion.section>
 
-        {/* Notifications */}
-        <section>
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Recent Notifications
-              </h3>
-              <Bell className="h-5 w-5 text-gray-400" />
+        {/* Notifications Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Bell className="h-6 w-6 text-amber-500" />
+                <h3 className="text-xl font-bold text-gray-900">
+                  Recent Notifications
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 text-amber-500">
+                <span className="text-sm font-semibold">
+                  {notifications.filter(n => !n.read).length} unread
+                </span>
+              </div>
             </div>
+            
             {notifications.length > 0 ? (
               <div className="space-y-4">
-                {notifications.map((n) => (
+                {notifications.map((n, index) => (
                   <motion.div
                     key={n._id}
-                    whileHover={{ scale: 1.01 }}
-                    className="p-4 border-l-4 border-indigo-500 bg-indigo-50 rounded-r-lg"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.01, x: 5 }}
+                    className={`p-4 rounded-xl border-l-4 ${
+                      n.read 
+                        ? 'border-gray-300 bg-gray-50' 
+                        : 'border-amber-500 bg-amber-50/50 shadow-sm'
+                    } transition-all duration-300`}
                   >
-                    <p className="text-sm font-medium text-gray-900">{n.title}</p>
-                    <p className="text-xs text-gray-600 mt-1">{n.message}</p>
+                    <div className="flex items-start gap-3">
+                      {!n.read && (
+                        <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                      )}
+                      <div className="flex-1">
+                        <p className={`font-semibold ${
+                          n.read ? 'text-gray-700' : 'text-gray-900'
+                        }`}>
+                          {n.title}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+                          {n.message}
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">No new notifications</p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-8"
+              >
+                <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 font-medium">
+                  No new notifications. You're all caught up!
+                </p>
+              </motion.div>
             )}
           </div>
-        </section>
+        </motion.section>
       </div>
-      </div>
-            <Footer />
+      
+      <Footer />
     </div>
-
   );
 };
 

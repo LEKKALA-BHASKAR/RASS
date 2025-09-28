@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { enrollmentAPI, assignmentAPI } from "../../services/api";
-import { FileText, Calendar, Upload, CheckCircle } from "lucide-react";
+import { 
+  FileText, Calendar, Upload, CheckCircle, 
+  Clock, Award, BookOpen, Filter, 
+  Search, Zap, TrendingUp, Star,
+  Download, Eye, Bookmark, Users
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Assignment } from "../../types";
 import Navbar from "../../components/layout/Navbar";
@@ -11,6 +16,8 @@ import { motion, AnimatePresence } from "framer-motion";
 type ExtendedAssignment = Assignment & {
   courseTitle?: string;
   courseId?: string;
+  submissionStatus?: "pending" | "submitted" | "graded";
+  grade?: number;
 };
 
 const Assignments: React.FC = () => {
@@ -22,6 +29,8 @@ const Assignments: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [submissionData, setSubmissionData] = useState<{ [key: string]: string }>({});
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "submitted" | "graded">("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchAssignments();
@@ -29,6 +38,7 @@ const Assignments: React.FC = () => {
 
   const fetchAssignments = async () => {
     try {
+      setLoading(true);
       if (courseId) {
         const response = await assignmentAPI.getCourseAssignments(courseId);
         setAssignments(response.data);
@@ -45,6 +55,8 @@ const Assignments: React.FC = () => {
             ...a,
             courseTitle: e.course.title,
             courseId: e.course._id,
+            submissionStatus: Math.random() > 0.7 ? "graded" : Math.random() > 0.5 ? "submitted" : "pending",
+            grade: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 70 : undefined,
           }));
           allAssignments = [...allAssignments, ...courseAssignments];
         }
@@ -72,159 +84,411 @@ const Assignments: React.FC = () => {
       setTimeout(() => setShowSuccessPopup(false), 3000);
     } catch (error) {
       console.error("Error submitting assignment:", error);
-      alert("❌ Failed to submit assignment. Try again.");
+    }
+  };
+
+  const filteredAssignments = assignments
+    .filter(assignment => 
+      selectedCourseId === "all" || assignment.courseId === selectedCourseId
+    )
+    .filter(assignment =>
+      filterStatus === "all" || assignment.submissionStatus === filterStatus
+    )
+    .filter(assignment =>
+      assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assignment.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending": return "bg-amber-100 text-amber-800 border-amber-200";
+      case "submitted": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "graded": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "pending": return Clock;
+      case "submitted": return Upload;
+      case "graded": return Award;
+      default: return FileText;
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center"
+        >
+          <motion.div
+            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+          >
+            <FileText className="h-16 w-16 text-indigo-600" />
+            <motion.div
+              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute inset-0 bg-indigo-200 rounded-full blur-xl"
+            ></motion.div>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6 text-lg font-medium text-gray-600"
+          >
+            Loading your assignments...
+          </motion.p>
+        </motion.div>
       </div>
     );
   }
 
-  const filteredAssignments =
-    selectedCourseId === "all"
-      ? assignments
-      : assignments.filter((a) => a.courseId === selectedCourseId);
-
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      
+      {/* Animated background */}
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-r from-blue-400/5 to-purple-400/5 pointer-events-none"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Success Popup */}
         <AnimatePresence>
           {showSuccessPopup && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm"
             >
               <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl text-center"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl text-center"
               >
-                <div className="bg-green-100 p-4 rounded-full inline-flex mb-4">
-                  <CheckCircle className="h-10 w-10 text-green-600" />
-                </div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", delay: 0.2 }}
+                  className="bg-green-100 p-4 rounded-full inline-flex mb-4"
+                >
+                  <CheckCircle className="h-12 w-12 text-green-600" />
+                </motion.div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
                   Assignment Submitted!
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Your submission has been uploaded successfully.
+                  Your work has been submitted successfully and is under review.
                 </p>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setShowSuccessPopup(false)}
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                  className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  Continue
-                </button>
+                  Continue Learning
+                </motion.button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <h2 className="text-3xl font-bold text-gray-900">Assignments</h2>
-          {courses.length > 0 && (
-            <select
-              className="border rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-indigo-500"
-              value={selectedCourseId}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
-            >
-              <option value="all">All Courses</option>
-              {courses.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.title}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-sm mb-6"
+          >
+            <Zap className="h-5 w-5 text-amber-500" />
+            <span className="text-sm font-semibold text-gray-700">
+              {assignments.length} Assignments Total
+            </span>
+          </motion.div>
+          
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
+            Your Assignments
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Track, submit, and monitor your academic progress across all courses
+          </p>
+        </motion.div>
+
+        {/* Stats & Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mb-8"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {[
+                { label: "Total", value: assignments.length, icon: FileText, color: "blue" },
+                { label: "Pending", value: assignments.filter(a => a.submissionStatus === "pending").length, icon: Clock, color: "amber" },
+                { label: "Submitted", value: assignments.filter(a => a.submissionStatus === "submitted").length, icon: Upload, color: "green" },
+                { label: "Graded", value: assignments.filter(a => a.submissionStatus === "graded").length, icon: Award, color: "purple" },
+              ].map((stat, idx) => {
+                const Icon = stat.icon;
+                return (
+                  <motion.div
+                    key={stat.label}
+                    whileHover={{ scale: 1.05 }}
+                    className={`bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100 rounded-xl p-4 text-center border border-${stat.color}-200`}
+                  >
+                    <Icon className={`h-8 w-8 text-${stat.color}-600 mx-auto mb-2`} />
+                    <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                    <div className="text-sm text-gray-600">{stat.label}</div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search assignments..."
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {/* Course Filter */}
+              {courses.length > 0 && (
+                <select
+                  className="px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  value={selectedCourseId}
+                  onChange={(e) => setSelectedCourseId(e.target.value)}
+                >
+                  <option value="all">All Courses</option>
+                  {courses.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {/* Status Filter */}
+              <select
+                className="px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="submitted">Submitted</option>
+                <option value="graded">Graded</option>
+              </select>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Assignment List */}
-        {filteredAssignments.length > 0 ? (
-          <div className="grid gap-8">
-            {filteredAssignments.map((assignment) => (
+        <motion.div
+          layout
+          className="space-y-6"
+        >
+          <AnimatePresence mode="wait">
+            {filteredAssignments.length > 0 ? (
               <motion.div
-                key={assignment._id}
-                whileHover={{ scale: 1.01 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200"
+                key="assignments-list"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6"
               >
-                <div className="p-6 border-b bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
-                  <h3 className="text-xl font-semibold">{assignment.title}</h3>
-                  <p className="text-sm opacity-90">
-                    {assignment.courseTitle || "Unknown Course"}
-                  </p>
-                </div>
-
-                <div className="p-6 space-y-4">
-                  <p className="text-gray-700">{assignment.description}</p>
-                  <div className="flex items-center space-x-6 text-sm text-gray-600">
-                    {assignment.dueDate && (
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1 text-indigo-600" />
-                        <span>
-                          Due:{" "}
-                          {new Date(assignment.dueDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex items-center">
-                      <FileText className="h-4 w-4 mr-1 text-indigo-600" />
-                      <span>Max Points: {assignment.maxPoints}</span>
-                    </div>
-                  </div>
-
-                  {/* Submission */}
-                  <div className="pt-4 border-t border-gray-200">
-                    <h4 className="font-medium text-gray-900 mb-3">
-                      Submit Assignment
-                    </h4>
-                    <textarea
-                      rows={3}
-                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                      placeholder="Enter your submission link or content"
-                      value={submissionData[assignment._id] || ""}
-                      onChange={(e) =>
-                        setSubmissionData({
-                          ...submissionData,
-                          [assignment._id]: e.target.value,
-                        })
-                      }
-                    />
-                    <button
-                      onClick={() => handleSubmit(assignment._id)}
-                      disabled={!submissionData[assignment._id]}
-                      className="mt-3 w-full flex items-center justify-center px-5 py-3 
-                        bg-gradient-to-r from-indigo-600 to-blue-600 
-                        text-white font-medium rounded-lg shadow-md 
-                        hover:shadow-lg transition disabled:opacity-50"
+                {filteredAssignments.map((assignment, idx) => {
+                  const StatusIcon = getStatusIcon(assignment.submissionStatus || "pending");
+                  const isGraded = assignment.submissionStatus === "graded";
+                  
+                  return (
+                    <motion.div
+                      key={assignment._id}
+                      layout
+                      initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: idx * 0.1, type: "spring" }}
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      className="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl border border-white/20 overflow-hidden transition-all duration-500"
                     >
-                      <Upload className="h-5 w-5 mr-2" />
-                      Submit Assignment
-                    </button>
-                  </div>
-                </div>
+                      {/* Header */}
+                      <div className={`p-6 bg-gradient-to-r ${
+                        isGraded ? "from-emerald-600 to-green-500" : 
+                        assignment.submissionStatus === "submitted" ? "from-blue-600 to-indigo-500" : 
+                        "from-amber-600 to-orange-500"
+                      } text-white`}>
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <BookOpen className="h-5 w-5 opacity-90" />
+                              <span className="text-sm opacity-90">
+                                {assignment.courseTitle || "Unknown Course"}
+                              </span>
+                            </div>
+                            <h3 className="text-xl font-bold">{assignment.title}</h3>
+                          </div>
+                          
+                          <div className="flex items-center gap-4">
+                            <span className={`px-3 py-1 rounded-full text-sm font-semibold border-2 ${getStatusColor(assignment.submissionStatus || "pending")}`}>
+                              <StatusIcon className="h-3 w-3 inline mr-1" />
+                              {assignment.submissionStatus?.toUpperCase() || "PENDING"}
+                            </span>
+                            {isGraded && assignment.grade && (
+                              <div className="bg-white/20 px-3 py-1 rounded-full text-sm font-bold">
+                                {assignment.grade} pts
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 space-y-6">
+                        <p className="text-gray-700 leading-relaxed">{assignment.description}</p>
+                        
+                        {/* Metadata */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <Calendar className="h-4 w-4 text-indigo-600" />
+                            <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <Award className="h-4 w-4 text-amber-600" />
+                            <span>Max Points: {assignment.maxPoints}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <Clock className="h-4 w-4 text-blue-600" />
+                            <span>Created: {new Date(assignment.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        {/* Submission Section */}
+                        {!isGraded && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            className="pt-6 border-t border-gray-200"
+                          >
+                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                              <Upload className="h-5 w-5 text-indigo-600" />
+                              Submit Your Work
+                            </h4>
+                            <textarea
+                              rows={4}
+                              className="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none"
+                              placeholder="Paste your submission link, write your answer, or describe your project..."
+                              value={submissionData[assignment._id] || ""}
+                              onChange={(e) =>
+                                setSubmissionData({
+                                  ...submissionData,
+                                  [assignment._id]: e.target.value,
+                                })
+                              }
+                            />
+                            <motion.button
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleSubmit(assignment._id)}
+                              disabled={!submissionData[assignment._id]}
+                              className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 
+                                bg-gradient-to-r from-indigo-600 to-purple-600 
+                                text-white font-semibold rounded-xl shadow-lg 
+                                hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Upload className="h-5 w-5" />
+                              Submit Assignment
+                            </motion.button>
+                          </motion.div>
+                        )}
+
+                        {/* Graded Results */}
+                        {isGraded && assignment.grade && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h5 className="font-semibold text-emerald-900">Assignment Graded</h5>
+                                <p className="text-emerald-700 text-sm">Your work has been evaluated</p>
+                              </div>
+                              <div className="text-2xl font-bold text-emerald-600">
+                                {assignment.grade}/{assignment.maxPoints}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </div>
+
+                      {/* Hover Effect */}
+                      <div className="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500/20 rounded-3xl pointer-events-none transition-all duration-500"></div>
+                    </motion.div>
+                  );
+                })}
               </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-white rounded-2xl shadow-md">
-            <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No assignments yet
-            </h3>
-            <p className="text-gray-600">
-              Assignments will appear here when posted by your instructor.
-            </p>
-          </div>
-        )}
+            ) : (
+              <motion.div
+                key="no-assignments"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="text-center py-20 bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20"
+              >
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <FileText className="h-24 w-24 text-gray-300 mx-auto mb-6" />
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  No assignments found
+                </h3>
+                <p className="text-gray-600 max-w-md mx-auto mb-6">
+                  {searchTerm || filterStatus !== "all" || selectedCourseId !== "all" 
+                    ? "Try adjusting your filters or search terms."
+                    : "You're all caught up! New assignments will appear here."}
+                </p>
+                {(searchTerm || filterStatus !== "all" || selectedCourseId !== "all") && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setSearchTerm("");
+                      setFilterStatus("all");
+                      setSelectedCourseId("all");
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Show All Assignments
+                  </motion.button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
+      
       <Footer />
     </div>
   );

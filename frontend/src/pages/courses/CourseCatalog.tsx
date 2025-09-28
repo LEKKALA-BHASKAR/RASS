@@ -1,40 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { courseAPI } from "../../services/api";
-import { BookOpen, Clock, Users, Star, Search } from "lucide-react";
+import { 
+  BookOpen, Clock, Users, Star, Search, Filter, 
+  X, Zap, Bookmark, Eye, Award,
+  PlayCircle, Shield, Globe, Rocket,
+  Phone,
+  BrainCog,
+  TrendingUp
+} from "lucide-react";
 import { Course } from "../../types";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import { FaMobile } from "react-icons/fa";
 
 const CourseCatalog: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ category: "", level: "", search: "" });
+  const [filters, setFilters] = useState({ 
+    category: "", 
+    level: "", 
+    search: "",
+    sortBy: "popular"
+  });
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     fetchCourses();
-  }, [filters]);
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, allCourses]);
 
   const fetchCourses = async () => {
     try {
-      const response = await courseAPI.getAllCourses(); // ✅ no args
-      let allCourses: Course[] = response.data;
-
-      // Apply frontend filters
-      if (filters.search) {
-        allCourses = allCourses.filter((c) =>
-          c.title.toLowerCase().includes(filters.search.toLowerCase())
-        );
-      }
-      if (filters.category) {
-        allCourses = allCourses.filter((c) => c.category === filters.category);
-      }
-      if (filters.level) {
-        allCourses = allCourses.filter((c) => c.level === filters.level);
-      }
-
-      setCourses(allCourses);
+      setLoading(true);
+      const response = await courseAPI.getAllCourses();
+      setAllCourses(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
     } finally {
@@ -42,184 +47,461 @@ const CourseCatalog: React.FC = () => {
     }
   };
 
-  const categories = ["Web Development", "Data Science", "Mobile Development", "DevOps", "AI/ML"];
-  const levels = ["beginner", "intermediate", "advanced"];
+  const applyFilters = () => {
+    let filtered = [...allCourses];
+
+    // Search filter
+    if (filters.search) {
+      filtered = filtered.filter((c) =>
+        c.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+        c.description.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (filters.category) {
+      filtered = filtered.filter((c) => c.category === filters.category);
+    }
+
+    // Level filter
+    if (filters.level) {
+      filtered = filtered.filter((c) => c.level === filters.level);
+    }
+
+    // Sort courses
+    switch (filters.sortBy) {
+      case "rating":
+        filtered.sort((a, b) => b.rating.average - a.rating.average);
+        break;
+      case "duration":
+        filtered.sort((a, b) => b.totalDuration - a.totalDuration);
+        break;
+      case "price-low":
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      default: // popular
+        filtered.sort((a, b) => b.enrollmentCount - a.enrollmentCount);
+    }
+
+    setCourses(filtered);
+  };
+
+  const categories = [
+    { name: "Web Development", icon: Globe, color: "blue" },
+    { name: "Data Science", icon: TrendingUp, color: "green" },
+    { name: "Mobile Development", icon: FaMobile, color: "purple" },
+    { name: "DevOps", icon: Rocket, color: "orange" },
+    { name: "AI/ML", icon: BrainCog, color: "pink" },
+    { name: "Cyber Security", icon: Shield, color: "red" }
+  ];
+
+  const levels = [
+    { name: "beginner", label: "Beginner", color: "emerald" },
+    { name: "intermediate", label: "Intermediate", color: "amber" },
+    { name: "advanced", label: "Advanced", color: "rose" }
+  ];
+
+  const sortOptions = [
+    { value: "popular", label: "Most Popular" },
+    { value: "rating", label: "Highest Rated" },
+    { value: "duration", label: "Longest Duration" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "price-high", label: "Price: High to Low" }
+  ];
+
+  // Mock Smartphone and Brain icons since they're not in Lucide
+  const Smartphone = ({ className }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+    </svg>
+  );
+
+  const Brain = ({ className }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+  );
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center"
+        >
+          <motion.div
+            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+          >
+            <BookOpen className="h-16 w-16 text-indigo-600" />
+            <motion.div
+              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute inset-0 bg-indigo-200 rounded-full blur-xl"
+            ></motion.div>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6 text-lg font-medium text-gray-600"
+          >
+            Discovering amazing courses...
+          </motion.p>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      {/* Hero Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold text-gray-900">
-          Explore Our Courses
-        </h1>
-        <p className="mt-3 text-gray-600">
-          Upskill with industry-aligned programs and real-world projects.
-        </p>
-        <div className="mt-6 max-w-xl mx-auto flex items-center border rounded-full shadow-sm overflow-hidden">
-          <Search className="ml-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search for a course..."
-            className="flex-1 px-4 py-3 focus:outline-none"
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          />
-        </div>
-      </div>
-
-      {/* Filters */}
-<div className="mb-10 text-center">
-  {/* Category Selection */}
-  <h3 className="text-lg font-semibold text-gray-900 mb-3">Choose Category</h3>
-  <div className="flex flex-wrap gap-3 justify-center mb-6">
-    {categories.map((cat) => (
-      <button
-        key={cat}
-        onClick={() =>
-          setFilters({ ...filters, category: cat, level: "" }) // reset level on new category
-        }
-        className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-          filters.category === cat
-            ? "bg-indigo-600 text-white"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-        }`}
-      >
-        {cat}
-      </button>
-    ))}
-    <button
-      onClick={() => setFilters({ category: "", level: "", search: "" })}
-      className="px-4 py-2 rounded-full text-sm bg-red-100 text-red-700 hover:bg-red-200"
-    >
-      Clear
-    </button>
-  </div>
-
-  {/* Level Filter → only show after selecting a category */}
-  {filters.category && (
-    <>
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-        Select Level
-      </h3>
-      <div className="flex flex-wrap gap-3 justify-center">
-        {levels.map((lvl) => (
-          <button
-            key={lvl}
-            onClick={() => setFilters({ ...filters, level: lvl })}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-              filters.level === lvl
-                ? "bg-green-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+      
+      {/* Animated background elements */}
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-r from-blue-400/5 to-purple-400/5 pointer-events-none"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        {/* Hero Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-sm mb-6"
           >
-            {lvl.charAt(0).toUpperCase() + lvl.slice(1)}
-          </button>
-        ))}
-      </div>
-    </>
-  )}
-</div>
+            <Zap className="h-5 w-5 text-amber-500" />
+            <span className="text-sm font-semibold text-gray-700">
+              {allCourses.length}+ Courses Available
+            </span>
+          </motion.div>
+          
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
+            Master New Skills
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Discover courses designed by industry experts to advance your career and unlock new opportunities
+          </p>
+          
+          {/* Search Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 max-w-2xl mx-auto relative"
+          >
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search courses, topics, or instructors..."
+              className="w-full pl-12 pr-6 py-4 bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg"
+              value={filters.search}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            />
+          </motion.div>
+        </motion.div>
 
-      {/* Courses Grid */}
-      {courses.length > 0 ? (
+        {/* Filters & Sort Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <Filter className="h-6 w-6 text-indigo-600" />
+                <h2 className="text-2xl font-bold text-gray-900">Filter Courses</h2>
+                <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
+                  {courses.length} courses
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <select
+                  value={filters.sortBy}
+                  onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                  className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  {sortOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-sm font-medium"
+                >
+                  <Filter className="h-4 w-4" />
+                  Filters
+                </button>
+              </div>
+            </div>
+
+            {/* Category Filters */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Categories</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const isActive = filters.category === category.name;
+                  return (
+                    <motion.button
+                      key={category.name}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setFilters({ ...filters, category: isActive ? "" : category.name, level: "" })}
+                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                        isActive
+                          ? `border-${category.color}-500 bg-${category.color}-50 shadow-lg`
+                          : "border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <Icon className={`h-6 w-6 mb-2 mx-auto ${
+                        isActive ? `text-${category.color}-600` : "text-gray-400"
+                      }`} />
+                      <span className={`text-sm font-medium ${
+                        isActive ? `text-${category.color}-700` : "text-gray-600"
+                      }`}>
+                        {category.name}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Level Filters - Only show when category is selected */}
+            <AnimatePresence>
+              {filters.category && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-6"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Difficulty Level</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {levels.map((level) => {
+                      const isActive = filters.level === level.name;
+                      return (
+                        <motion.button
+                          key={level.name}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setFilters({ ...filters, level: isActive ? "" : level.name })}
+                          className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                            isActive
+                              ? `bg-${level.color}-500 text-white shadow-lg`
+                              : `bg-${level.color}-100 text-${level.color}-700 hover:bg-${level.color}-200`
+                          }`}
+                        >
+                          {level.label}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Active Filters */}
+            {(filters.category || filters.level || filters.search) && (
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <span className="text-sm font-medium text-gray-600">Active filters:</span>
+                <div className="flex flex-wrap gap-2">
+                  {filters.search && (
+                    <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                      Search: "{filters.search}"
+                      <button onClick={() => setFilters({ ...filters, search: "" })}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  {filters.category && (
+                    <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                      {filters.category}
+                      <button onClick={() => setFilters({ ...filters, category: "", level: "" })}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  {filters.level && (
+                    <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">
+                      {filters.level}
+                      <button onClick={() => setFilters({ ...filters, level: "" })}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  <button
+                    onClick={() => setFilters({ category: "", level: "", search: "", sortBy: "popular" })}
+                    className="text-sm text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Clear all
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Courses Grid */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="mb-16"
         >
-          {courses.map((course, idx) => (
-            <motion.div
-              key={course._id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className="bg-white shadow-md rounded-2xl overflow-hidden relative"
-            >
-              {/* Thumbnail */}
-              <div className="aspect-video relative">
-                {course.thumbnail ? (
-                  <img
-                    src={course.thumbnail}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full bg-gray-100">
-                    <BookOpen className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="p-5">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {course.description}
-                </p>
-
-                <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
-                  <span className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    {course.totalDuration}m
-                  </span>
-                  <span className="flex items-center">
-                    <Users className="h-4 w-4 mr-1" />
-                    {course.enrollmentCount}
-                  </span>
-                  <span className="flex items-center">
-                    <Star className="h-4 w-4 mr-1 text-yellow-400" />
-                    {course.rating.average.toFixed(1)}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between mb-4">
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      course.level === "beginner"
-                        ? "bg-green-100 text-green-700"
-                        : course.level === "intermediate"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
+          <AnimatePresence mode="wait">
+            {courses.length > 0 ? (
+              <motion.div
+                key="courses-grid"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {courses.map((course, idx) => (
+                  <motion.div
+                    key={course._id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1, type: "spring" }}
+                    whileHover={{ scale: 1.03, y: -8 }}
+                    className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
                   >
-                    {course.level}
-                  </span>
-                  <span className="font-bold text-indigo-600">₹{course.price}</span>
-                </div>
+                    {/* Course Image/Thumbnail */}
+                    <div className="relative h-48 overflow-hidden">
+                      {course.thumbnail ? (
+                        <img
+                          src={course.thumbnail}
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full bg-gradient-to-br from-indigo-500 to-purple-600">
+                          <BookOpen className="h-16 w-16 text-white opacity-80" />
+                        </div>
+                      )}
+                      
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                      
+                      {/* Level Badge */}
+                      <span className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold text-white ${
+                        course.level === "beginner" ? "bg-emerald-500" :
+                        course.level === "intermediate" ? "bg-amber-500" : "bg-rose-500"
+                      }`}>
+                        {course.level}
+                      </span>
+                      
+                      {/* Enrollment Count */}
+                      <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded-full text-xs font-medium">
+                        👥 {course.enrollmentCount}+ enrolled
+                      </div>
+                    </div>
 
-                {/* Always-visible View Details Button */}
-                <Link
-                  to={`/courses/${course._id}`}
-                  className="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg shadow hover:bg-indigo-700 transition"
+                    {/* Course Content */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 flex-1">
+                          {course.title}
+                        </h3>
+                        <Bookmark className="h-5 w-5 text-gray-400 hover:text-amber-500 cursor-pointer transition-colors" />
+                      </div>
+                      
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {course.description}
+                      </p>
+
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div className="flex items-center gap-4">
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {Math.round(course.totalDuration / 60)}h
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <PlayCircle className="h-4 w-4" />
+                            {course.modules?.length || 12} modules
+                          </span>
+                        </div>
+                        <span className="flex items-center gap-1 font-semibold">
+                          <Star className="h-4 w-4 text-amber-400" />
+                          {course.rating.average.toFixed(1)}
+                        </span>
+                      </div>
+
+                      {/* Instructor & Price */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-xs text-gray-500">
+                          By {course.instructor?.name || "Industry Expert"}
+                        </span>
+                        <span className="text-2xl font-bold text-indigo-600">
+                          ₹{course.price}
+                        </span>
+                      </div>
+
+                      {/* Action Button */}
+                      <Link
+                        to={`/courses/${course._id}`}
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 group-hover:scale-105"
+                      >
+                        <Eye className="h-4 w-4" />
+                        View Course Details
+                      </Link>
+                    </div>
+
+                    {/* Hover Effect */}
+                    <div className="absolute inset-0 border-2 border-transparent group-hover:border-indigo-500/30 rounded-3xl pointer-events-none transition-all duration-500"></div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-courses"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="text-center py-20"
+              >
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
                 >
-                  View Details →
-                </Link>
-              </div>
-            </motion.div>
-          ))}
+                  <Search className="h-24 w-24 text-gray-300 mx-auto mb-6" />
+                </motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  No courses found
+                </h3>
+                <p className="text-gray-600 max-w-md mx-auto mb-6">
+                  We couldn't find any courses matching your criteria. Try adjusting your filters or search terms.
+                </p>
+                <button
+                  onClick={() => setFilters({ category: "", level: "", search: "", sortBy: "popular" })}
+                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Show All Courses
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
-      ) : (
-        <div className="text-center py-16">
-          <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No courses found
-          </h3>
-          <p className="text-gray-600">Try adjusting your filters or search</p>
-        </div>
-      )}
-    </div>
+      </div>
+      
       <Footer />
     </div>
   );
