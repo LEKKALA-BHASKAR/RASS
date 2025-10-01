@@ -1,77 +1,49 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  GraduationCap,
-  Briefcase,
-  Users,
-  Star,
-  BookOpen,
-  DollarSign,
-  Network,
-  CheckCircle,
-} from "lucide-react";
+import { GraduationCap, BookOpen, Briefcase, Users, Star, CheckCircle, Network, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
 const benefits = [
   {
-    icon: BookOpen,
-    title: "Learn Skills Employers Actually Need",
-    desc: "Our programs are created with input from industry leaders, ensuring students gain practical, up-to-date skills.",
-  },
-  {
-    icon: Briefcase,
-    title: "Direct Access to Internships",
-    desc: "Students don’t just finish training—they get connected to companies ready to hire.",
-  },
-  {
-    icon: Star,
-    title: "Customized Learning for Better Career Fit",
-    desc: "We adapt our training to match students’ academic background and career aspirations.",
-  },
-  {
-    icon: DollarSign,
-    title: "Zero-Cost Internship Access",
-    desc: "Financial barriers shouldn’t limit opportunity—students gain access to internships at no cost.",
-  },
-  {
-    icon: Users,
-    title: "Stronger Job Prospects After Graduation",
-    desc: "Graduating with academic + industry experience makes students stand out in job markets.",
-  },
-  {
-    icon: CheckCircle,
-    title: "Work on Real Company Projects",
-    desc: "Students gain confidence by applying skills in real-world projects with measurable impact.",
+    icon: GraduationCap,
+    title: "Enhance Student Employability",
+    desc: "Students graduate not only with a degree but also with certifications, hands-on project experience, and industry-ready skills.",
   },
   {
     icon: Network,
-    title: "Build Long-Term Career Networks",
-    desc: "Students expand professional networks, opening doors to mentorship and jobs.",
+    title: "Strengthen Industry Connections",
+    desc: "Our partnerships with hiring organizations give your students direct access to job opportunities and internships.",
+  },
+  {
+    icon: Star,
+    title: "Boost University Reputation",
+    desc: "By producing graduates who are truly workforce-ready, your institution stands out as a leader in career-focused education.",
+  },
+  {
+    icon: BookOpen,
+    title: "Flexible Integration",
+    desc: "Our programs can be offered as value-added certifications, credit-bearing modules, or extracurricular training alongside your existing curriculum.",
   },
 ];
 
-const onboardingSteps = [
+const partnershipModels = [
   {
-    step: "University Collaboration",
-    desc: "We align our program with your students’ academic and career goals.",
+    title: "Value-Added Certification Programs",
+    desc: "Offer short-term, specialized certifications alongside degree programs to boost employability.",
   },
   {
-    step: "Tailored Training",
-    desc: "Students receive targeted training designed to meet industry standards.",
+    title: "Integrated Curriculum Support",
+    desc: "Embed our training modules into your academic curriculum as credit courses.",
   },
   {
-    step: "Skill Assessments",
-    desc: "We evaluate progress to ensure every student meets required competencies.",
+    title: "Career-Ready Bootcamps",
+    desc: "Intensive, project-driven programs to prepare final-year students for immediate employment.",
   },
   {
-    step: "Internship Matching",
-    desc: "Students are placed with pre-vetted companies for meaningful internships.",
-  },
-  {
-    step: "Career Advancement Support",
-    desc: "From resumes to interviews, we help students transition into full-time roles.",
+    title: "Industry Engagement",
+    desc: "Collaborative workshops, guest lectures, and hackathons to expose students to real-world business challenges.",
   },
 ];
 
@@ -79,105 +51,147 @@ const UniversitiesPage: React.FC = () => {
   return (
     <div>
       <Navbar />
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
-        <div className="max-w-6xl mx-auto px-6 lg:px-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <GraduationCap className="h-16 w-16 mx-auto mb-6 text-yellow-300" />
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              Empowering Students Through Real-World Skills & Career
-              Opportunities
-            </h1>
-            <p className="max-w-3xl mx-auto text-lg text-indigo-100 mb-8">
-              We help universities transform academic learning into career
-              success by giving students the chance to gain industry-ready
-              skills, real project experience, and direct internship
-              opportunities. Partnering with us means your students graduate
-              with more than a degree—they graduate with a competitive edge.
+      <div className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <GraduationCap className="h-16 w-16 mx-auto mb-6 text-yellow-300" />
+              <h1 className="text-4xl lg:text-5xl font-bold mb-6">
+                Empower Students. Elevate Careers.
+              </h1>
+              <p className="max-w-3xl mx-auto text-lg text-indigo-100 mb-8">
+                Imagine your graduates stepping into the workforce with confidence, certifications, and real-world skills from day one. With RAAS Academy, your university can transform education into meaningful career outcomes.
+              </p>
+              <Link
+                to="/contact"
+                className="inline-block px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
+              >
+                Start a Partnership
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Bridging the Gap Section */}
+        <section className="bg-white py-16">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Bridging the Gap Between Classroom Learning and Industry Readiness
+              </h2>
+              <p className="max-w-4xl mx-auto text-lg text-gray-600">
+                At RAAS Academy, we partner with universities to equip students with the practical skills, certifications, and real-world experiences they need to thrive in today's competitive job market. Our collaboration enhances your academic programs, strengthens student employability, and builds stronger industry connections—without adding extra burden to your faculty or curriculum.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Benefits */}
+        <section className="max-w-6xl mx-auto px-6 lg:px-12 py-16">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            Why Universities Partner with RAAS Academy
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((b, idx) => {
+              const Icon = b.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -6 }}
+                  className="bg-white rounded-xl p-6 shadow border hover:shadow-md transition"
+                >
+                  <Icon className="h-8 w-8 text-indigo-600 mb-4" />
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {b.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-2">{b.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Partnership Models */}
+        <section className="bg-indigo-50 py-16">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+              Partnership Models for Universities
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {partnershipModels.map((m, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white p-8 rounded-lg shadow-sm border"
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="bg-indigo-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                      <span className="font-bold text-indigo-600">{idx + 1}</span>
+                    </div>
+                    <h3 className="font-semibold text-xl text-gray-900">
+                      {m.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-700">{m.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Success Stories */}
+        <section className="bg-white py-16">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+            <div className="text-center mb-12">
+              <Award className="h-12 w-12 mx-auto text-indigo-600 mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                Transforming Education Into Career Success
+              </h2>
+              <p className="max-w-3xl mx-auto text-lg text-gray-600">
+                By partnering with RAAS Academy, universities ensure their students are not just educated—but employable, certified, and industry-ready from day one. Our mission is to complement your academic excellence with practical career pathways that benefit both students and the institution.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 text-center">
+          <div className="max-w-3xl mx-auto px-6">
+            <h2 className="text-3xl font-bold mb-6">
+              Together, We Create Future-Ready Graduates.
+            </h2>
+            <p className="text-lg text-indigo-100 mb-8">
+              Join leading universities that are revolutionizing how they prepare students for successful careers.
             </p>
             <Link
               to="/contact"
               className="inline-block px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
             >
-              Schedule a Call
+              Start a Partnership
             </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="max-w-6xl mx-auto px-6 lg:px-12 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-          Why This Partnership Benefits Your Students
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((b, idx) => {
-            const Icon = b.icon;
-            return (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -6 }}
-                className="bg-white rounded-xl p-6 shadow border hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <Icon className="h-8 w-8 text-indigo-600" />
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {b.title}
-                  </h3>
-                </div>
-                <p className="text-gray-600 text-sm">{b.desc}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Onboarding Steps */}
-      <section className="bg-white py-16 border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 lg:px-12">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            How We Onboard Your Students
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {onboardingSteps.map((s, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.02 }}
-                className="bg-indigo-50 p-6 rounded-lg shadow-sm border text-center"
-              >
-                <div className="text-indigo-600 text-3xl font-bold mb-3">
-                  {idx + 1}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{s.step}</h3>
-                <p className="text-sm text-gray-600">{s.desc}</p>
-              </motion.div>
-            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-3xl font-bold mb-6">
-            Partner with us to give your students the confidence, skills, and
-            experience to succeed from day one.
-          </h2>
-          <Link
-            to="/contact"
-            className="inline-block px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
-          >
-            Schedule a Call
-          </Link>
-        </div>
-      </section>
-    </div>
-    <Footer />
+        </section>
+      </div>
+      <Footer />
     </div>
   );
 };
