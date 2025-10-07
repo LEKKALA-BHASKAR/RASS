@@ -1,196 +1,255 @@
-import React from "react";
+// src/pages/UniversitiesPage.tsx
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, BookOpen, Briefcase, Users, Star, CheckCircle, Network, Award } from "lucide-react";
-import { Link } from "react-router-dom";
+import { GraduationCap, CheckCircle, BookOpen, Network, Star, Briefcase, Users, Award, ArrowRight } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
+import { Link } from "react-router-dom";
 
-const benefits = [
-  {
-    icon: GraduationCap,
-    title: "Enhance Student Employability",
-    desc: "Students graduate not only with a degree but also with certifications, hands-on project experience, and industry-ready skills.",
-  },
-  {
-    icon: Network,
-    title: "Strengthen Industry Connections",
-    desc: "Our partnerships with hiring organizations give your students direct access to job opportunities and internships.",
-  },
-  {
-    icon: Star,
-    title: "Boost University Reputation",
-    desc: "By producing graduates who are truly workforce-ready, your institution stands out as a leader in career-focused education.",
-  },
-  {
-    icon: BookOpen,
-    title: "Flexible Integration",
-    desc: "Our programs can be offered as value-added certifications, credit-bearing modules, or extracurricular training alongside your existing curriculum.",
-  },
-];
-
-const partnershipModels = [
-  {
-    title: "Value-Added Certification Programs",
-    desc: "Offer short-term, specialized certifications alongside degree programs to boost employability.",
-  },
-  {
-    title: "Integrated Curriculum Support",
-    desc: "Embed our training modules into your academic curriculum as credit courses.",
-  },
-  {
-    title: "Career-Ready Bootcamps",
-    desc: "Intensive, project-driven programs to prepare final-year students for immediate employment.",
-  },
-  {
-    title: "Industry Engagement",
-    desc: "Collaborative workshops, guest lectures, and hackathons to expose students to real-world business challenges.",
-  },
+const heroImages = [
+  "/images/universities/university-cta-bg.jpg",
+  "/images/universities/hero-university-campus.jpg",
+  "/images/universities/hero-classroom.jpg",
+  "/images/universities/hero-graduation.jpg",
+  "/images/universities/bridge-learning.jpg",
+  "/images/universities/university-benefits.jpg",
+  "/images/universities/partnership-models.jpg",
+  "/images/universities/success-stories.jpg",
 ];
 
 const UniversitiesPage: React.FC = () => {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  // Auto-rotate hero images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div>
+    <div className="bg-gray-50">
       <Navbar />
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <GraduationCap className="h-16 w-16 mx-auto mb-6 text-yellow-300" />
-              <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-                Empower Students. Elevate Careers.
-              </h1>
-              <p className="max-w-3xl mx-auto text-lg text-indigo-100 mb-8">
-                Imagine your graduates stepping into the workforce with confidence, certifications, and real-world skills from day one. With RAAS Academy, your university can transform education into meaningful career outcomes.
-              </p>
-              <Link
-                to="/contact"
-                className="inline-block px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
-              >
-                Start a Partnership
-              </Link>
-            </motion.div>
-          </div>
-        </section>
 
-        {/* Bridging the Gap Section */}
-        <section className="bg-white py-16">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12">
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Bridging the Gap Between Classroom Learning and Industry Readiness
-              </h2>
-              <p className="max-w-4xl mx-auto text-lg text-gray-600">
-                At RAAS Academy, we partner with universities to equip students with the practical skills, certifications, and real-world experiences they need to thrive in today's competitive job market. Our collaboration enhances your academic programs, strengthens student employability, and builds stronger industry connections—without adding extra burden to your faculty or curriculum.
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Benefits */}
-        <section className="max-w-6xl mx-auto px-6 lg:px-12 py-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Why Universities Partner with RAAS Academy
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((b, idx) => {
-              const Icon = b.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -6 }}
-                  className="bg-white rounded-xl p-6 shadow border hover:shadow-md transition"
-                >
-                  <Icon className="h-8 w-8 text-indigo-600 mb-4" />
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {b.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-2">{b.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Partnership Models */}
-        <section className="bg-indigo-50 py-16">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12">
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-              Partnership Models for Universities
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {partnershipModels.map((m, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ scale: 1.02 }}
-                  className="bg-white p-8 rounded-lg shadow-sm border"
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="bg-indigo-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                      <span className="font-bold text-indigo-600">{idx + 1}</span>
-                    </div>
-                    <h3 className="font-semibold text-xl text-gray-900">
-                      {m.title}
-                    </h3>
-                  </div>
-                  <p className="text-gray-700">{m.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Success Stories */}
-        <section className="bg-white py-16">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12">
-            <div className="text-center mb-12">
-              <Award className="h-12 w-12 mx-auto text-indigo-600 mb-4" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Transforming Education Into Career Success
-              </h2>
-              <p className="max-w-3xl mx-auto text-lg text-gray-600">
-                By partnering with RAAS Academy, universities ensure their students are not just educated—but employable, certified, and industry-ready from day one. Our mission is to complement your academic excellence with practical career pathways that benefit both students and the institution.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 text-center">
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl font-bold mb-6">
-              Together, We Create Future-Ready Graduates.
-            </h2>
+      {/* Hero Section */}
+      <section className="relative py-20 bg-gradient-to-r from-indigo-700 to-purple-700 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center px-6 gap-10">
+          {/* Text */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="md:w-1/2"
+          >
+            <GraduationCap className="h-14 w-14 text-yellow-400 mb-6" />
+            <h1 className="text-5xl font-bold mb-6 leading-tight">
+              Empower Universities. <br /> Transform Students into Professionals.
+            </h1>
             <p className="text-lg text-indigo-100 mb-8">
-              Join leading universities that are revolutionizing how they prepare students for successful careers.
+              RASS Academy partners with institutions to bridge the gap between education and employability, preparing students with real-world skills and certifications.
             </p>
             <Link
               to="/contact"
-              className="inline-block px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
             >
-              Start a Partnership
+              Start a Partnership <ArrowRight className="h-5 w-5" />
+            </Link>
+          </motion.div>
+
+          {/* Image Player */}
+          <motion.div
+            key={currentImage}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="md:w-1/2 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20"
+          >
+            <img
+              src={heroImages[currentImage]}
+              alt="University partnership"
+              className="w-full h-[420px] object-cover"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Bridging the Gap Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src="/images/universities/bridge-learning.jpg"
+              alt="Bridge Learning"
+              className="rounded-2xl shadow-xl border"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Bridging the Gap Between Classroom and Career
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Our university partnerships help students apply academic knowledge to real-world challenges through certifications, projects, and placement-oriented training—without adding burden to faculty or existing syllabi.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Why Universities Partner with RASS Academy
+            </h2>
+            <ul className="space-y-4 text-gray-700">
+              {[
+                "Enhance student employability through industry certifications.",
+                "Provide project-driven, hands-on experience.",
+                "Boost university reputation with career-ready graduates.",
+                "Strengthen your link with hiring organizations.",
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 mt-1" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src="/images/universities/university-benefits.jpg"
+              alt="University Benefits"
+              className="rounded-2xl shadow-xl border"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Partnership Models Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src="/images/universities/partnership-models.jpg"
+              alt="Partnership Models"
+              className="rounded-2xl shadow-xl border"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Flexible Partnership Models for Universities
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Choose the engagement model that aligns best with your institutional goals.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                "Value-Added Certification Programs",
+                "Integrated Curriculum Support",
+                "Career-Ready Bootcamps",
+                "Industry Engagement Workshops",
+              ].map((model, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 border rounded-xl shadow-sm hover:shadow-md transition bg-gray-50"
+                >
+                  <h3 className="font-semibold text-gray-900 mb-1">{model}</h3>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Success Stories */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Transforming Education into Career Success
+            </h2>
+            <p className="text-gray-700 mb-6">
+              Partnering universities have seen measurable improvements in graduate employability, placement outcomes, and industry collaboration.
+            </p>
+            <div className="bg-white p-6 rounded-xl shadow-md border">
+              <p className="italic text-gray-700">
+                “Our collaboration with RASS Academy has given our students a real competitive edge.
+                Their certification programs and mentorship transformed our placement outcomes.”
+              </p>
+              <p className="mt-3 font-semibold text-indigo-700">— Dean, Global Tech University</p>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src="/images/universities/success-stories.jpg"
+              alt="Success Stories"
+              className="rounded-2xl shadow-xl border"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section
+        className="relative py-20 text-white bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/universities/university-cta-bg.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="relative z-10 text-center max-w-3xl mx-auto px-6">
+          <h2 className="text-4xl font-bold mb-6">Let’s Build Future-Ready Graduates Together</h2>
+          <p className="text-lg text-gray-200 mb-8">
+            Join the network of universities shaping the next generation of skilled professionals through RASS Academy’s industry-aligned programs.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/contact"
+              className="px-8 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition"
+            >
+              Start Partnership
+            </Link>
+            <Link
+              to="/about"
+              className="px-8 py-3 border-2 border-white rounded-lg hover:bg-white/10 transition"
+            >
+              Learn More
             </Link>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

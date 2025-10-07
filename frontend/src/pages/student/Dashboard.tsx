@@ -18,7 +18,6 @@ import {
   MessageSquare,
   Video,
   FileText,
-  ChevronDown,
   ChevronUp,
   Sparkles,
   TrendingUp,
@@ -54,7 +53,8 @@ const StudentDashboard: React.FC = () => {
 
       const assignmentsAll: Assignment[] = [];
       for (const e of enrollmentsRes.data) {
-        const courseId = typeof e.course === "string" ? e.course : e.course._id;
+        const courseId =
+          typeof e.course === "string" ? e.course : e.course._id;
         const res = await assignmentAPI.getCourseAssignments(courseId);
         assignmentsAll.push(...res.data);
       }
@@ -95,8 +95,6 @@ const StudentDashboard: React.FC = () => {
       total + e.progress.reduce((sum, p) => sum + (p.watchTime || 0), 0),
     0
   );
-
-  // Calculate achievement score based on progress
   const achievementScore = Math.round(
     (completedCourses.length / Math.max(enrollments.length, 1)) * 100
   );
@@ -104,12 +102,12 @@ const StudentDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
-      
-      {/* Animated background elements */}
+
+      {/* Background gradient */}
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-r from-blue-400/5 to-indigo-400/5 pointer-events-none"></div>
-      
+
       <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header Section */}
+        {/* Header */}
         <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,15 +120,15 @@ const StudentDashboard: React.FC = () => {
               Welcome back, {user?.name}!
             </span>
           </div>
-          
+
           <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
             Your Learning Dashboard
           </h1>
-          
+
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Continue your journey towards mastery. You're doing amazing!
           </p>
-          
+
           <div className="flex items-center justify-center gap-4 mt-6 text-gray-500">
             <Calendar className="h-5 w-5" />
             <span className="font-medium">
@@ -144,7 +142,7 @@ const StudentDashboard: React.FC = () => {
           </div>
         </motion.header>
 
-        {/* Quick Actions Grid */}
+        {/* Quick Access */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -155,21 +153,17 @@ const StudentDashboard: React.FC = () => {
             <Zap className="h-6 w-6 text-amber-500" />
             <h2 className="text-2xl font-bold text-gray-900">Quick Access</h2>
           </div>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {[
-              { name: "Courses", icon: BookOpen, path: "/courses", type: null, color: "blue" },
-              { name: "Profile", icon: Users, path: "/profile", type: null, color: "emerald" },
-              { name: "Assignments", icon: FileText, path: "/student/assignments", type: "assignment", color: "orange" },
-              { name: "Support", icon: MessageSquare, path: "/support-tickets", type: "support", color: "red" },
-              { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", type: "discussion", color: "purple" },
-              { name: "Chat", icon: MessageSquare, path: "/student/chat", type: "chat", color: "green" },
-              { name: "Live Sessions", icon: Video, path: "/student/live-sessions", type: "live-session", color: "pink" },
+              { name: "Courses", icon: BookOpen, path: "/courses", color: "blue" },
+              { name: "Profile", icon: Users, path: "/profile", color: "emerald" },
+              { name: "Assignments", icon: FileText, path: "/student/assignments", color: "orange" },
+              { name: "Support", icon: MessageSquare, path: "/support-tickets", color: "red" },
+              { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", color: "purple" },
+              { name: "Chat", icon: MessageSquare, path: "/student/chat", color: "green" },
+              { name: "Live Sessions", icon: Video, path: "/student/live-sessions", color: "pink" },
             ].map((item, idx) => {
               const Icon = item.icon;
-              const unreadCount = item.type
-                ? notifications.filter((n) => !n.read && n.type === item.type).length
-                : 0;
               const colorClasses = {
                 blue: "from-blue-500 to-blue-600",
                 emerald: "from-emerald-500 to-emerald-600",
@@ -179,7 +173,6 @@ const StudentDashboard: React.FC = () => {
                 green: "from-green-500 to-green-600",
                 pink: "from-pink-500 to-pink-600",
               }[item.color];
-
               return (
                 <motion.div
                   key={idx}
@@ -188,30 +181,111 @@ const StudentDashboard: React.FC = () => {
                 >
                   <Link
                     to={item.path}
-                    className={`relative block p-4 bg-gradient-to-br ${colorClasses} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group`}
+                    className={`block p-4 bg-gradient-to-br ${colorClasses} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center`}
                   >
-                    <div className="flex flex-col items-center text-center">
-                      <Icon className="h-6 w-6 mb-2 group-hover:scale-110 transition-transform" />
-                      <span className="text-xs font-semibold">{item.name}</span>
-                    </div>
-                    
-                    {/* Unread Notification Badge */}
-                    {unreadCount > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-2 -right-2 bg-white text-red-600 text-xs font-bold h-6 w-6 flex items-center justify-center rounded-full shadow-lg border-2 border-current"
-                      >
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </motion.span>
-                    )}
-                    
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <Icon className="h-6 w-6 mb-2 mx-auto" />
+                    <span className="text-xs font-semibold">{item.name}</span>
                   </Link>
                 </motion.div>
               );
             })}
+          </div>
+        </motion.section>
+
+        {/* ✅ My Enrolled Courses Section (NEW) */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <BookOpen className="h-6 w-6 text-indigo-600" />
+                <h2 className="text-2xl font-bold text-gray-900">
+                  My Enrolled Courses
+                </h2>
+              </div>
+              <Link
+                to="/courses"
+                className="group flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-semibold transition-colors"
+              >
+                View All
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {enrollments.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {enrollments.map((e, index) => {
+                  const course =
+                    typeof e.course === "string" ? { _id: e.course } : e.course;
+                  return (
+                    <motion.div
+                      key={e._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ scale: 1.03, y: -3 }}
+                      className="group bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300"
+                    >
+                      <div className="flex flex-col justify-between h-full">
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-2">
+                            {(course as any).title}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-4">
+                            by {(course as any).instructor?.name}
+                          </p>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600">Progress</span>
+                              <span className="font-semibold text-indigo-600">
+                                {e.completionPercentage || 0}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{
+                                  width: `${e.completionPercentage || 0}%`,
+                                }}
+                                transition={{ duration: 1 }}
+                                className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
+                              ></motion.div>
+                            </div>
+                          </div>
+                        </div>
+                        <Link
+                          to={`/learn/${course._id}`}
+                          className="mt-4 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-center"
+                        >
+                          Continue
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                  No enrolled courses yet
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  Enroll in a course to start your learning journey!
+                </p>
+                <Link
+                  to="/courses"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Browse Courses
+                </Link>
+              </div>
+            )}
           </div>
         </motion.section>
 

@@ -7,7 +7,6 @@ import {
   User,
   Clock,
   MessageSquare,
-  ChevronDown,
 } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
@@ -28,18 +27,19 @@ interface Mentor {
   courseTitle: string;
 }
 
-const Chat: React.FC = () => {
+interface ChatProps {
+  courseId?: string;   // optional - filters to specific course
+  embedded?: boolean;  // hide navbar/footer if true
+}
+
+const Chat: React.FC<ChatProps> = ({ courseId, embedded = false }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
-
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
-  const [courseChats, setCourseChats] = useState<Record<string, ChatMessage[]>>(
-    {}
-  );
-
+  const [courseChats, setCourseChats] = useState<Record<string, ChatMessage[]>>({});
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -67,15 +67,22 @@ const Chat: React.FC = () => {
 
       const chatMap: Record<string, ChatMessage[]> = {};
       allChats.forEach((c: any) => {
-        const courseId = c.course._id;
-        if (!chatMap[courseId]) chatMap[courseId] = [];
-        chatMap[courseId].push(...c.messages);
+        const cid = c.course._id;
+        if (!chatMap[cid]) chatMap[cid] = [];
+        chatMap[cid].push(...c.messages);
       });
 
-      if (mentorsData.length > 0) {
+      // If courseId is provided (embedded mode)
+      if (courseId) {
+        const mentor = mentorsData.find((m) => m.courseId === courseId) || null;
+        setSelectedMentor(mentor);
+        setMessages(chatMap[courseId] || []);
+      } else if (mentorsData.length > 0) {
+        // Normal standalone mode
         setSelectedMentor(mentorsData[0]);
         setMessages(chatMap[mentorsData[0].courseId] || []);
       }
+
       setCourseChats(chatMap);
     } catch (error) {
       console.error("Error fetching mentors/chats:", error);
@@ -84,10 +91,10 @@ const Chat: React.FC = () => {
     }
   };
 
-  const handleSelectMentor = (courseId: string) => {
-    const mentor = mentors.find((m) => m.courseId === courseId) || null;
+  const handleSelectMentor = (cid: string) => {
+    const mentor = mentors.find((m) => m.courseId === cid) || null;
     setSelectedMentor(mentor);
-    setMessages(courseChats[courseId] || []);
+    setMessages(courseChats[cid] || []);
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -95,10 +102,7 @@ const Chat: React.FC = () => {
     if (!newMessage.trim() || !selectedMentor) return;
 
     try {
-      const res = await chatAPI.sendMessageToCourse(
-        selectedMentor.courseId,
-        newMessage
-      );
+      const res = await chatAPI.sendMessageToCourse(selectedMentor.courseId, newMessage);
       const updatedMessages = res.data.messages;
 
       setMessages(updatedMessages);
@@ -154,30 +158,31 @@ const Chat: React.FC = () => {
   }
 
   return (
-    <div>
-      <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
+    <div className={`${embedded ? "" : "min-h-screen"}`}>
+      {!embedded && <Navbar />}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden h-[85vh] flex flex-col">
-          {/* Header with mentor selector */}
-            <div className="flex-none p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-700 text-white flex items-center justify-between">
-              <div>
-                <h1 className="text-xl font-bold">
-                  Chat with {selectedMentor?.name}
-                </h1>
-                <p className="text-blue-100 text-sm flex items-center">
-                  <Clock className="h-3 w-3 mr-1" />
-                  {messages.length > 0
-                    ? `Last message: ${new Date(
-                        messages[messages.length - 1].timestamp ||
-                          messages[messages.length - 1].createdAt
-                      ).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`
-                    : "No messages yet"}
-                </p>
-              </div>
+          {/* Header */}
+          <div className="flex-none p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-700 text-white flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold">
+                Chat with {selectedMentor?.name}
+              </h1>
+              <p className="text-blue-100 text-sm flex items-center">
+                <Clock className="h-3 w-3 mr-1" />
+                {messages.length > 0
+                  ? `Last message: ${new Date(
+                      messages[messages.length - 1].timestamp ||
+                        messages[messages.length - 1].createdAt
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}`
+                  : "No messages yet"}
+              </p>
+            </div>
 
+            {!courseId && (
               <div className="flex items-center space-x-2">
                 <label
                   htmlFor="mentorSelect"
@@ -198,8 +203,8 @@ const Chat: React.FC = () => {
                   ))}
                 </select>
               </div>
-            </div>
-
+            )}
+          </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-5 bg-gray-50">
@@ -213,7 +218,9 @@ const Chat: React.FC = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className={`flex ${isStudent ? "justify-end" : "justify-start"}`}
+                      className={`flex ${
+                        isStudent ? "justify-end" : "justify-start"
+                      }`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md p-4 rounded-2xl shadow-sm ${
@@ -231,10 +238,12 @@ const Chat: React.FC = () => {
                           <span>{msg.sender.name}</span>
                           <span className="mx-1">•</span>
                           <span>
-                            {new Date(msg.timestamp || msg.createdAt).toLocaleTimeString(
-                              [],
-                              { hour: "2-digit", minute: "2-digit" }
-                            )}
+                            {new Date(
+                              msg.timestamp || msg.createdAt
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </span>
                         </div>
                       </div>
@@ -258,7 +267,6 @@ const Chat: React.FC = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
-
 
           {/* Input */}
           <form
@@ -286,7 +294,7 @@ const Chat: React.FC = () => {
           </form>
         </div>
       </div>
-      <Footer />
+      {!embedded && <Footer />}
     </div>
   );
 };

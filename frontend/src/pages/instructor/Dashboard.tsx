@@ -20,6 +20,7 @@ import {
   Calendar,
   Clock,
   LifeBuoy,
+  FolderOpen,
 } from "lucide-react";
 import { Course, Assignment, LiveSession, SupportTicket } from "../../types";
 import { motion } from "framer-motion";
@@ -96,7 +97,8 @@ const InstructorDashboard: React.FC = () => {
               courseId: course._id,
               courseTitle: course.title,
               studentId: student._id,
-              studentName: (student as any).name || (student as any).email || "Student",
+              studentName:
+                (student as any).name || (student as any).email || "Student",
               content: s.content,
               submittedAt: s.submittedAt || new Date().toISOString(),
             });
@@ -120,11 +122,12 @@ const InstructorDashboard: React.FC = () => {
         }
       }
       sessionsFlat.sort(
-        (a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+        (a, b) =>
+          new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
       );
       setUpcomingSessions(sessionsFlat.slice(0, 5));
 
-      // Chats
+      // Chats (limit 3)
       const chatRes = await chatAPI.getMentorChats();
       const flatChats = chatRes.data
         .flatMap((c: any) =>
@@ -134,13 +137,16 @@ const InstructorDashboard: React.FC = () => {
             course: c.course || {},
           }))
         )
-        .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      setRecentChats(flatChats.slice(0, 5));
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+      setRecentChats(flatChats.slice(0, 3));
 
-      // Discussions
+      // Discussions (limit 3)
       if (coursesData.length > 0) {
         const forumRes = await forumAPI.getCourseForums(coursesData[0]._id);
-        setRecentDiscussions(forumRes.data.slice(0, 5));
+        setRecentDiscussions(forumRes.data.slice(0, 3));
       }
     } catch (err) {
       console.error("Error loading dashboard:", err);
@@ -151,9 +157,10 @@ const InstructorDashboard: React.FC = () => {
 
   const loadTickets = async () => {
     try {
-      const res = await supportTicketAPI.getAllTickets(); // or instructor-specific tickets
+      const res = await supportTicketAPI.getAllTickets();
       const sorted = (res.data || []).sort(
-        (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setRecentTickets(sorted.slice(0, 3));
     } catch (err) {
@@ -169,7 +176,10 @@ const InstructorDashboard: React.FC = () => {
     );
   }
 
-  const totalStudents = courses.reduce((t, c) => t + (c.enrollmentCount || 0), 0);
+  const totalStudents = courses.reduce(
+    (t, c) => t + (c.enrollmentCount || 0),
+    0
+  );
   const publishedCourses = courses.filter((c) => c.isPublished).length;
   const avgRating =
     courses.reduce((total, c) => total + (c.rating?.average || 0), 0) /
@@ -187,8 +197,12 @@ const InstructorDashboard: React.FC = () => {
           className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-6 rounded-2xl shadow-md"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Instructor Dashboard</h1>
-            <p className="text-gray-600 mt-1">Manage your courses, students & sessions</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Instructor Dashboard
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Manage your courses, students & sessions
+            </p>
           </div>
           <div className="flex gap-3 mt-4 sm:mt-0">
             <button
@@ -209,10 +223,26 @@ const InstructorDashboard: React.FC = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { icon: <BookOpen className="h-6 w-6 text-blue-600" />, label: "Courses", value: courses.length },
-            { icon: <Users className="h-6 w-6 text-green-600" />, label: "Students", value: totalStudents },
-            { icon: <Eye className="h-6 w-6 text-amber-600" />, label: "Published", value: publishedCourses },
-            { icon: <TrendingUp className="h-6 w-6 text-indigo-600" />, label: "Avg Rating", value: avgRating.toFixed(1) },
+            {
+              icon: <BookOpen className="h-6 w-6 text-blue-600" />,
+              label: "Courses",
+              value: courses.length,
+            },
+            {
+              icon: <Users className="h-6 w-6 text-green-600" />,
+              label: "Students",
+              value: totalStudents,
+            },
+            {
+              icon: <Eye className="h-6 w-6 text-amber-600" />,
+              label: "Published",
+              value: publishedCourses,
+            },
+            {
+              icon: <TrendingUp className="h-6 w-6 text-indigo-600" />,
+              label: "Avg Rating",
+              value: avgRating.toFixed(1),
+            },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -228,99 +258,60 @@ const InstructorDashboard: React.FC = () => {
           ))}
         </div>
 
-        {/* Main Content: Submissions + Sessions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Submissions */}
-          <motion.div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
-            <div className="flex justify-between mb-4">
-              <h3 className="text-lg font-semibold">📑 Recent Submissions</h3>
-              <Link to="/instructor/courses?tab=assignments" className="text-sm text-indigo-600 hover:underline">
-                View All
-              </Link>
-            </div>
-            {recentSubmissions.length === 0 ? (
-              <p className="text-gray-500 text-center py-10">No submissions yet.</p>
-            ) : (
-              <ul className="space-y-3">
-                {recentSubmissions.map((s, i) => (
-                  <motion.li
-                    key={s._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 flex justify-between"
+        {/* Assigned Courses */}
+        <motion.div className="bg-white rounded-2xl shadow-md p-6">
+          <div className="flex justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center">
+              <FolderOpen className="h-5 w-5 mr-2 text-purple-600" /> Assigned
+              Courses
+            </h3>
+            <Link
+              to="/instructor/courses"
+              className="text-sm text-indigo-600 hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+          {courses.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">
+              You don't have any assigned courses yet.
+            </p>
+          ) : (
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {courses.map((c) => (
+                <li
+                  key={c._id}
+                  className="p-4 border rounded-xl bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <p className="font-medium text-gray-900 truncate">{c.title}</p>
+                  <p className="text-sm text-gray-500">
+                    {c.enrollmentCount || 0} students
+                  </p>
+                  <button
+                    onClick={() => navigate("/instructor/courses")}
+                    className="mt-3 w-full bg-indigo-600 text-white rounded-lg py-1.5 text-sm hover:bg-indigo-700"
                   >
-                    <div>
-                      <p className="text-sm text-gray-600">
-                        {s.courseTitle} • {s.assignmentTitle}
-                      </p>
-                      <p className="font-medium">{s.studentName}</p>
-                      <p className="text-xs text-gray-500 truncate">{s.content || "— no submission —"}</p>
-                    </div>
-                    <button
-                      onClick={() => navigate(`/instructor/courses?course=${s.courseId}&tab=assignments`)}
-                      className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700"
-                    >
-                      Grade
-                    </button>
-                  </motion.li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
+                    Manage
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </motion.div>
 
-          {/* Sessions */}
-          <motion.div className="bg-white rounded-2xl shadow-md p-6">
-            <div className="flex justify-between mb-4">
-              <h3 className="text-lg font-semibold">📅 Upcoming Sessions</h3>
-              <Link to="/instructor/courses?tab=sessions" className="text-sm text-indigo-600 hover:underline">
-                Manage
-              </Link>
-            </div>
-            {upcomingSessions.length === 0 ? (
-              <p className="text-gray-500 text-center py-8"> Manage Scheduled Live Sessions Here.</p>
-            ) : (
-              <ul className="space-y-3">
-                {upcomingSessions.map((s, i) => (
-                  <motion.li
-                    key={s._id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 flex justify-between"
-                  >
-                    <div>
-                      <p className="text-sm text-gray-600">{(s as any).courseTitle}</p>
-                      <p className="font-medium">{s.title}</p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(s.scheduledAt).toLocaleDateString()}{" "}
-                        <Clock className="h-3 w-3 ml-2" />
-                        {new Date(s.scheduledAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => window.open(s.meetingLink || "#", "_blank")}
-                      className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
-                    >
-                      Join
-                    </button>
-                  </motion.li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Bottom Grid: Chats + Discussions + Tickets + Students */}
+        {/* Bottom Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Chats */}
           <motion.div className="bg-white rounded-2xl shadow-md p-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center">
-                <MessageSquare className="h-5 w-5 mr-2 text-blue-600" /> Recent Chats
+                <MessageSquare className="h-5 w-5 mr-2 text-blue-600" /> Recent
+                Chats
               </h3>
-              <Link to="/instructor/chats" className="text-sm text-indigo-600 hover:underline">
+              <Link
+                to="/instructor/chats"
+                className="text-sm text-indigo-600 hover:underline"
+              >
                 Open
               </Link>
             </div>
@@ -336,8 +327,12 @@ const InstructorDashboard: React.FC = () => {
                     transition={{ delay: i * 0.05 }}
                     className="p-3 border rounded-lg bg-gray-50 hover:bg-gray-100"
                   >
-                    <p className="text-sm font-medium">{c.student?.name || "Student"}</p>
-                    <p className="text-xs text-gray-600 truncate">{c.content}</p>
+                    <p className="text-sm font-medium">
+                      {c.student?.name || "Student"}
+                    </p>
+                    <p className="text-xs text-gray-600 truncate">
+                      {c.content}
+                    </p>
                   </motion.li>
                 ))}
               </ul>
@@ -348,14 +343,20 @@ const InstructorDashboard: React.FC = () => {
           <motion.div className="bg-white rounded-2xl shadow-md p-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center">
-                <MessagesSquare className="h-5 w-5 mr-2 text-green-600" /> Discussions
+                <MessagesSquare className="h-5 w-5 mr-2 text-green-600" /> Recent
+                Discussions
               </h3>
-              <Link to="/instructor/discussions" className="text-sm text-indigo-600 hover:underline">
+              <Link
+                to="/instructor/discussions"
+                className="text-sm text-indigo-600 hover:underline"
+              >
                 View
               </Link>
             </div>
             {recentDiscussions.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">View All Discussions Here</p>
+              <p className="text-gray-500 text-center py-8">
+                No active discussions.
+              </p>
             ) : (
               <ul className="space-y-3">
                 {recentDiscussions.map((d, i) => (
@@ -379,14 +380,20 @@ const InstructorDashboard: React.FC = () => {
           <motion.div className="bg-white rounded-2xl shadow-md p-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center">
-                <LifeBuoy className="h-5 w-5 mr-2 text-red-600" /> Support Tickets
+                <LifeBuoy className="h-5 w-5 mr-2 text-red-600" /> Support
+                Tickets
               </h3>
-              <Link to="/instructor/tickets" className="text-sm text-indigo-600 hover:underline">
+              <Link
+                to="/instructor/tickets"
+                className="text-sm text-indigo-600 hover:underline"
+              >
                 View All
               </Link>
             </div>
             {recentTickets.length === 0 ? (
-              <p className="text-gray-500 text-center py-6">View All Support Tickets Here</p>
+              <p className="text-gray-500 text-center py-6">
+                No new support tickets.
+              </p>
             ) : (
               <ul className="space-y-3">
                 {recentTickets.map((t) => (
@@ -395,7 +402,9 @@ const InstructorDashboard: React.FC = () => {
                     className="p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 flex justify-between items-center"
                   >
                     <div>
-                      <p className="text-sm font-medium text-gray-900 truncate">{t.subject}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {t.subject}
+                      </p>
                       <p className="text-xs text-gray-500">
                         {new Date(t.createdAt).toLocaleDateString()}
                       </p>
@@ -414,28 +423,40 @@ const InstructorDashboard: React.FC = () => {
             )}
           </motion.div>
 
-          {/* Students Management */}
+          {/* Students */}
           <motion.div className="bg-white rounded-2xl shadow-md p-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center">
-                <Users className="h-5 w-5 mr-2 text-purple-600" /> Students
+                <Users className="h-5 w-5 mr-2 text-purple-600" /> Students & Handlers
               </h3>
-              <Link to="/instructor/students" className="text-sm text-indigo-600 hover:underline">
+              <Link
+                to="/instructor/students"
+                className="text-sm text-indigo-600 hover:underline"
+              >
                 Manage
               </Link>
             </div>
             {totalStudents === 0 ? (
-              <p className="text-gray-500 text-center py-6">No students enrolled yet.</p>
+              <p className="text-gray-500 text-center py-6">
+                No students enrolled yet.
+              </p>
             ) : (
               <div>
-                <p className="text-sm text-gray-600 mb-2">View Total Students & Course Handlers: {totalStudents}</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  View Students and Handlers : {totalStudents}
+                </p>
                 <ul className="space-y-2">
                   {courses
                     .flatMap((c) => c.students || [])
                     .slice(0, 3)
                     .map((s: any) => (
-                      <li key={s._id} className="p-2 border rounded-lg bg-gray-50">
-                        <p className="font-medium text-sm">{s.name || "Unnamed Student"}</p>
+                      <li
+                        key={s._id}
+                        className="p-2 border rounded-lg bg-gray-50"
+                      >
+                        <p className="font-medium text-sm">
+                          {s.name || "Unnamed Student"}
+                        </p>
                         <p className="text-xs text-gray-500">{s.email}</p>
                       </li>
                     ))}
