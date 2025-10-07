@@ -1,230 +1,354 @@
-import  { useState, useEffect } from 'react';
-import { 
-  Target, 
-  Users, 
-  Award, 
-  TrendingUp, 
-  Heart, 
-  Lightbulb, 
-  Shield, 
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Target,
+  Users,
+  Award,
+  TrendingUp,
+  Heart,
+  Lightbulb,
+  Shield,
   Star,
   Calendar,
-  MapPin,
   GraduationCap,
   Briefcase,
-  ArrowRight
-} from 'lucide-react';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
-import { useNavigate } from 'react-router-dom';
+  ArrowRight,
+} from "lucide-react";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
+import { useNavigate } from "react-router-dom";
+
+const heroImages = [
+  "/images/universities/university-cta-bg.jpg",
+  "/images/universities/hero-classroom.jpg",
+  "/images/companies/hero-teamwork.jpg",
+  "/images/universities/hero-graduation.jpg",
+  "/images/companies/hero-office.jpg",
+  "/images/universities/hero-university-campus.jpg",
+];
+
+const missionCardImage = "/images/companies/hire-model.jpg";
+const trainingImg = "/images/universities/training-session.jpg";
+const facultyImg = "/images/universities/faculty-development.jpg";
+const placementImg = "/images/universities/placement-support.jpg";
+const bridgeImg = "/images/universities/bridge-learning.jpg";
+const benefitsImg = "/images/universities/university-benefits.jpg";
+const partnershipImg = "/images/universities/partnership-models.jpg";
+const successImg = "/images/universities/success-stories.jpg";
+const ctaBg = "/images/universities/university-cta-bg.jpg";
+
+const coreValues = [
+  { title: "Student First", desc: "Everything we build prioritizes student outcomes.", icon: Heart, color: "from-rose-50 to-rose-100" },
+  { title: "Innovation", desc: "Modern curriculum, industry-aligned projects.", icon: Lightbulb, color: "from-amber-50 to-amber-100" },
+  { title: "Integrity", desc: "Transparent, measurable career outcomes.", icon: Shield, color: "from-blue-50 to-blue-100" },
+  { title: "Impact", desc: "Measured by jobs created and lives changed.", icon: Star, color: "from-indigo-50 to-indigo-100" },
+];
+
+const leadership = [
+  { name: "Prateek Shukla", role: "CEO & Co-Founder", desc: "IIT Bombay alumnus; vision for democratized learning." },
+  { name: "Nrupul Dev", role: "CTO & Co-Founder", desc: "Ex-tech lead; building scalable education platforms." },
+  { name: "Yogesh Bhat", role: "VP – Engineering", desc: "Architecting reliable, performant learning systems." },
+];
+
+const timeline = [
+  { year: "2019", event: "Founded with the mission to democratize tech education." },
+  { year: "2020", event: "Launched first cohort and industry-aligned curriculum." },
+  { year: "2021", event: "Crossed 1,000 placements milestone." },
+  { year: "2022", event: "Expanded to multiple tech stacks and partner universities." },
+  { year: "2023", event: "10,000+ learners trained and certified." },
+  { year: "2024", event: "Launched AI-powered learning & assessment tools." },
+];
 
 const About: React.FC = () => {
-  const [animatedStats, setAnimatedStats] = useState({
-    students: 0,
-    placement: 0,
-    salary: 0,
-    partners: 0
-  });
-
-  useEffect(() => {
-    // Animate statistics
-    const interval = setInterval(() => {
-      setAnimatedStats(prev => ({
-        students: prev.students < 15000 ? prev.students + 500 : 15000,
-        placement: prev.placement < 85 ? prev.placement + 2 : 85,
-        salary: prev.salary < 3.5 ? prev.salary + 0.1 : 3.5,
-        partners: prev.partners < 2500 ? prev.partners + 50 : 2500
-      }));
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, []);
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [counts, setCounts] = useState({ students: 0, placement: 0, salary: 0, partners: 0 });
+  const countersRun = useRef(false);
   const navigate = useNavigate();
 
+  // light-weight hero image rotation
+  useEffect(() => {
+    const t = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 2000);
+    return () => clearInterval(t);
+  }, []);
+
+  // counters animation - trigger once on mount with gentle increments
+  useEffect(() => {
+    if (countersRun.current) return;
+    countersRun.current = true;
+    const target = { students: 15000, placement: 85, salary: 3.5, partners: 2500 };
+    const start = performance.now();
+    const duration = 1100;
+
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      setCounts({
+        students: Math.floor(target.students * t),
+        placement: Math.floor(target.placement * t),
+        salary: Math.round((target.salary * t) * 10) / 10,
+        partners: Math.floor(target.partners * t),
+      });
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, []);
+
+  // helper for card image (with subtle overlay so text sits well regardless of image)
+  const ImageCard: React.FC<{ src: string; alt?: string; className?: string }> = ({ src, alt, className }) => (
+    <div className={`rounded-2xl overflow-hidden shadow-lg ${className || ""}`}>
+      <img
+        src={src}
+        alt={alt || ""}
+        loading="lazy"
+        className="w-full h-56 object-cover transform transition-transform duration-500 hover:scale-105"
+      />
+    </div>
+  );
+
+  const minimalFade = { initial: { opacity: 0, y: 6 }, whileInView: { opacity: 1, y: 0 }, transition: { duration: 0.5 } };
+
   return (
-    <div>
-    <Navbar/>
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-blue-200 rounded-full filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-200 rounded-full filter blur-3xl opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
-      </div>
+    <div className="bg-gray-50 min-h-screen">
+      <Navbar />
 
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto text-center mb-20 transform transition-all duration-700">
-        <div className="relative inline-block mb-8">
-          <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-lg opacity-30"></div>
-          <h1 className="relative text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-            Transforming Lives Through Outcome-Based Education
-          </h1>
-        </div>
-        <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-          We are on a mission to empower individuals with industry-relevant skills and connect them with life-changing career opportunities.
-        </p>
-      </section>
-
-      {/* Mission & Stats */}
-      <section className="max-w-6xl mx-auto mb-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Target className="h-6 w-6 text-blue-600" />
-              </div>
-              <h2 className="text-3xl font-semibold text-gray-800">Our Mission</h2>
-            </div>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              To democratize tech education and create a diverse talent pool that can contribute to India's growing digital economy. We believe that talent is evenly distributed, but opportunities are not – and we're here to bridge that gap.
+      {/* HERO */}
+      <section className="relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-2 items-center gap-10">
+          <motion.div {...minimalFade} className="space-y-6">
+            <div className="uppercase text-sm font-semibold text-indigo-600">About RASS Academy</div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
+              Transforming Education into Career Outcomes
+            </h1>
+            <p className="text-lg text-gray-700 max-w-2xl">
+              We partner with universities, companies and communities to equip graduates with certifications, hands-on projects and connections for day-one productivity.
             </p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 text-center transform hover:-translate-y-1">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{animatedStats.students.toLocaleString()}+</div>
-              <div className="text-gray-600 flex items-center justify-center gap-1">
-                <Users className="h-5 w-5" />
-                Students Transformed
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 text-center transform hover:-translate-y-1">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{animatedStats.placement}%</div>
-              <div className="text-gray-600 flex items-center justify-center gap-1">
-                <Award className="h-5 w-5" />
-                Placement Rate
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 text-center transform hover:-translate-y-1">
-              <div className="text-4xl font-bold text-blue-600 mb-2">₹{animatedStats.salary.toFixed(1)}L</div>
-              <div className="text-gray-600 flex items-center justify-center gap-1">
-                <TrendingUp className="h-5 w-5" />
-                Average Salary
-              </div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 text-center transform hover:-translate-y-1">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{animatedStats.partners.toLocaleString()}+</div>
-              <div className="text-gray-600 flex items-center justify-center gap-1">
-                <Briefcase className="h-5 w-5" />
-                Hiring Partners
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Core Values */}
-      <section className="max-w-6xl mx-auto mb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-4">Our Core Values</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">The principles that guide everything we do at RAAS Academy</p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: Heart, title: "Student First", desc: "Every decision we make prioritizes student success and career outcomes.", color: "bg-rose-100 text-rose-600" },
-            { icon: Lightbulb, title: "Innovation", desc: "Constantly evolving our teaching methods and curriculum to stay ahead.", color: "bg-amber-100 text-amber-600" },
-            { icon: Shield, title: "Integrity", desc: "Transparent in our processes, honest in our commitments.", color: "bg-blue-100 text-blue-600" },
-            { icon: Star, title: "Impact", desc: "Measuring success by the lives transformed and careers launched.", color: "bg-indigo-100 text-indigo-600" }
-          ].map((value, index) => (
-            <div key={index} className="group relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 h-full transform hover:-translate-y-1">
-                <div className={`w-14 h-14 ${value.color} rounded-xl flex items-center justify-center mb-4`}>
-                  <value.icon className="h-7 w-7" />
+            <div className="flex flex-wrap gap-3 items-center">
+              <button
+                onClick={() => navigate("/contact")}
+                className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold shadow hover:bg-indigo-700 transition"
+              >
+                Start a Partnership
+              </button>
+              <a href="/courses" className="text-sm text-gray-600 hover:underline">Explore Programs</a>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-xl p-4 shadow flex items-start gap-3">
+                <div className="p-2 bg-indigo-50 rounded-lg"><GraduationCap className="h-6 w-6 text-indigo-600" /></div>
+                <div>
+                  <div className="text-sm text-gray-500">Students Trained</div>
+                  <div className="font-bold text-lg text-gray-900">{counts.students.toLocaleString()}+</div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{value.title}</h3>
-                <p className="text-gray-600">{value.desc}</p>
+              </div>
+              <div className="bg-white rounded-xl p-4 shadow flex items-start gap-3">
+                <div className="p-2 bg-amber-50 rounded-lg"><Award className="h-6 w-6 text-amber-600" /></div>
+                <div>
+                  <div className="text-sm text-gray-500">Placement Rate</div>
+                  <div className="font-bold text-lg text-gray-900">{counts.placement}%</div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+          </motion.div>
 
-      {/* Leadership Team */}
-      <section className="max-w-6xl mx-auto mb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-4">Leadership Team</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">The visionaries driving our mission forward</p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { name: "Prateek Shukla", role: "CEO & Co-Founder", desc: "IIT Bombay alumnus with a vision to democratize quality education", icon: GraduationCap },
-            { name: "Nrupul Dev", role: "CTO & Co-Founder", desc: "Former tech lead at top companies, passionate about teaching", icon: Briefcase },
-            { name: "Yogesh Bhat", role: "VP – Engineering", desc: "Building scalable systems to transform education delivery", icon: Target }
-          ].map((leader, index) => (
-            <div key={index} className="group relative text-center">
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 h-full transform hover:-translate-y-1">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <leader.icon className="h-10 w-10 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-1">{leader.name}</h3>
-                <p className="text-blue-600 font-medium mb-3">{leader.role}</p>
-                <p className="text-gray-600">{leader.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Our Journey */}
-      <section className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-4">Our Journey</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Milestones in our story of transforming education</p>
-        </div>
-        
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-indigo-400 transform -translate-x-1/2"></div>
-          
-          {/* Timeline items */}
-          <div className="space-y-12 relative">
-            {[
-              { year: "2019", event: "Started with a vision to transform tech education", icon: Target },
-              { year: "2020", event: "Launched first cohort with 30 students", icon: Users },
-              { year: "2021", event: "Crossed 1000+ placements milestone", icon: Award },
-              { year: "2022", event: "Expanded to 5 new tech stacks", icon: TrendingUp },
-              { year: "2023", event: "Reached 10,000+ students transformed", icon: Star },
-              { year: "2024", event: "Launched AI-powered learning platform", icon: Lightbulb }
-            ].map((milestone, index) => (
-              <div key={index} className={`flex ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center`}>
-                <div className="hidden md:block md:w-1/2"></div>
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center z-10">
-                  <milestone.icon className="h-5 w-5 text-white" />
-                </div>
-                <div className="flex-1 bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 ml-6 md:mx-6 transform hover:-translate-y-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Calendar className="h-5 w-5 text-blue-600" />
-                    <span className="text-lg font-semibold text-blue-600">{milestone.year}</span>
+          {/* HERO IMAGE CARD: rotating images */}
+          <motion.div {...minimalFade} className="relative">
+            <div className="rounded-3xl overflow-hidden shadow-2xl border border-gray-100 bg-white">
+              <div className="relative h-80 md:h-96">
+                {/* image */}
+                <img
+                  src={heroImages[heroIndex]}
+                  alt="hero"
+                  loading="eager"
+                  className="w-full h-full object-cover transition-opacity duration-900 ease-out"
+                  style={{ willChange: "opacity, transform" }}
+                />
+                {/* gentle zoom overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10 pointer-events-none" />
+                {/* small info card bottom-left */}
+                <div className="absolute left-6 bottom-6 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-md flex items-center gap-3">
+                  <img src="/images/universities/hero-classroom.jpg" alt="thumb" className="w-12 h-12 object-cover rounded-md" />
+                  <div>
+                    <div className="text-xs text-gray-500">Outcome-Based Learning</div>
+                    <div className="text-sm font-semibold text-gray-900">Industry-aligned curriculum</div>
                   </div>
-                  <p className="text-gray-700">{milestone.event}</p>
                 </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* MISSION + IMAGE (alternating card) */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <motion.div {...minimalFade} className="space-y-4">
+            <h3 className="text-xl text-indigo-600 font-semibold">Our Mission</h3>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Democratize industry-relevant education at scale</h2>
+            <p className="text-gray-700">
+              We close the gap between campus learning and industry expectations by offering certifications, project-based learning and placement support — so students step into jobs confidently.
+            </p>
+            <ul className="mt-4 space-y-2">
+              <li className="text-gray-700">• Curriculum co-created with hiring partners</li>
+              <li className="text-gray-700">• Real projects and mentorship from industry experts</li>
+              <li className="text-gray-700">• Placement & internship support for top performers</li>
+            </ul>
+          </motion.div>
+
+          <motion.div {...minimalFade}>
+            <ImageCard src={missionCardImage} alt="hiring model" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CORE VALUES (cards with subtle hover) */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h3 className="text-sm text-indigo-600 font-semibold text-center">Foundational Values</h3>
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">What guides us</h2>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {coreValues.map((v, i) => {
+            const Icon = v.icon;
+            return (
+              <motion.div
+                key={i}
+                whileHover={{ y: -6 }}
+                className="relative bg-white rounded-2xl p-6 shadow hover:shadow-lg transition-transform duration-300"
+              >
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br ${v.color}`}>
+                  <Icon className="h-7 w-7 text-gray-800" />
+                </div>
+                <h4 className="font-semibold text-lg text-gray-900">{v.title}</h4>
+                <p className="text-gray-600 mt-2 text-sm">{v.desc}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* FEATURE CARDS (alternating image+text) */}
+      <section className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+        {/* Training */}
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div {...minimalFade}><ImageCard src={trainingImg} alt="training session" /></motion.div>
+          <motion.div {...minimalFade} className="space-y-4">
+            <h3 className="text-xl text-indigo-600 font-semibold">Industry Training</h3>
+            <h4 className="text-2xl font-bold text-gray-900">Instructor-led sessions & hands-on projects</h4>
+            <p className="text-gray-700">Short immersive programs that focus on skills employers need — assessments, live projects and certification.</p>
+          </motion.div>
+        </div>
+
+        {/* Faculty Development (switch sides) */}
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div {...minimalFade} className="space-y-4 order-2 md:order-1">
+            <h3 className="text-xl text-indigo-600 font-semibold">Faculty Enablement</h3>
+            <h4 className="text-2xl font-bold text-gray-900">Upskill faculty to deliver industry outcomes</h4>
+            <p className="text-gray-700">Workshops and co-teaching models so your faculty become partners in delivering career outcomes.</p>
+          </motion.div>
+          <motion.div {...minimalFade} className="order-1 md:order-2"><ImageCard src={facultyImg} alt="faculty development" /></motion.div>
+        </div>
+
+        {/* Placement support */}
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div {...minimalFade}><ImageCard src={placementImg} alt="placement support" /></motion.div>
+          <motion.div {...minimalFade} className="space-y-4">
+            <h3 className="text-xl text-indigo-600 font-semibold">Placement Support</h3>
+            <h4 className="text-2xl font-bold text-gray-900">Employer engagement & interview readiness</h4>
+            <p className="text-gray-700">From resume clinics to interview simulations, we prepare students and connect them to hiring partners.</p>
+          </motion.div>
+        </div>
+
+        {/* Bridge learning */}
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div {...minimalFade} className="space-y-4 order-2 md:order-1">
+            <h3 className="text-xl text-indigo-600 font-semibold">Bridge Learning</h3>
+            <h4 className="text-2xl font-bold text-gray-900">Curriculum-to-career pathways</h4>
+            <p className="text-gray-700">We map academic outcomes to industry roles and create short bridge courses that plug competency gaps.</p>
+          </motion.div>
+          <motion.div {...minimalFade} className="order-1 md:order-2"><ImageCard src={bridgeImg} alt="bridge learning" /></motion.div>
+        </div>
+      </section>
+
+      {/* Benefits (image cards grid) */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <motion.div {...minimalFade} className="space-y-4">
+            <h3 className="text-xl text-indigo-600 font-semibold">Proven Benefits</h3>
+            <h2 className="text-3xl font-bold text-gray-900">Why universities and students choose us</h2>
+            <p className="text-gray-700">Lower time-to-hire, better job readiness and a repeatable pipeline for industry-ready candidates.</p>
+
+            <ul className="mt-6 space-y-3 text-gray-700">
+              <li>• Pre-trained talent ready for internships & roles</li>
+              <li>• Industry-verified curriculum & assessments</li>
+              <li>• Scalable faculty enablement models</li>
+            </ul>
+          </motion.div>
+
+          <motion.div {...minimalFade}>
+            <div className="grid grid-cols-1 gap-4">
+              <ImageCard src={benefitsImg} />
+              <div className="grid grid-cols-2 gap-4">
+                <ImageCard src={partnershipImg} className="h-full" />
+                <ImageCard src={successImg} className="h-full" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      
+
+      {/* Timeline */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h3 className="text-sm text-indigo-600 font-semibold text-center">Our Journey</h3>
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Milestones</h2>
+
+        <div className="relative">
+          <div className="absolute left-1/2 top-6 bottom-6 w-px bg-gradient-to-b from-indigo-300 to-indigo-500 opacity-40 transform -translate-x-1/2" />
+          <div className="space-y-12">
+            {timeline.map((t, i) => (
+              <div key={i} className={`flex flex-col md:flex-row items-center md:items-start gap-6 ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
+                <div className={`md:w-1/2 flex justify-center md:justify-${i % 2 === 0 ? "end" : "start"}`}>
+                  <div className="bg-white/90 rounded-2xl p-6 shadow w-full max-w-md">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Calendar className="h-5 w-5 text-indigo-600" />
+                      <div className="font-semibold text-indigo-700">{t.year}</div>
+                    </div>
+                    <p className="text-gray-700">{t.event}</p>
+                  </div>
+                </div>
+
+                <div className="relative z-10">
+                  <div className="w-4 h-4 rounded-full bg-indigo-600 border-2 border-white shadow" />
+                </div>
+
+                <div className="md:w-1/2 hidden md:block" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="max-w-4xl mx-auto mt-20 text-center">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-10 shadow-xl">
-          <h2 className="text-3xl font-bold text-white mb-4">Join Our Mission</h2>
-          <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-            Be part of the movement that's transforming education and creating opportunities for thousands of students.
-          </p>
-           <button
-      onClick={() => navigate("/courses")}
-      className="group bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center mx-auto"
-    >
-      Explore Programs
-      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-    </button>
+      {/* CTA */}
+      <section className="py-16">
+        <div
+          className="max-w-6xl mx-auto rounded-2xl overflow-hidden relative"
+          style={{ backgroundImage: `url(${ctaBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-800/70 to-indigo-700/60"></div>
+          <div className="relative z-10 px-6 py-16 text-center text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Join the movement creating future-ready graduates</h2>
+            <p className="max-w-3xl mx-auto text-lg mb-8 text-indigo-100">
+              Partner with RASS Academy for curriculum, faculty enablement, and direct hire pipelines for your students.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button onClick={() => navigate("/contact")} className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-semibold shadow hover:scale-[1.02] transition">Contact Us</button>
+              <a href="/partnership" className="px-6 py-3 border border-white/40 rounded-xl text-white hover:bg-white/10 transition">Partnership Details</a>
+            </div>
+          </div>
         </div>
       </section>
-    </div>
-    <Footer />
+
+      <Footer />
     </div>
   );
 };

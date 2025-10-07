@@ -24,7 +24,7 @@ const UniversitiesPage: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 4000);
+    }, 2800);
     return () => clearInterval(interval);
   }, []);
 

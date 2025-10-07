@@ -32,7 +32,7 @@ const Companies: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
+    }, 3500);
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
