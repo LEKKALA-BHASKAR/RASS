@@ -45,9 +45,7 @@ export function ClientsSection() {
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-      <div className="absolute top-10 left-10 w-20 h-20 bg-blue-100 rounded-full opacity-30 blur-xl"></div>
-      <div className="absolute bottom-10 right-10 w-24 h-24 bg-purple-100 rounded-full opacity-30 blur-xl"></div>
+   
       
       <div className="container mx-auto px-6 relative z-10">
         <motion.div 

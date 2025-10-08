@@ -1,4 +1,3 @@
-// frontend/src/pages/admin/AdminDashboard.tsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { userAPI, courseAPI } from "../../services/api";
@@ -19,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import AdminCourses from "./AdminCourse";
+import ManageCourses from "./AdminCourse";
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -285,7 +286,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Recent Activity */}
-        
+        <ManageCourses />
       </main>
     </div>
       <Footer />

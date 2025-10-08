@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://rass-h2s1.onrender.com/api";
+const API_BASE_URL = "http://localhost:8000/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -38,8 +38,12 @@ export const authAPI = {
 };
 
 /* ---------------- COURSES & MODULES ---------------- */
+// In your api.ts file, update the courseAPI section:
+
+/* ---------------- COURSES & MODULES ---------------- */
 export const courseAPI = {
-  getAllCourses: () => apiClient.get("/courses"),
+  getAllCourses: (searchTerm?: string) => 
+    apiClient.get("/courses", { params: { search: searchTerm } }),
   getCourse: (id: string) => apiClient.get(`/courses/${id}`),
   createCourse: (data: any) => apiClient.post("/courses", data),
   updateCourse: (id: string, data: any) => apiClient.put(`/courses/${id}`, data),
