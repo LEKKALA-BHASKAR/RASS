@@ -284,8 +284,6 @@ const AdminDashboard: React.FC = () => {
             </motion.button>
           ))}
         </div>
-
-        {/* Recent Activity */}
         <ManageCourses />
       </main>
     </div>
