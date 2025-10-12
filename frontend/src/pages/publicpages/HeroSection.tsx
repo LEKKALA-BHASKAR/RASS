@@ -1,22 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  Play,
-  Pause,
-  Award,
-  Shield,
-  Code,
-  Cpu,
-  Brain,
-  Server,
-  Star,
-  Users,
-  TrendingUp,
-  CheckCircle
-} from "lucide-react";
+import { ArrowRight, CheckCircle, TrendingUp, Users, Star, Award, Clock, Target } from "lucide-react";
 
 const heroTech = "https://images.unsplash.com/photo-1497215842964-222b430dc094?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
 const heroCode = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
@@ -31,11 +15,12 @@ const slides = [
     image: heroCode,
     cta: "Explore Our Impact",
     accentColor: "blue",
-    icon: <Code className="h-6 w-6" />,
+    bgGradient: "from-blue-900 via-indigo-900 to-purple-900",
+    overlay: "bg-gradient-to-br from-blue-600/20 to-purple-600/10",
     stats: [
-      { value: "95%", label: "Placement Rate" },
-      { value: "10K+", label: "Students Trained" },
-      { value: "500+", label: "Hiring Partners" }
+      { value: "95%", label: "Placement Rate", icon: Target },
+      { value: "10K+", label: "Students Trained", icon: Users },
+      { value: "500+", label: "Hiring Partners", icon: TrendingUp }
     ],
     features: ["Industry-aligned curriculum", "1:1 Mentorship", "Real-world projects"]
   },
@@ -45,12 +30,13 @@ const slides = [
     subtitle: "Officially recognized partner of NASSCOM's FutureSkills Prime, building India's next generation of tech talent.",
     image: heroTech,
     cta: "Learn More",
-    accentColor: "teal",
-    icon: <Cpu className="h-6 w-6" />,
+    accentColor: "emerald",
+    bgGradient: "from-emerald-900 via-teal-900 to-cyan-900",
+    overlay: "bg-gradient-to-br from-emerald-600/20 to-cyan-600/10",
     stats: [
-      { value: "NASSCOM", label: "Certified Partner" },
-      { value: "4.9/5", label: "Student Rating" },
-      { value: "100+", label: "Certifications" }
+      { value: "NASSCOM", label: "Certified Partner", icon: Award },
+      { value: "4.9/5", label: "Student Rating", icon: Star },
+      { value: "100+", label: "Certifications", icon: CheckCircle }
     ],
     features: ["Industry-recognized certificates", "Skill India aligned", "Global recognition"]
   },
@@ -60,12 +46,13 @@ const slides = [
     subtitle: "Our commitment to revolutionizing education is officially recognized by the Government of India.",
     image: heroAI,
     cta: "See Our Recognition",
-    accentColor: "indigo",
-    icon: <Brain className="h-6 w-6" />,
+    accentColor: "amber",
+    bgGradient: "from-amber-900 via-orange-900 to-red-900",
+    overlay: "bg-gradient-to-br from-amber-600/20 to-red-600/10",
     stats: [
-      { value: "Startup", label: "India Recognized" },
-      { value: "AI-Powered", label: "Learning Platform" },
-      { value: "24/7", label: "Support" }
+      { value: "Startup", label: "India Recognized", icon: Award },
+      { value: "AI-Powered", label: "Learning Platform", icon: TrendingUp },
+      { value: "24/7", label: "Support", icon: Clock }
     ],
     features: ["Government recognized", "Cutting-edge technology", "Personalized learning paths"]
   },
@@ -75,12 +62,13 @@ const slides = [
     subtitle: "Translate knowledge into action with virtual internships and real-world job simulations.",
     image: heroCommunity,
     cta: "Get Started",
-    accentColor: "purple",
-    icon: <Server className="h-6 w-6" />,
+    accentColor: "violet",
+    bgGradient: "from-violet-900 via-purple-900 to-fuchsia-900",
+    overlay: "bg-gradient-to-br from-violet-600/20 to-fuchsia-600/10",
     stats: [
-      { value: "6 Months", label: "Average Hiring Time" },
-      { value: "300%", label: "Salary Hike" },
-      { value: "100+", label: "Live Projects" }
+      { value: "6 Months", label: "Average Hiring Time", icon: Clock },
+      { value: "300%", label: "Salary Hike", icon: TrendingUp },
+      { value: "100+", label: "Live Projects", icon: Target }
     ],
     features: ["Virtual internships", "Job simulations", "Portfolio building"]
   },
@@ -93,228 +81,226 @@ const colorMap = {
     gradient: "from-blue-500 via-blue-600 to-blue-700",
     light: "bg-blue-50",
     text: "text-blue-600",
-    border: "border-blue-200"
+    border: "border-blue-200",
+    glow: "shadow-2xl shadow-blue-500/20"
   },
-  teal: {
-    primary: "bg-teal-600",
-    hover: "hover:bg-teal-700",
-    gradient: "from-teal-500 via-teal-600 to-teal-700",
-    light: "bg-teal-50",
-    text: "text-teal-600",
-    border: "border-teal-200"
+  emerald: {
+    primary: "bg-emerald-600",
+    hover: "hover:bg-emerald-700",
+    gradient: "from-emerald-500 via-emerald-600 to-emerald-700",
+    light: "bg-emerald-50",
+    text: "text-emerald-600",
+    border: "border-emerald-200",
+    glow: "shadow-2xl shadow-emerald-500/20"
   },
-  indigo: {
-    primary: "bg-indigo-600",
-    hover: "hover:bg-indigo-700",
-    gradient: "from-indigo-500 via-indigo-600 to-indigo-700",
-    light: "bg-indigo-50",
-    text: "text-indigo-600",
-    border: "border-indigo-200"
+  amber: {
+    primary: "bg-amber-600",
+    hover: "hover:bg-amber-700",
+    gradient: "from-amber-500 via-amber-600 to-amber-700",
+    light: "bg-amber-50",
+    text: "text-amber-600",
+    border: "border-amber-200",
+    glow: "shadow-2xl shadow-amber-500/20"
   },
-  purple: {
-    primary: "bg-purple-600",
-    hover: "hover:bg-purple-700",
-    gradient: "from-purple-500 via-purple-600 to-purple-700",
-    light: "bg-purple-50",
-    text: "text-purple-600",
-    border: "border-purple-200"
+  violet: {
+    primary: "bg-violet-600",
+    hover: "hover:bg-violet-700",
+    gradient: "from-violet-500 via-violet-600 to-violet-700",
+    light: "bg-violet-50",
+    text: "text-violet-600",
+    border: "border-violet-200",
+    glow: "shadow-2xl shadow-violet-500/20"
   },
 };
 
 export function HeroCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
-  const carouselRef = useRef(null);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   useEffect(() => {
-    let timer;
-    if (isPlaying && !isHovering) {
-      timer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-      }, 5000);
-    }
+    if (!isAutoPlaying) return;
+    
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    
     return () => clearInterval(timer);
-  }, [isPlaying, isHovering]);
+  }, [isAutoPlaying]);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  const goToSlide = (index) => setCurrentSlide(index);
-  const togglePlay = () => setIsPlaying(!isPlaying);
+  const currentSlideData = slides[currentSlide];
+  const currentAccent = colorMap[currentSlideData.accentColor];
 
-  const currentAccent = colorMap[slides[currentSlide].accentColor];
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+    setIsAutoPlaying(false);
+    setTimeout(() => setIsAutoPlaying(true), 10000);
+  };
 
   return (
-    <section
-      ref={carouselRef}
-      className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
+    <section className="relative min-h-screen w-full overflow-hidden">
       <AnimatePresence mode="wait">
-        {slides.map(
-          (slide, index) =>
-            index === currentSlide && (
+        <motion.div
+          key={currentSlideData.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5 }}
+          className={`absolute inset-0 bg-gradient-to-br ${currentSlideData.bgGradient}`}
+        >
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-conic from-white/5 via-transparent to-transparent animate-spin-slow" />
+            <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-gradient-conic from-transparent via-white/5 to-transparent animate-spin-slower" />
+          </div>
+
+          {/* Main Content */}
+          <div className="relative h-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Left Content */}
+            <div className="flex items-center justify-center px-6 py-16 lg:px-8 lg:py-24 z-10 order-2 lg:order-1">
+              <div className="max-w-2xl text-center lg:text-left">
+                {/* Progress Bar */}
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 6, ease: "linear" }}
+                  className="h-1 bg-white/30 rounded-full mb-8 overflow-hidden"
+                >
+                  <div className={`h-full ${currentAccent.primary} bg-gradient-to-r ${currentAccent.gradient}`} />
+                </motion.div>
+
+                <motion.h1
+                  initial={{ y: 40, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.3 }}
+                  className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-6"
+                >
+                  {currentSlideData.title}
+                </motion.h1>
+
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="text-xl sm:text-2xl text-white/80 leading-relaxed mb-8 font-light"
+                >
+                  {currentSlideData.subtitle}
+                </motion.p>
+
+
+
+                {/* Stats */}
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.9, duration: 0.8 }}
+                  className="grid grid-cols-3 gap-6 mb-8"
+                >
+                  {currentSlideData.stats.map((stat, index) => {
+                    const IconComponent = stat.icon;
+                    return (
+                      <div key={index} className="text-center lg:text-left">
+                        <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
+                          <IconComponent className="h-5 w-5 text-white/80" />
+                          <div className="text-2xl font-bold text-white">{stat.value}</div>
+                        </div>
+                        <div className="text-white/60 text-sm font-medium">{stat.label}</div>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+
+
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="flex items-center justify-center p-8 lg:p-12 order-1 lg:order-2 relative">
               <motion.div
-                key={slide.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2 }}
-                className="absolute inset-0"
+                initial={{ scale: 1.1, opacity: 0, rotate: 2 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                className="relative w-full max-w-2xl"
               >
-                <div className="relative h-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2">
-                  {/* Left Content */}
-                  <div className="flex items-center justify-center px-8 py-16 lg:px-16 lg:py-24">
-                    <div className="max-w-2xl">
-                      
-                      <motion.h1
-                        initial={{ y: 40, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                        className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6"
-                      >
-                        {slide.title}
-                      </motion.h1>
-
-                      <motion.p
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                        className="text-xl text-gray-600 leading-relaxed mb-8"
-                      >
-                        {slide.subtitle}
-                      </motion.p>
-
-                      {/* Features List */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7, duration: 0.8 }}
-                        className="flex flex-wrap gap-4 mb-8"
-                      >
-                        {slide.features.map((feature, idx) => (
-                          <div key={idx} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-lg border shadow-sm">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium text-gray-700">{feature}</span>
-                          </div>
-                        ))}
-                      </motion.div>
-
-                      {/* Stats */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.9, duration: 0.8 }}
-                        className="flex gap-8 mb-8"
-                      >
-                        {slide.stats.map((stat, idx) => (
-                          <div key={idx} className="text-center">
-                            <div className={`text-2xl font-bold ${currentAccent.text} mb-1`}>{stat.value}</div>
-                            <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
-                          </div>
-                        ))}
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.1, duration: 0.8 }}
-                        className="flex flex-col sm:flex-row gap-4"
-                      >
-                        <button
-                          className={`px-8 py-4 rounded-xl text-white font-semibold shadow-xl bg-gradient-to-r ${currentAccent.gradient} hover:scale-105 transition-all duration-300 flex items-center gap-3 group`}
-                        >
-                          {slide.cta}
-                          <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                        </button>
-                        <button className="px-6 py-4 rounded-xl font-semibold border-2 bg-white/80 backdrop-blur-lg hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          Our Story
-                        </button>
-                      </motion.div>
-
-                    </div>
-                  </div>
-
-                  {/* Right Image */}
-                  <div className="relative hidden lg:flex items-center justify-center p-12">
-                    <motion.div
-                      initial={{ scale: 1.1, opacity: 0, rotate: 2 }}
-                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="relative w-full max-w-2xl"
-                    >
-                      <img
-                        src={slide.image}
-                        alt={slide.title}
-                        className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
-                      />
-                      {/* Floating Elements */}
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                        className="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-xl border"
-                      >
-                        <TrendingUp className="h-6 w-6 text-green-500" />
-                      </motion.div>
-                      <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 1.2, duration: 0.8 }}
-                        className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-xl border"
-                      >
-                        <Users className="h-6 w-6 text-blue-500" />
-                      </motion.div>
-                    </motion.div>
-                  </div>
+                {/* Main Image */}
+                <div className="relative rounded-3xl overflow-hidden">
+                  <img
+                    src={currentSlideData.image}
+                    alt={currentSlideData.title}
+                    className="w-full h-[500px] object-cover"
+                  />
+                  <div className={`absolute inset-0 ${currentSlideData.overlay}`} />
+                  
+                  {/* Floating Badge */}
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 1, duration: 0.8, type: "spring" }}
+                    className={`absolute top-6 right-6 ${currentAccent.primary} ${currentAccent.glow} text-white p-4 rounded-2xl backdrop-blur-sm border border-white/20`}
+                  >
+                    <TrendingUp className="h-8 w-8" />
+                  </motion.div>
                 </div>
+
+                {/* Floating Elements */}
+                <motion.div
+                  initial={{ y: 20, opacity: 0, x: -20 }}
+                  animate={{ y: 0, opacity: 1, x: 0 }}
+                  transition={{ delay: 1.2, duration: 0.8 }}
+                  className="absolute -bottom-4 -left-4 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
+                >
+                  <Users className="h-8 w-8 text-blue-500 mb-2" />
+                  <div className="text-sm font-semibold text-gray-900">10K+ Happy</div>
+                  <div className="text-sm text-gray-600">Students</div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ y: -20, opacity: 0, x: 20 }}
+                  animate={{ y: 0, opacity: 1, x: 0 }}
+                  transition={{ delay: 1.4, duration: 0.8 }}
+                  className="absolute -top-4 -right-4 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
+                >
+                  <Award className="h-8 w-8 text-amber-500 mb-2" />
+                  <div className="text-sm font-semibold text-gray-900">Award</div>
+                  <div className="text-sm text-gray-600">Winning</div>
+                </motion.div>
               </motion.div>
-            )
-        )}
+            </div>
+          </div>
+        </motion.div>
       </AnimatePresence>
 
-      {/* Enhanced Controls */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-white/80 backdrop-blur-xl px-6 py-4 rounded-2xl border shadow-2xl">
-        <button
-          onClick={togglePlay}
-          className={`p-2 rounded-lg ${currentAccent.text} hover:${currentAccent.light} transition-colors`}
-        >
-          {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-        </button>
-        
-        <div className="flex gap-3">
+      {/* Enhanced Slide Controls */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20">
+        {/* Slide Indicators */}
+        <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-500 ${
+              className={`relative w-3 h-3 rounded-full transition-all duration-500 ${
                 index === currentSlide
-                  ? `${currentAccent.primary} scale-125 shadow-lg`
-                  : "bg-gray-300 hover:bg-gray-400"
+                  ? `${currentAccent.primary} scale-125 ${currentAccent.glow}`
+                  : "bg-white/40 hover:bg-white/60"
               }`}
-            />
+            >
+              {index === currentSlide && (
+                <motion.div
+                  layoutId="activeSlide"
+                  className="absolute inset-0 rounded-full border-2 border-white/30"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
           ))}
         </div>
-        
-        <div className={`text-sm font-semibold ${currentAccent.text}`}>
-          {String(currentSlide + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
-        </div>
+
+
       </div>
 
-      {/* Enhanced Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-xl p-4 rounded-2xl border shadow-2xl hover:scale-110 transition-all duration-300 group"
-      >
-        <ChevronLeft className="h-6 w-6 text-gray-700 group-hover:scale-110 transition-transform" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-xl p-4 rounded-2xl border shadow-2xl hover:scale-110 transition-all duration-300 group"
-      >
-        <ChevronRight className="h-6 w-6 text-gray-700 group-hover:scale-110 transition-transform" />
-      </button>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:20px_20px]" />
+      </div>
     </section>
   );
 }

@@ -4,7 +4,7 @@ const API_BASE_URL = "https://rass-h2s1.onrender.com/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" }, 
 });
 
 // ✅ Attach token automatically
