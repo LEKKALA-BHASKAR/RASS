@@ -13,6 +13,7 @@ import CourseCatalog from './courses/CourseCatalog';
 import IntroCourse from './publicpages/IntroCourse';
 import AIInsightsDashboard from './publicpages/AIInsightsDashboard';
 import { motion } from 'framer-motion';
+import TestimonialCarousel from './publicpages/TestimonialCarousel';
 
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -94,47 +95,8 @@ const Home: React.FC = () => {
 <IntroCourse/>
 <AIInsightsDashboard/>
 <CertificationCourses/>
-      {/* Testimonial Section */}
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              What Our <span className="text-indigo-600">Students</span> Say
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Don't just take our word for it - hear from some of our students who have transformed their careers.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center mb-6">
-                  <div className="flex items-center text-amber-400">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} size={20} className="fill-current" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-6 italic">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center">
-                  <img 
-                    src={testimonial.avatar} 
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full mr-4 object-cover"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-indigo-600">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+<TestimonialCarousel/>
+
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-indigo-700 to-indigo-800 text-white">
