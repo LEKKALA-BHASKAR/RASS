@@ -18,18 +18,9 @@ const LearningOutcomes: React.FC<Props> = ({ outcomes }) => {
             className="flex items-start gap-3 bg-white rounded-lg p-4 shadow-sm border hover:shadow-md transition"
           >
             <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-            <span className="text-gray-700 text-sm">{outcome}</span>
+            <span className="text-gray-900 text-sm font-medium">{outcome}</span>
           </li>
         ))}
-        {/* extra placeholders */}
-        <li className="flex items-start gap-3 bg-white rounded-lg p-4 shadow-sm border">
-          <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-          <span className="text-gray-700 text-sm">Crack technical interviews with mock sessions</span>
-        </li>
-        <li className="flex items-start gap-3 bg-white rounded-lg p-4 shadow-sm border">
-          <CheckCircle className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
-          <span className="text-gray-700 text-sm">Get hands-on with real-world projects</span>
-        </li>
       </ul>
     </section>
   );

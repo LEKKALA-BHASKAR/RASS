@@ -47,6 +47,15 @@ export interface Course {
   createdAt: string;
   updatedAt: string;
 
+  // Tech Stack/Tools data
+  techStack?: { 
+    name: string; 
+    imageUrl: string;
+  }[];
+
+  // Job Roles data
+  jobRoles?: string[];
+
   // 🔹 Extra fields for new CourseDetail sections
   tools?: { name: string; logo: string }[];
   testimonials?: { name: string; title: string; quote: string; avatar?: string }[];

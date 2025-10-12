@@ -47,6 +47,21 @@ const CourseHero: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
             <h1 className="text-4xl font-extrabold text-gray-900 leading-snug">
               {course.title}
             </h1>
+            
+            {/* Tags */}
+            {course.tags && course.tags.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {course.tags.map((tag, index) => (
+                  <span 
+                    key={index} 
+                    className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            
             <p className="mt-4 text-lg text-gray-700 max-w-3xl leading-relaxed">
               {course.description}
             </p>

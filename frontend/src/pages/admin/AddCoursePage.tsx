@@ -1,28 +1,16 @@
 import React, { useState } from 'react';
-import { Plus, Upload, Trash2, Save, Eye, X, ChevronDown, ChevronUp, BookOpen, Users, Award, HelpCircle, Tag, FileText, Target, Monitor, Star, CheckCircle } from 'lucide-react';
-
-// Interfaces remain the same
+import { useNavigate } from 'react-router-dom';
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 interface CurriculumItem {
   order: number;
   title: string;
   description: string;
 }
 
-interface FeatureItem {
-  name: string;
-}
-
 interface TechStackItem {
   name: string;
   imageUrl: string;
-}
-
-interface SkillItem {
-  name: string;
-}
-
-interface JobRoleItem {
-  name: string;
 }
 
 interface TestimonialItem {
@@ -36,203 +24,234 @@ interface FAQItem {
   answer: string;
 }
 
-interface ModuleItem {
-  title: string;
-  description: string;
-  videoUrl: string;
-  duration: number;
-  order: number;
-  resources: Array<{
-    title: string;
-    url: string;
-    type: string;
-  }>;
-}
-
 interface ResourceItem {
   title: string;
   url: string;
   type: string;
 }
 
-interface CourseData {
+interface ModuleItem {
   title: string;
   description: string;
-  about: string;
-  instructor: string;
-  category: string;
-  level: string;
-  price: number;
-  thumbnail: string;
-  curriculum: CurriculumItem[];
-  features: string[];
-  techStack: TechStackItem[];
-  skillsGained: string[];
-  jobRoles: string[];
-  testimonials: TestimonialItem[];
-  faqs: FAQItem[];
-  modules: ModuleItem[];
-  tags: string[];
-  requirements: string[];
-  learningOutcomes: string[];
+  videoUrl: string;
+  duration: number;
+  order: number;
+  resources: ResourceItem[];
 }
 
 const AddCoursePage: React.FC = () => {
-  const [courseData, setCourseData] = useState<CourseData>({
-    title: '',
-    description: '',
-    about: '',
-    instructor: '',
-    category: '',
-    level: 'intermediate',
-    price: 0,
-    thumbnail: '',
-    curriculum: [],
-    features: [],
-    techStack: [],
-    skillsGained: [],
-    jobRoles: [],
-    testimonials: [],
-    faqs: [],
-    modules: [],
-    tags: [],
-    requirements: [],
-    learningOutcomes: []
-  });
-
-  const [newItem, setNewItem] = useState({
-    curriculum: { order: 0, title: '', description: '' },
-    feature: '',
-    techStack: { name: '', imageUrl: '' },
-    skill: '',
-    jobRole: '',
-    testimonial: { name: '', imageUrl: '', description: '' },
-    faq: { question: '', answer: '' },
-    module: { 
-      title: '', 
-      description: '', 
-      videoUrl: '', 
-      duration: 0, 
-      order: 0, 
-      resources: [] as ResourceItem[] 
-    },
-    tag: '',
-    requirement: '',
-    learningOutcome: '',
-    resource: { title: '', url: '', type: 'link' }
-  });
-
-  const [previewMode, setPreviewMode] = useState(false);
-  const [activeTab, setActiveTab] = useState('basic');
-  const [expandedSections, setExpandedSections] = useState({
-    basic: true,
-    curriculum: true,
-    features: true,
-    techStack: true,
-    skills: true,
-    jobs: true,
-    testimonials: true,
-    faqs: true,
-    tags: true,
-    requirements: true,
-    outcomes: true
-  });
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [notification, setNotification] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
-    show: false,
-    message: '',
-    type: 'success'
-  });
-
+  const navigate = useNavigate();
+  
   // Basic Information
-  const handleBasicInfoChange = (field: keyof CourseData, value: string | number) => {
-    setCourseData(prev => ({ ...prev, [field]: value }));
-  };
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [about, setAbout] = useState('');
+  const [instructor, setInstructor] = useState('');
+  const [category, setCategory] = useState('');
+  const [level, setLevel] = useState('beginner');
+  const [price, setPrice] = useState('');
+  const [thumbnail, setThumbnail] = useState('');
+  
+  // Array states
+  const [curriculum, setCurriculum] = useState<CurriculumItem[]>([]);
+  const [features, setFeatures] = useState<string[]>([]);
+  const [techStack, setTechStack] = useState<TechStackItem[]>([]);
+  const [skillsGained, setSkillsGained] = useState<string[]>([]);
+  const [jobRoles, setJobRoles] = useState<string[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  const [modules, setModules] = useState<ModuleItem[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [requirements, setRequirements] = useState<string[]>([]);
+  const [learningOutcomes, setLearningOutcomes] = useState<string[]>([]);
+  
+  // Temporary input states for array items
+  const [newCurriculumItem, setNewCurriculumItem] = useState({ order: 1, title: '', description: '' });
+  const [newFeature, setNewFeature] = useState('');
+  const [newTechStackItem, setNewTechStackItem] = useState({ name: '', imageUrl: '' });
+  const [newSkill, setNewSkill] = useState('');
+  const [newJobRole, setNewJobRole] = useState('');
+  const [newTestimonial, setNewTestimonial] = useState({ name: '', imageUrl: '', description: '' });
+  const [newFaq, setNewFaq] = useState({ question: '', answer: '' });
+  const [newModule, setNewModule] = useState({ title: '', description: '', videoUrl: '', duration: 0, order: 1, resources: [] });
+  const [newTag, setNewTag] = useState('');
+  const [newRequirement, setNewRequirement] = useState('');
+  const [newLearningOutcome, setNewLearningOutcome] = useState('');
+  const [newResource, setNewResource] = useState({ title: '', url: '', type: 'link' });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  // Array Management Functions
-  const addToArray = (field: keyof CourseData, item: any) => {
-    setCourseData(prev => ({
-      ...prev,
-      [field]: [...(prev[field] as any[]), item]
-    }));
-    setNewItem(prev => ({ ...prev, [field]: getDefaultItem(field) }));
-    showNotification(`Item added to ${field}`, 'success');
-  };
-
-  const removeFromArray = (field: keyof CourseData, index: number) => {
-    setCourseData(prev => {
-      const arr = prev[field];
-      if (Array.isArray(arr)) {
-        return {
-          ...prev,
-          [field]: arr.filter((_, i) => i !== index)
-        };
-      }
-      return prev;
-    });
-    showNotification(`Item removed from ${field}`, 'success');
-  };
-
-  const getDefaultItem = (field: string): any => {
-    const defaults: any = {
-      curriculum: { order: 0, title: '', description: '' },
-      feature: '',
-      techStack: { name: '', imageUrl: '' },
-      skill: '',
-      jobRole: '',
-      testimonial: { name: '', imageUrl: '', description: '' },
-      faq: { question: '', answer: '' },
-      module: { 
-        title: '', 
-        description: '', 
-        videoUrl: '', 
-        duration: 0, 
-        order: 0, 
-        resources: [] 
-      },
-      tag: '',
-      requirement: '',
-      learningOutcome: ''
-    };
-    return defaults[field] || '';
-  };
-
-  const handleNewItemChange = (field: string, value: any) => {
-    setNewItem(prev => ({ ...prev, [field]: value }));
-  };
-
- const handleNestedItemChange = (parent: string, field: string, value: any) => {
-  setNewItem(prev => ({
-    ...prev,
-    [parent]: {
-      ...(prev[parent] || {}),
-      [field]: value
+  // Helper functions for array management
+  const addCurriculumItem = () => {
+    if (newCurriculumItem.title && newCurriculumItem.description) {
+      setCurriculum([...curriculum, { ...newCurriculumItem, order: curriculum.length + 1 }]);
+      setNewCurriculumItem({ order: curriculum.length + 2, title: '', description: '' });
     }
-  }));
-};
-
-
-
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
   };
 
-  const showNotification = (message: string, type: 'success' | 'error') => {
-    setNotification({ show: true, message, type });
-    setTimeout(() => {
-      setNotification(prev => ({ ...prev, show: false }));
-    }, 3000);
+  const removeCurriculumItem = (index: number) => {
+    const updated = curriculum.filter((_, i) => i !== index);
+    setCurriculum(updated.map((item, i) => ({ ...item, order: i + 1 })));
   };
 
-  // Submit Handler
+  const addFeature = () => {
+    if (newFeature) {
+      setFeatures([...features, newFeature]);
+      setNewFeature('');
+    }
+  };
+
+  const removeFeature = (index: number) => {
+    setFeatures(features.filter((_, i) => i !== index));
+  };
+
+  const addTechStackItem = () => {
+    if (newTechStackItem.name && newTechStackItem.imageUrl) {
+      setTechStack([...techStack, newTechStackItem]);
+      setNewTechStackItem({ name: '', imageUrl: '' });
+    }
+  };
+
+  const removeTechStackItem = (index: number) => {
+    setTechStack(techStack.filter((_, i) => i !== index));
+  };
+
+  const addSkill = () => {
+    if (newSkill) {
+      setSkillsGained([...skillsGained, newSkill]);
+      setNewSkill('');
+    }
+  };
+
+  const removeSkill = (index: number) => {
+    setSkillsGained(skillsGained.filter((_, i) => i !== index));
+  };
+
+  const addJobRole = () => {
+    if (newJobRole) {
+      setJobRoles([...jobRoles, newJobRole]);
+      setNewJobRole('');
+    }
+  };
+
+  const removeJobRole = (index: number) => {
+    setJobRoles(jobRoles.filter((_, i) => i !== index));
+  };
+
+  const addTestimonial = () => {
+    if (newTestimonial.name && newTestimonial.description) {
+      setTestimonials([...testimonials, newTestimonial]);
+      setNewTestimonial({ name: '', imageUrl: '', description: '' });
+    }
+  };
+
+  const removeTestimonial = (index: number) => {
+    setTestimonials(testimonials.filter((_, i) => i !== index));
+  };
+
+  const addFaq = () => {
+    if (newFaq.question && newFaq.answer) {
+      setFaqs([...faqs, newFaq]);
+      setNewFaq({ question: '', answer: '' });
+    }
+  };
+
+  const removeFaq = (index: number) => {
+    setFaqs(faqs.filter((_, i) => i !== index));
+  };
+
+  const addResourceToModule = () => {
+    if (newResource.title && newResource.url) {
+      setNewModule({
+        ...newModule,
+        resources: [...newModule.resources, newResource]
+      });
+      setNewResource({ title: '', url: '', type: 'link' });
+    }
+  };
+
+  const removeResourceFromModule = (index: number) => {
+    setNewModule({
+      ...newModule,
+      resources: newModule.resources.filter((_, i) => i !== index)
+    });
+  };
+
+  const addModule = () => {
+    if (newModule.title && newModule.description) {
+      setModules([...modules, { ...newModule, order: modules.length + 1 }]);
+      setNewModule({ title: '', description: '', videoUrl: '', duration: 0, order: modules.length + 2, resources: [] });
+    }
+  };
+
+  const removeModule = (index: number) => {
+    const updated = modules.filter((_, i) => i !== index);
+    setModules(updated.map((item, i) => ({ ...item, order: i + 1 })));
+  };
+
+  const addTag = () => {
+    if (newTag) {
+      setTags([...tags, newTag]);
+      setNewTag('');
+    }
+  };
+
+  const removeTag = (index: number) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
+  const addRequirement = () => {
+    if (newRequirement) {
+      setRequirements([...requirements, newRequirement]);
+      setNewRequirement('');
+    }
+  };
+
+  const removeRequirement = (index: number) => {
+    setRequirements(requirements.filter((_, i) => i !== index));
+  };
+
+  const addLearningOutcome = () => {
+    if (newLearningOutcome) {
+      setLearningOutcomes([...learningOutcomes, newLearningOutcome]);
+      setNewLearningOutcome('');
+    }
+  };
+
+  const removeLearningOutcome = (index: number) => {
+    setLearningOutcomes(learningOutcomes.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitStatus('submitting');
+    setIsLoading(true);
+    setError('');
     
     try {
+      const courseData = {
+        title,
+        description,
+        about,
+        instructor,
+        category,
+        level,
+        price: parseInt(price),
+        thumbnail,
+        curriculum,
+        features,
+        techStack,
+        skillsGained,
+        jobRoles,
+        testimonials,
+        faqs,
+        modules,
+        tags,
+        requirements,
+        learningOutcomes
+      };
+      
       const response = await fetch('https://rass-h2s1.onrender.com/api/courses', {
         method: 'POST',
         headers: {
@@ -241,704 +260,599 @@ const AddCoursePage: React.FC = () => {
         body: JSON.stringify(courseData),
       });
       
-      if (response.ok) {
-        setSubmitStatus('success');
-        showNotification('Course created successfully!', 'success');
-        // Reset form
-        setCourseData({
-          title: '',
-          description: '',
-          about: '',
-          instructor: '',
-          category: '',
-          level: 'intermediate',
-          price: 0,
-          thumbnail: '',
-          curriculum: [],
-          features: [],
-          techStack: [],
-          skillsGained: [],
-          jobRoles: [],
-          testimonials: [],
-          faqs: [],
-          modules: [],
-          tags: [],
-          requirements: [],
-          learningOutcomes: []
-        });
-      } else {
-        setSubmitStatus('error');
-        showNotification('Error creating course', 'error');
+      if (!response.ok) {
+        throw new Error('Failed to create course');
       }
-    } catch (error) {
-      setSubmitStatus('error');
-      showNotification(`Error creating course: ${error}`, 'error');
+      
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/courses');
+      }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Preview Component
-  const CoursePreview = () => (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">Course Preview</h2>
-        <p className="opacity-90">See how your course will appear to students</p>
-      </div>
-      
-      <div className="p-6 space-y-6">
-        {/* Basic Info */}
-        <div className="border-b pb-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center">
-            <BookOpen className="mr-2 text-blue-500" size={20} />
-            Basic Information
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Title</p>
-              <p className="font-medium">{courseData.title || 'Not specified'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Category</p>
-              <p className="font-medium">{courseData.category || 'Not specified'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Level</p>
-              <p className="font-medium capitalize">{courseData.level || 'Not specified'}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Price</p>
-              <p className="font-medium">${courseData.price || 0}</p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <p className="text-sm text-gray-500">Description</p>
-            <p className="mt-1">{courseData.description || 'Not specified'}</p>
-          </div>
-          {courseData.thumbnail && (
-            <div className="mt-4">
-              <p className="text-sm text-gray-500">Thumbnail</p>
-              <img src={courseData.thumbnail} alt="Course thumbnail" className="mt-2 h-40 rounded-lg object-cover" />
-            </div>
-          )}
-        </div>
-
-        {/* Curriculum */}
-        {courseData.curriculum.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <FileText className="mr-2 text-blue-500" size={20} />
-              Curriculum
-            </h3>
-            <div className="space-y-3">
-              {courseData.curriculum.map((item, index) => (
-                <div key={index} className="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 rounded-r-lg">
-                  <p className="font-medium">{item.order}. {item.title}</p>
-                  <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tech Stack */}
-        {courseData.techStack.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Monitor className="mr-2 text-blue-500" size={20} />
-              Tech Stack
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {courseData.techStack.map((tech, index) => (
-                <div key={index} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  {tech.imageUrl && <img src={tech.imageUrl} alt={tech.name} className="w-4 h-4 mr-1 rounded-full" />}
-                  {tech.name}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Skills Gained */}
-        {courseData.skillsGained.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Award className="mr-2 text-blue-500" size={20} />
-              Skills Gained
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {courseData.skillsGained.map((skill, index) => (
-                <div key={index} className="flex items-center">
-                  <CheckCircle className="mr-2 text-green-500" size={16} />
-                  <span>{skill}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Job Roles */}
-        {courseData.jobRoles.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Users className="mr-2 text-blue-500" size={20} />
-              Job Roles
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {courseData.jobRoles.map((role, index) => (
-                <div key={index} className="bg-gray-100 p-2 rounded-lg text-center">
-                  {role}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Testimonials */}
-        {courseData.testimonials.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Star className="mr-2 text-blue-500" size={20} />
-              Testimonials
-            </h3>
-            <div className="space-y-4">
-              {courseData.testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center mb-2">
-                    {testimonial.imageUrl && (
-                      <img src={testimonial.imageUrl} alt={testimonial.name} className="w-10 h-10 rounded-full mr-3" />
-                    )}
-                    <p className="font-medium">{testimonial.name}</p>
-                  </div>
-                  <p className="text-gray-600 italic">"{testimonial.description}"</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* FAQs */}
-        {courseData.faqs.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <HelpCircle className="mr-2 text-blue-500" size={20} />
-              Frequently Asked Questions
-            </h3>
-            <div className="space-y-3">
-              {courseData.faqs.map((faq, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <p className="font-medium mb-2">Q: {faq.question}</p>
-                  <p className="text-gray-600">A: {faq.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Tags */}
-        {courseData.tags.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Tag className="mr-2 text-blue-500" size={20} />
-              Tags
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {courseData.tags.map((tag, index) => (
-                <span key={index} className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Requirements */}
-        {courseData.requirements.length > 0 && (
-          <div className="border-b pb-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <FileText className="mr-2 text-blue-500" size={20} />
-              Requirements
-            </h3>
-            <ul className="list-disc list-inside space-y-1">
-              {courseData.requirements.map((requirement, index) => (
-                <li key={index} className="text-gray-700">{requirement}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Learning Outcomes */}
-        {courseData.learningOutcomes.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Target className="mr-2 text-blue-500" size={20} />
-              Learning Outcomes
-            </h3>
-            <ul className="list-disc list-inside space-y-1">
-              {courseData.learningOutcomes.map((outcome, index) => (
-                <li key={index} className="text-gray-700">{outcome}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  // Form Sections
-  const renderArraySection = (
-    title: string,
-    field: keyof CourseData,
-    items: any[],
-    renderItem: (item: any, index: number) => React.ReactNode,
-    inputFields: React.ReactNode,
-    icon: React.ReactNode
-  ) => (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-      <div 
-        className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white flex justify-between items-center cursor-pointer"
-        onClick={() => toggleSection(field)}
-      >
-        <h3 className="text-lg font-semibold flex items-center">
-          {icon}
-          <span className="ml-2">{title}</span>
-          <span className="ml-2 bg-white bg-opacity-20 px-2 py-1 rounded-full text-xs">
-            {items.length}
-          </span>
-        </h3>
-        {expandedSections[field] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </div>
-      
-      {expandedSections[field] && (
-        <div className="p-6">
-          {/* Input Fields */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Add New {title.slice(0, -1)}</h4>
-            <div className="space-y-3">
-              {inputFields}
-              <button
-                type="button"
-                onClick={() => addToArray(field, newItem[field])}
-                className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-              >
-                <Plus size={16} />
-                Add {title.slice(0, -1)}
-              </button>
-            </div>
-          </div>
-
-          {/* List Items */}
-          {items.length > 0 ? (
-            <div className="space-y-2">
-              {items.map((item, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
-                  {renderItem(item, index)}
-                  <button
-                    type="button"
-                    onClick={() => removeFromArray(field, index)}
-                    className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No {title.toLowerCase()} added yet. Add your first {title.slice(0, -1).toLowerCase()} above.</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create New Course</h1>
-          <p className="text-gray-600">Fill in the details to create a comprehensive course</p>
-        </div>
-
-        {/* Notification */}
-        {notification.show && (
-          <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-            notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-          } text-white flex items-center`}>
-            {notification.type === 'success' ? <CheckCircle size={20} className="mr-2" /> : <X size={20} className="mr-2" />}
-            {notification.message}
+    <div>
+      <Navbar/>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="px-4 py-5 sm:px-6 bg-indigo-700">
+            <h1 className="text-2xl font-bold text-white">Add New Course</h1>
+            <p className="mt-1 text-sm text-indigo-200">Create a new course for the platform</p>
           </div>
-        )}
-
-        {/* Toggle Preview */}
-        <div className="flex justify-end mb-6">
-          <button
-            type="button"
-            onClick={() => setPreviewMode(!previewMode)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
-              previewMode 
-                ? 'bg-gray-500 text-white hover:bg-gray-600' 
-                : 'bg-purple-500 text-white hover:bg-purple-600'
-            }`}
-          >
-            <Eye size={20} />
-            {previewMode ? 'Edit Mode' : 'Preview Mode'}
-          </button>
-        </div>
-
-        {previewMode ? (
-          <CoursePreview />
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection('basic')}
-              >
-                <h3 className="text-lg font-semibold flex items-center">
-                  <BookOpen className="mr-2" size={20} />
-                  Basic Information
-                </h3>
-                {expandedSections.basic ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          
+          {success && (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4 m-4">
+              <div className="flex">
+                <div className="ml-3">
+                  <p className="text-sm text-green-700">
+                    Course created successfully! Redirecting...
+                  </p>
+                </div>
               </div>
-              
-              {expandedSections.basic && (
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Course Title *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={courseData.title}
-                        onChange={(e) => handleBasicInfoChange('title', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="MERN Stack Development"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Category *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={courseData.category}
-                        onChange={(e) => handleBasicInfoChange('category', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Web Development"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Level *
-                      </label>
-                      <select
-                        required
-                        value={courseData.level}
-                        onChange={(e) => handleBasicInfoChange('level', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      >
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Price (INR) *
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        value={courseData.price}
-                        onChange={(e) => handleBasicInfoChange('price', parseInt(e.target.value) || 0)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="4999"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Description *
-                      </label>
-                      <textarea
-                        required
-                        value={courseData.description}
-                        onChange={(e) => handleBasicInfoChange('description', e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Build powerful full-stack web applications using MongoDB, Express, React, and Node.js..."
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        About Course *
-                      </label>
-                      <textarea
-                        required
-                        value={courseData.about}
-                        onChange={(e) => handleBasicInfoChange('about', e.target.value)}
-                        rows={4}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="This course provides a complete guide to becoming a professional MERN Stack Developer..."
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Thumbnail URL *
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="url"
-                          required
-                          value={courseData.thumbnail}
-                          onChange={(e) => handleBasicInfoChange('thumbnail', e.target.value)}
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="https://res.cloudinary.com/demo/image/upload/..."
-                        />
-                        <button
-                          type="button"
-                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center"
-                        >
-                          <Upload size={16} className="mr-2" />
-                          Upload
-                        </button>
-                      </div>
-                      {courseData.thumbnail && (
-                        <div className="mt-2">
-                          <img src={courseData.thumbnail} alt="Course thumbnail" className="h-20 rounded-lg object-cover" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Instructor ID *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={courseData.instructor}
-                        onChange={(e) => handleBasicInfoChange('instructor', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="68eb53bc03477b59f82c71d4"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
-
-            {/* Curriculum */}
-            {renderArraySection(
-              'Curriculum',
-              'curriculum',
-              courseData.curriculum,
-              (item, index) => (
-                <div className="flex-1">
-                  <p className="font-medium">{item.order}. {item.title}</p>
-                  <p className="text-sm text-gray-600">{item.description}</p>
+          )}
+          
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 m-4">
+              <div className="flex">
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">
+                    {error}
+                  </p>
                 </div>
-              ),
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              </div>
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* Basic Information Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                    Course Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="instructor" className="block text-sm font-medium text-gray-700">
+                    Instructor ID
+                  </label>
+                  <input
+                    type="text"
+                    id="instructor"
+                    value={instructor}
+                    onChange={(e) => setInstructor(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="level" className="block text-sm font-medium text-gray-700">
+                    Level
+                  </label>
+                  <select
+                    id="level"
+                    value={level}
+                    onChange={(e) => setLevel(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                    Price
+                  </label>
                   <input
                     type="number"
-                    placeholder="Order"
-                    value={newItem.curriculum.order}
-                    onChange={(e) => handleNestedItemChange('curriculum', 'order', parseInt(e.target.value) || 0)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    value={newItem.curriculum.title}
-                    onChange={(e) => handleNestedItemChange('curriculum', 'title', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Description"
-                    value={newItem.curriculum.description}
-                    onChange={(e) => handleNestedItemChange('curriculum', 'description', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    id="price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
                   />
                 </div>
-              </>,
-              <FileText size={20} />
-            )}
-
-            {/* Features */}
-            {renderArraySection(
-              'Features',
-              'features',
-              courseData.features,
-              (item, index) => <p>{item}</p>,
-              <input
-                type="text"
-                placeholder="Feature (e.g., 100+ hours of video content)"
-                value={newItem.feature}
-                onChange={(e) => handleNewItemChange('feature', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <Star size={20} />
-            )}
-
-            {/* Tech Stack */}
-            {renderArraySection(
-              'Tech Stack',
-              'techStack',
-              courseData.techStack,
-              (item, index) => (
-                <div className="flex items-center">
-                  {item.imageUrl && <img src={item.imageUrl} alt={item.name} className="w-6 h-6 mr-2 rounded-full" />}
-                  <p>{item.name}</p>
-                </div>
-              ),
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Technology Name"
-                    value={newItem.techStack.name}
-                    onChange={(e) => handleNestedItemChange('techStack', 'name', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                
+                <div>
+                  <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">
+                    Thumbnail URL
+                  </label>
                   <input
                     type="url"
-                    placeholder="Image URL"
-                    value={newItem.techStack.imageUrl}
-                    onChange={(e) => handleNestedItemChange('techStack', 'imageUrl', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    id="thumbnail"
+                    value={thumbnail}
+                    onChange={(e) => setThumbnail(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    required
                   />
                 </div>
-              </>,
-              <Monitor size={20} />
-            )}
-
-            {/* Skills Gained */}
-            {renderArraySection(
-              'Skills Gained',
-              'skillsGained',
-              courseData.skillsGained,
-              (item, index) => (
-                <div className="flex items-center">
-                  <CheckCircle className="mr-2 text-green-500" size={16} />
-                  <p>{item}</p>
+              </div>
+              
+              <div className="mt-6">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+              
+              <div className="mt-6">
+                <label htmlFor="about" className="block text-sm font-medium text-gray-700">
+                  About
+                </label>
+                <textarea
+                  id="about"
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  rows={4}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+            </div>
+            
+            
+            {/* Tech Stack Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Tech Stack</h2>
+              
+              <div className="space-y-4">
+                {techStack.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-md shadow">
+                    <div className="flex items-center space-x-3">
+                      <img src={item.imageUrl} alt={item.name} className="h-8 w-8 object-contain" />
+                      <p>{item.name}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTechStackItem(index)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Technology name"
+                      value={newTechStackItem.name}
+                      onChange={(e) => setNewTechStackItem({ ...newTechStackItem, name: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <input
+                      type="url"
+                      placeholder="Image URL"
+                      value={newTechStackItem.imageUrl}
+                      onChange={(e) => setNewTechStackItem({ ...newTechStackItem, imageUrl: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addTechStackItem}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add Tech
+                    </button>
+                  </div>
                 </div>
-              ),
-              <input
-                type="text"
-                placeholder="Skill (e.g., Problem Solving)"
-                value={newItem.skill}
-                onChange={(e) => handleNewItemChange('skill', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <Award size={20} />
-            )}
-
-            {/* Job Roles */}
-            {renderArraySection(
-              'Job Roles',
-              'jobRoles',
-              courseData.jobRoles,
-              (item, index) => <p>{item}</p>,
-              <input
-                type="text"
-                placeholder="Job Role (e.g., Full Stack Developer)"
-                value={newItem.jobRole}
-                onChange={(e) => handleNewItemChange('jobRole', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <Users size={20} />
-            )}
-
-
-
-            {/* Tags */}
-            {renderArraySection(
-              'Tags',
-              'tags',
-              courseData.tags,
-              (item, index) => <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">#{item}</span>,
-              <input
-                type="text"
-                placeholder="Tag (e.g., mern, react)"
-                value={newItem.tag}
-                onChange={(e) => handleNewItemChange('tag', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <Tag size={20} />
-            )}
-
-            {/* Requirements */}
-            {renderArraySection(
-              'Requirements',
-              'requirements',
-              courseData.requirements,
-              (item, index) => <p>{item}</p>,
-              <input
-                type="text"
-                placeholder="Requirement (e.g., Basic knowledge of HTML)"
-                value={newItem.requirement}
-                onChange={(e) => handleNewItemChange('requirement', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <FileText size={20} />
-            )}
-
-            {/* Learning Outcomes */}
-            {renderArraySection(
-              'Learning Outcomes',
-              'learningOutcomes',
-              courseData.learningOutcomes,
-              (item, index) => <p>{item}</p>,
-              <input
-                type="text"
-                placeholder="Learning Outcome (e.g., Build scalable web applications)"
-                value={newItem.learningOutcome}
-                onChange={(e) => handleNewItemChange('learningOutcome', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />,
-              <Target size={20} />
-            )}
-
+              </div>
+            </div>
+            
+            
+            
+            {/* Job Roles Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Job Roles</h2>
+              
+              <div className="space-y-4">
+                {jobRoles.map((role, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-md shadow">
+                    <p>{role}</p>
+                    <button
+                      type="button"
+                      onClick={() => removeJobRole(index)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      placeholder="Add a job role"
+                      value={newJobRole}
+                      onChange={(e) => setNewJobRole(e.target.value)}
+                      className="flex-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addJobRole}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Testimonials Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Testimonials</h2>
+              
+              <div className="space-y-4">
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="p-3 bg-white rounded-md shadow">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3">
+                        <img src={testimonial.imageUrl} alt={testimonial.name} className="h-10 w-10 rounded-full" />
+                        <div>
+                          <p className="font-medium">{testimonial.name}</p>
+                          <p className="text-sm text-gray-500">{testimonial.description}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeTestimonial(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={newTestimonial.name}
+                      onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <input
+                      type="url"
+                      placeholder="Image URL"
+                      value={newTestimonial.imageUrl}
+                      onChange={(e) => setNewTestimonial({ ...newTestimonial, imageUrl: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      value={newTestimonial.description}
+                      onChange={(e) => setNewTestimonial({ ...newTestimonial, description: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addTestimonial}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* FAQs Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Frequently Asked Questions</h2>
+              
+              <div className="space-y-4">
+                {faqs.map((faq, index) => (
+                  <div key={index} className="p-3 bg-white rounded-md shadow">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-medium">Q: {faq.question}</p>
+                        <p className="text-sm text-gray-500">A: {faq.answer}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFaq(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Question"
+                      value={newFaq.question}
+                      onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <textarea
+                      placeholder="Answer"
+                      value={newFaq.answer}
+                      onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
+                      rows={2}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addFaq}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add FAQ
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Modules Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Course Modules</h2>
+              
+              <div className="space-y-4">
+                {modules.map((module, index) => (
+                  <div key={index} className="p-3 bg-white rounded-md shadow">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-medium">{module.order}. {module.title}</p>
+                        <p className="text-sm text-gray-500">{module.description}</p>
+                        <p className="text-xs text-gray-400">Duration: {module.duration} minutes</p>
+                        <p className="text-xs text-gray-400">Resources: {module.resources.length}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeModule(index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Module Title"
+                        value={newModule.title}
+                        onChange={(e) => setNewModule({ ...newModule, title: e.target.value })}
+                        className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Duration (minutes)"
+                        value={newModule.duration}
+                        onChange={(e) => setNewModule({ ...newModule, duration: parseInt(e.target.value) || 0 })}
+                        className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                    
+                    <textarea
+                      placeholder="Module Description"
+                      value={newModule.description}
+                      onChange={(e) => setNewModule({ ...newModule, description: e.target.value })}
+                      rows={2}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    
+                    <input
+                      type="url"
+                      placeholder="Video URL"
+                      value={newModule.videoUrl}
+                      onChange={(e) => setNewModule({ ...newModule, videoUrl: e.target.value })}
+                      className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">Module Resources</h3>
+                      <div className="space-y-2">
+                        {newModule.resources.map((resource, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-2 bg-gray-100 rounded">
+                            <p className="text-sm">{resource.title} ({resource.type})</p>
+                            <button
+                              type="button"
+                              onClick={() => removeResourceFromModule(idx)}
+                              className="text-red-600 hover:text-red-800 text-sm"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                          <input
+                            type="text"
+                            placeholder="Resource Title"
+                            value={newResource.title}
+                            onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                            className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          />
+                          <input
+                            type="url"
+                            placeholder="Resource URL"
+                            value={newResource.url}
+                            onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+                            className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          />
+                          <select
+                            value={newResource.type}
+                            onChange={(e) => setNewResource({ ...newResource, type: e.target.value })}
+                            className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          >
+                            <option value="link">Link</option>
+                            <option value="document">Document</option>
+                            <option value="video">Video</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={addResourceToModule}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                          >
+                            Add Resource
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={addModule}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add Module
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Tags Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Tags</h2>
+              
+              <div className="space-y-4">
+                {tags.map((tag, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-md shadow">
+                    <p>{tag}</p>
+                    <button
+                      type="button"
+                      onClick={() => removeTag(index)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      placeholder="Add a tag"
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      className="flex-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addTag}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            
+            
+            {/* Learning Outcomes Section */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Learning Outcomes</h2>
+              
+              <div className="space-y-4">
+                {learningOutcomes.map((outcome, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-md shadow">
+                    <p>{outcome}</p>
+                    <button
+                      type="button"
+                      onClick={() => removeLearningOutcome(index)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                
+                <div className="p-3 bg-white rounded-md shadow">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      placeholder="Add a learning outcome"
+                      value={newLearningOutcome}
+                      onChange={(e) => setNewLearningOutcome(e.target.value)}
+                      className="flex-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={addLearningOutcome}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             {/* Submit Button */}
-            <div className="flex justify-center">
+            <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={submitStatus === 'submitting'}
-                className={`flex items-center gap-2 px-8 py-4 rounded-lg text-lg font-semibold transition-colors ${
-                  submitStatus === 'submitting'
-                    ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
-                }`}
+                disabled={isLoading}
+                className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 disabled:bg-indigo-300"
               >
-                {submitStatus === 'submitting' ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Creating Course...
-                  </>
-                ) : (
-                  <>
-                    <Save size={20} />
-                    Create Course
-                  </>
-                )}
+                {isLoading ? 'Creating Course...' : 'Create Course'}
               </button>
             </div>
           </form>
-        )}
+        </div>
       </div>
+    </div>
+    <Footer />
     </div>
   );
 };

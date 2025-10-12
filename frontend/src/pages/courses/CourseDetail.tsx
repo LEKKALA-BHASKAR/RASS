@@ -13,6 +13,7 @@ import LearningOutcomes from "../../components/course/LearningOutcomes";
 import CourseHighlights from "../../components/course/CourseHighlights";
 import CourseCurriculum from "../../components/course/CourseCurriculum";
 import ToolsTechnologies from "../../components/course/ToolsTechnologies";
+import JobRoles from "../../components/course/JobRoles";
 import InstructorCard from "../../components/course/InstructorCard";
 import AlumniSpeaks from "../../components/course/AlumniSpeaks";
 import LearningJourney from "../../components/course/LearningJourney";
@@ -45,6 +46,7 @@ const CourseDetail: React.FC = () => {
     highlights: useRef(null),
     curriculum: useRef(null),
     tools: useRef(null),
+    jobs: useRef(null),
     instructor: useRef(null),
     alumni: useRef(null),
     journey: useRef(null),
@@ -200,18 +202,24 @@ const CourseDetail: React.FC = () => {
     { title: "Job Readiness", desc: "Resume building & mock interviews." },
   ];
 
-  const tools = (course as any).tools || [
+  // Use the actual techStack from the course or fallback to default tools
+  const tools = course.techStack || (course as any).tools || [
     { name: "React" },
     { name: "Node.js" },
     { name: "MongoDB" },
   ];
 
+  // Use the actual jobRoles from the course
+  const jobRoles = (course.jobRoles || [])
+    .filter((role): role is string => role !== null && role !== undefined && typeof role === 'string' && role.trim() !== '')
+    .map(role => ({ name: role })) || [];
+
   const testimonials =
     (course as any).testimonials?.map((t: any) => ({
       name: t.name,
       role: t.role || t.title || "Student",
-      quote: t.quote,
-      avatar: t.avatar,
+      quote: t.quote || t.description || "",
+      avatar: t.avatar || t.imageUrl || "",
     })) || [];
 
   const learningJourney = (course as any).learningJourney || [];
@@ -234,12 +242,14 @@ const CourseDetail: React.FC = () => {
           <div className="max-w-7xl mx-auto flex items-center px-6 py-3 overflow-x-auto space-x-3 text-sm font-medium">
             {[
               { key: "description", label: "About Course" },
-              { key: "details", label: "Course Overview" },
-              { key: "outcomes", label: "Learning Outcomes" },
-              { key: "highlights", label: "Highlights" },
               { key: "curriculum", label: "Curriculum" },
               { key: "tools", label: "Tools & Tech" },
-              { key: "instructor", label: "Instructors" },
+              { key: "jobs", label: "Job Roles" },
+              { key: "details", label: "Course Overview" },
+              { key: "outcomes", label: "Learning Outcomes" },
+              
+              { key: "highlights", label: "Highlights" },
+              
               { key: "alumni", label: "Alumni Speaks" },
               { key: "journey", label: "Admission Process" },
               { key: "companies", label: "Dream Companies" },
@@ -267,24 +277,27 @@ const CourseDetail: React.FC = () => {
         <div ref={sectionRefs.description}>
           <CourseDescription description={course.description || ""} />
         </div>
-        <div ref={sectionRefs.details}>
-          <CourseDetails course={course} />
-        </div>
-        <div ref={sectionRefs.outcomes}>
-          <LearningOutcomes outcomes={course.learningOutcomes || []} />
-        </div>
-        <div ref={sectionRefs.highlights}>
-          <CourseHighlights highlights={highlights} />
-        </div>
         <div ref={sectionRefs.curriculum}>
           <CourseCurriculum modules={course.modules || []} />
         </div>
         <div ref={sectionRefs.tools}>
           <ToolsTechnologies tools={tools} />
         </div>
-        <div ref={sectionRefs.instructor}>
-          <InstructorCard instructor={course.instructor} />
+        <div ref={sectionRefs.jobs}>
+          <JobRoles jobRoles={jobRoles} />
         </div>
+        <div ref={sectionRefs.details}>
+          <CourseDetails course={course} />
+        </div>
+        <div ref={sectionRefs.outcomes}>
+          <LearningOutcomes outcomes={course.learningOutcomes || []} />
+        </div>
+      
+        <div ref={sectionRefs.highlights}>
+          <CourseHighlights highlights={highlights} />
+        </div>
+        
+        
         <div ref={sectionRefs.alumni}>
           <AlumniSpeaks testimonials={testimonials} />
         </div>
