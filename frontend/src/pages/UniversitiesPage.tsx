@@ -1,13 +1,20 @@
 // src/pages/UniversitiesPage.tsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap, CheckCircle, BookOpen, Network, Star, Briefcase, Users, Award, ArrowRight } from "lucide-react";
+import { 
+  GraduationCap, CheckCircle, BookOpen, Network, Star, Briefcase, 
+  Users, Award, ArrowRight, TrendingUp, Globe, Lightbulb, Target,
+  ChevronRight, Quote, Calendar, Clock, UserCheck,
+  BarChart, Zap, Shield, Heart, MessageSquare, Phone, Mail,
+  Check,
+  ChevronLeft
+} from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { Link } from "react-router-dom";
 
 const heroImages = [
-  "/images/universities/university-cta-bg.jpg",
+    "/images/universities/university-cta-bg.jpg",
   "/images/universities/hero-university-campus.jpg",
   "/images/universities/hero-classroom.jpg",
   "/images/universities/hero-graduation.jpg",
@@ -19,234 +26,672 @@ const heroImages = [
 
 const UniversitiesPage: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   // Auto-rotate hero images
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 2800);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  const stats = [
+    { value: "200+", label: "Partner Universities", icon: Globe },
+    { value: "50K+", label: "Students Trained", icon: Users },
+    { value: "85%", label: "Placement Rate", icon: TrendingUp },
+    { value: "95%", label: "Satisfaction", icon: Star },
+  ];
+
+  const benefits = [
+    {
+      icon: Target,
+      title: "Industry-Aligned Curriculum",
+      description: "Courses designed with industry experts to ensure relevance and practical application."
+    },
+    {
+      icon: Award,
+      title: "Recognized Certifications",
+      description: "Industry-recognized certifications that add value to student resumes."
+    },
+    {
+      icon: Briefcase,
+      title: "Placement Support",
+      description: "Dedicated placement assistance and connections to hiring partners."
+    },
+    {
+      icon: Network,
+      title: "Industry Connections",
+      description: "Regular interactions with industry professionals and alumni networks."
+    },
+  ];
+
+  const partnershipModels = [
+    {
+      title: "Value-Added Programs",
+      description: "Supplementary certification programs that complement existing curriculum.",
+      features: ["Flexible scheduling", "Customizable content", "Online and offline options"],
+      icon: BookOpen
+    },
+    {
+      title: "Integrated Curriculum",
+      description: "Seamlessly integrated modules within existing courses.",
+      features: ["Faculty training", "Joint certification", "Shared resources"],
+      icon: Lightbulb
+    },
+    {
+      title: "Career Bootcamps",
+      description: "Intensive short-term programs focused on specific skills.",
+      features: ["Hands-on projects", "Industry mentors", "Placement assistance"],
+      icon: Zap
+    },
+    {
+      title: "Faculty Development",
+      description: "Training programs for university faculty to enhance teaching methods.",
+      features: ["Industry exposure", "Pedagogical training", "Resource access"],
+      icon: UserCheck
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Dr. Sarah Johnson",
+      position: "Dean of Computer Science",
+      university: "TechVision University",
+      content: "Our partnership with RASS Academy has transformed our computer science program. Students are now more industry-ready and our placement rates have increased significantly.",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+    },
+    {
+      name: "Prof. Michael Chen",
+      position: "Head of Engineering",
+      university: "Global Institute of Technology",
+      content: "The industry-aligned curriculum provided by RASS Academy has been instrumental in bridging the gap between academic knowledge and practical skills.",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+    },
+    {
+      name: "Dr. Emily Rodriguez",
+      position: "Director of Career Services",
+      university: "Innovation University",
+      content: "RASS Academy's placement support has been exceptional. Our students are now getting placed in top companies with competitive packages.",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80"
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "How does the partnership process work?",
+      answer: "Our partnership process begins with an initial consultation to understand your institution's needs. We then customize our programs to align with your curriculum and goals. After agreement, we provide faculty training and gradually implement the programs with continuous support."
+    },
+    {
+      question: "What resources are required from the university?",
+      answer: "We require minimal resources from your end. Typically, we need access to classrooms for training sessions, basic IT infrastructure, and a coordinator from your side to facilitate communication. Our team handles most of the heavy lifting."
+    },
+    {
+      question: "How are the programs evaluated for effectiveness?",
+      answer: "We have a comprehensive evaluation system that includes student feedback, performance assessments, placement metrics, and regular reviews with university leadership. We provide detailed reports on program effectiveness and areas for improvement."
+    },
+    {
+      question: "Can the programs be customized to our specific needs?",
+      answer: "Absolutely! We pride ourselves on our flexibility. Our team works closely with your faculty to customize content, delivery methods, and evaluation criteria to match your institution's specific requirements and industry focus."
+    }
+  ];
+
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 overflow-hidden">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-indigo-700 to-purple-700 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center px-6 gap-10">
-          {/* Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="md:w-1/2"
-          >
-            <GraduationCap className="h-14 w-14 text-yellow-400 mb-6" />
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
-              Empower Universities. <br /> Transform Students into Professionals.
-            </h1>
-            <p className="text-lg text-indigo-100 mb-8">
-              RASS Academy partners with institutions to bridge the gap between education and employability, preparing students with real-world skills and certifications.
-            </p>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition"
-            >
-              Start a Partnership <ArrowRight className="h-5 w-5" />
-            </Link>
-          </motion.div>
+{/* Hero Section */}
+<section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+  <div className="absolute inset-0">
+    {/* Animated Background Elements */}
+    <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+  </div>
 
-          {/* Image Player */}
+  <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Left Side - Content */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-white space-y-8"
+      >
+        {/* Main Heading */}
+        <div className="space-y-6">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            Empower
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400">
+              Universities.
+            </span>
+            Transform
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              Students.
+            </span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-indigo-100 leading-relaxed max-w-2xl">
+            RASS Academy partners with institutions to bridge the gap between 
+            <span className="font-semibold text-yellow-300"> education </span>
+            and
+            <span className="font-semibold text-yellow-300"> employability</span>, 
+            preparing students with real-world skills and industry-recognized certifications.
+          </p>
+        </div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="grid grid-cols-3 gap-6 py-6"
+        >
+          {[
+            { number: "50+", label: "Partner Universities" },
+            { number: "10K+", label: "Students Trained" },
+            { number: "95%", label: "Placement Rate" }
+          ].map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-2xl md:text-3xl font-bold text-yellow-400">{stat.number}</div>
+              <div className="text-sm text-indigo-200 mt-1">{stat.label}</div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+          className="flex flex-col sm:flex-row gap-4 pt-4"
+        >
+          <Link
+            to="/contact"
+            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <span className="relative">Start a Partnership</span>
+            <ArrowRight className="h-5 w-5 relative transform group-hover:translate-x-1 transition-transform duration-300" />
+          </Link>
+          
+          <Link
+            to="/about"
+            className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 hover:border-white/40 transition-all duration-300"
+          >
+            <span>Learn More</span>
+            <ChevronRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-300" />
+          </Link>
+        </motion.div>
+
+        {/* Trust Badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.5 }}
+          className="pt-8 border-t border-white/20"
+        >
+          <p className="text-sm text-indigo-200 mb-4">Trusted by leading institutions</p>
+          <div className="flex flex-wrap gap-6 items-center opacity-80">
+            {["IIT", "NIT", "University", "College"].map((institution, index) => (
+              <div key={index} className="text-white/70 text-sm font-medium">
+                {institution}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Right Side - Image Carousel */}
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        className="relative"
+      >
+        {/* Main Image Container */}
+        <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
           <motion.div
             key={currentImage}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="md:w-1/2 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20"
+            initial={{ opacity: 0, scale: 1.1, x: 100 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: -100 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className="absolute inset-0"
           >
             <img
               src={heroImages[currentImage]}
               alt="University partnership"
-              className="w-full h-[420px] object-cover"
+              className="w-full h-full object-cover"
             />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/40 via-transparent to-purple-900/20"></div>
           </motion.div>
+
+          {/* Floating Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="absolute bottom-6 left-6 right-6"
+          >
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-full flex items-center justify-center">
+                    <Check className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-lg">Industry Ready Graduates</h3>
+                  <p className="text-indigo-100 text-sm">90% of our partners see improved placement rates</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={() => setCurrentImage((prev) => (prev === 0 ? heroImages.length - 1 : prev - 1))}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          >
+            <ChevronLeft className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          </button>
+          <button
+            onClick={() => setCurrentImage((prev) => (prev === heroImages.length - 1 ? 0 : prev + 1))}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          >
+            <ChevronRight className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          </button>
+        </div>
+
+        {/* Image Indicators */}
+        <div className="flex justify-center gap-3 mt-6">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImage(index)}
+              className={`relative group transition-all duration-300 ${
+                currentImage === index ? "w-12" : "w-8"
+              }`}
+            >
+              <div
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  currentImage === index
+                    ? "bg-gradient-to-r from-yellow-400 to-orange-400"
+                    : "bg-white/30 hover:bg-white/50"
+                }`}
+              />
+              <div className="absolute inset-0 -m-2 rounded-full group-hover:bg-white/10 transition-colors duration-300"></div>
+            </button>
+          ))}
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl"></div>
+        <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-pink-400/20 rounded-full blur-xl"></div>
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Scroll Indicator */}
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 1.5, duration: 0.5 }}
+    className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+  >
+    <div className="flex flex-col items-center gap-2 text-white/60">
+      <span className="text-sm">Scroll to explore</span>
+      <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+        <motion.div
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="w-1 h-3 bg-white/60 rounded-full mt-2"
+        />
+      </div>
+    </div>
+  </motion.div>
+</section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="text-center"
+              >
+                <div className="flex justify-center mb-3">
+                  <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
+                    <stat.icon className="h-8 w-8 text-yellow-400" />
+                  </div>
+                </div>
+                <div className="text-4xl font-bold mb-1">{stat.value}</div>
+                <div className="text-indigo-100">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Bridging the Gap Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <img
-              src="/images/universities/bridge-learning.jpg"
-              alt="Bridge Learning"
-              className="rounded-2xl shadow-xl border"
-            />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Bridging the Gap Between Classroom and Career
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Our university partnerships help students apply academic knowledge to real-world challenges through certifications, projects, and placement-oriented training—without adding burden to faculty or existing syllabi.
-            </p>
-          </motion.div>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="order-2 md:order-1"
+            >
+              <div className="relative">
+                <div className="absolute -top-4 -left-4 w-72 h-72 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full filter blur-3xl opacity-70"></div>
+                <img
+                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                  alt="Bridge Learning"
+                  className="relative rounded-2xl shadow-2xl border-4 border-white"
+                />
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="order-1 md:order-2"
+            >
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+                  <Lightbulb className="h-4 w-4" />
+                  Our Approach
+                </div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                  Bridging the Gap Between Classroom and Career
+                </h2>
+                <p className="text-xl text-gray-600 mb-8">
+                  Our university partnerships help students apply academic knowledge to real-world challenges through certifications, projects, and placement-oriented training—without adding burden to faculty or existing syllabi.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                {[
+                  "Industry-aligned curriculum design",
+                  "Hands-on project-based learning",
+                  "Expert mentorship from industry professionals",
+                  "Continuous assessment and feedback"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center mt-0.5">
+                      <CheckCircle className="h-4 w-4 text-white" />
+                    </div>
+                    <p className="text-gray-700">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+              <Award className="h-4 w-4" />
+              Benefits
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Why Universities Partner with RASS Academy
             </h2>
-            <ul className="space-y-4 text-gray-700">
-              {[
-                "Enhance student employability through industry certifications.",
-                "Provide project-driven, hands-on experience.",
-                "Boost university reputation with career-ready graduates.",
-                "Strengthen your link with hiring organizations.",
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-600 mt-1" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover the transformative benefits our university partners experience
+            </p>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <img
-              src="/images/universities/university-benefits.jpg"
-              alt="University Benefits"
-              className="rounded-2xl shadow-xl border"
-            />
-          </motion.div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {benefits.map((benefit, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-2xl shadow-lg p-8 h-full"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+                  <benefit.icon className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
+                <p className="text-gray-600">{benefit.description}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Partnership Models Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <img
-              src="/images/universities/partnership-models.jpg"
-              alt="Partnership Models"
-              className="rounded-2xl shadow-xl border"
-            />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+              <Network className="h-4 w-4" />
+              Partnership Models
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Flexible Partnership Models for Universities
             </h2>
-            <p className="text-gray-600 mb-6">
-              Choose the engagement model that aligns best with your institutional goals.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose the engagement model that aligns best with your institutional goals
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                "Value-Added Certification Programs",
-                "Integrated Curriculum Support",
-                "Career-Ready Bootcamps",
-                "Industry Engagement Workshops",
-              ].map((model, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 border rounded-xl shadow-sm hover:shadow-md transition bg-gray-50"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-1">{model}</h3>
-                </div>
-              ))}
-            </div>
           </motion.div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {partnershipModels.map((model, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-2xl p-8 border border-indigo-100"
+              >
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <model.icon className="h-7 w-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{model.title}</h3>
+                    <p className="text-gray-600">{model.description}</p>
+                  </div>
+                </div>
+                
+                <ul className="space-y-3">
+                  {model.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="h-3 w-3 text-white" />
+                      </div>
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Success Stories */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-6">
+      {/* Success Stories Section */}
+      <section className="py-20 bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-4">
+              <Star className="h-4 w-4" />
+              Success Stories
+            </div>
+            <h2 className="text-4xl font-bold mb-4">
+              Transforming Education into Career Success
+            </h2>
+            <p className="text-xl text-indigo-100 max-w-3xl mx-auto">
+              Hear from our university partners about their experience
+            </p>
+          </motion.div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
+              >
+                <Quote className="h-10 w-10 text-yellow-400 mb-6" />
+                <p className="text-lg mb-6 italic">"{testimonial.content}"</p>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white/30"
+                  />
+                  <div>
+                    <h4 className="font-bold">{testimonial.name}</h4>
+                    <p className="text-indigo-200 text-sm">{testimonial.position}</p>
+                    <p className="text-indigo-300 text-sm">{testimonial.university}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
+              <MessageSquare className="h-4 w-4" />
+              FAQ
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600">
+              Find answers to common questions about our university partnerships
+            </p>
+          </motion.div>
+          
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="bg-gray-50 rounded-xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-100 transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                  <div className={`w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center transition-transform ${expandedFaq === index ? 'rotate-180' : ''}`}>
+                    <ChevronRight className="h-5 w-5 text-indigo-600" />
+                  </div>
+                </button>
+                
+                {expandedFaq === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="px-6 pb-5"
+                  >
+                    <p className="text-gray-600">{faq.answer}</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="relative py-24 bg-gradient-to-br from-indigo-900 to-purple-900 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500 rounded-full filter blur-3xl opacity-20"></div>
+            <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl opacity-20"></div>
+          </div>
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Transforming Education into Career Success
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Let's Build Future-Ready Graduates Together
             </h2>
-            <p className="text-gray-700 mb-6">
-              Partnering universities have seen measurable improvements in graduate employability, placement outcomes, and industry collaboration.
+            <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
+              Join the network of universities shaping the next generation of skilled professionals through RASS Academy's industry-aligned programs.
             </p>
-            <div className="bg-white p-6 rounded-xl shadow-md border">
-              <p className="italic text-gray-700">
-                “Our collaboration with RASS Academy has given our students a real competitive edge.
-                Their certification programs and mentorship transformed our placement outcomes.”
-              </p>
-              <p className="mt-3 font-semibold text-indigo-700">— Dean, Global Tech University</p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+              >
+                Start Partnership <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                to="/about"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/20 transition-all duration-300"
+              >
+                Learn More <ChevronRight className="h-5 w-5" />
+              </Link>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center text-indigo-200">
+              <div className="flex items-center gap-2">
+                <Phone className="h-5 w-5" />
+                <span>+1 (555) 123-4567</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                <span>partnerships@rassacademy.com</span>
+              </div>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <img
-              src="/images/universities/success-stories.jpg"
-              alt="Success Stories"
-              className="rounded-2xl shadow-xl border"
-            />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section
-        className="relative py-20 text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/universities/university-cta-bg.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative z-10 text-center max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl font-bold mb-6">Let’s Build Future-Ready Graduates Together</h2>
-          <p className="text-lg text-gray-200 mb-8">
-            Join the network of universities shaping the next generation of skilled professionals through RASS Academy’s industry-aligned programs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/contact"
-              className="px-8 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition"
-            >
-              Start Partnership
-            </Link>
-            <Link
-              to="/about"
-              className="px-8 py-3 border-2 border-white rounded-lg hover:bg-white/10 transition"
-            >
-              Learn More
-            </Link>
-          </div>
         </div>
       </section>
 
