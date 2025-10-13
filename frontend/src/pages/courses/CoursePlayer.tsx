@@ -189,27 +189,6 @@ const CoursePlayer: React.FC = () => {
               )}
             </div>
 
-            {/* Analytics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white p-4 rounded-lg shadow border flex items-center gap-3">
-                <CheckCircle className="h-6 w-6 text-green-500" />
-                <span className="text-sm text-gray-700">
-                  Completion: {enrollment.completionPercentage}%
-                </span>
-              </div>
-              <div className="bg-white p-4 rounded-lg shadow border flex items-center gap-3">
-                <Clock className="h-6 w-6 text-indigo-500" />
-                <span className="text-sm text-gray-700">
-                  Watch Time:{" "}
-                  {enrollment.progress.reduce(
-                    (sum, p) => sum + (p.watchTime || 0),
-                    0
-                  )}{" "}
-                  mins
-                </span>
-              </div>
-            </div>
-
             {/* Controls */}
             <div className="bg-white border px-6 py-4 flex items-center justify-between rounded-lg shadow-sm">
               <div>
