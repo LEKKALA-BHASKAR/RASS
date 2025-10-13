@@ -178,7 +178,7 @@ const CoursePlayer: React.FC = () => {
                   url={currentModuleData.videoUrl}
                   controls
                   width="100%"
-                  height="330px"
+                  height="540px"
                   onEnded={() => handleModuleComplete(currentModuleData._id)}
                 />
               ) : (
