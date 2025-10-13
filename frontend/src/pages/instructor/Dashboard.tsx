@@ -392,7 +392,7 @@ const InstructorDashboard: React.FC = () => {
             </div>
             {recentTickets.length === 0 ? (
               <p className="text-gray-500 text-center py-6">
-                No new support tickets.
+                Manage all the Support Tickets Here.
               </p>
             ) : (
               <ul className="space-y-3">
