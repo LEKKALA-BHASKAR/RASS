@@ -21,6 +21,7 @@ interface Course {
   _id?: string;
   title: string;
   description: string;
+  about?: string;
   category: string;
   level: string;
   price: number;
@@ -31,6 +32,23 @@ interface Course {
   tags?: string[];
   requirements?: string[];
   learningOutcomes?: string[];
+  // Added fields from AddCoursePage
+  features?: string[];
+  techStack?: Array<{
+    name: string;
+    imageUrl: string;
+  }>;
+  skillsGained?: string[];
+  jobRoles?: string[];
+  testimonials?: Array<{
+    name: string;
+    imageUrl: string;
+    description: string;
+  }>;
+  faqs?: Array<{
+    question: string;
+    answer: string;
+  }>;
   enrollmentCount?: number;
   rating?: {
     average: number;
@@ -53,13 +71,23 @@ const ManageCourses: React.FC = () => {
   const [formData, setFormData] = useState<Partial<Course>>({
     title: "",
     description: "",
+    about: "",
     category: "",
     level: "beginner",
     price: 0,
+    thumbnail: "",
     isPublished: true,
     tags: [],
     requirements: [""],
     learningOutcomes: [""],
+    // Initialize new fields
+    features: [],
+    techStack: [],
+    skillsGained: [],
+    jobRoles: [],
+    testimonials: [],
+    faqs: [],
+    // curriculum: [],  // Removed as it's auto-generated from modules
   });
 
   const [moduleData, setModuleData] = useState<Partial<Module>>({
@@ -94,8 +122,10 @@ const ManageCourses: React.FC = () => {
   const handleCreateOrUpdateCourse = async () => {
     try {
       if (selectedCourse?._id) {
+        // Update existing course with all fields
         await courseAPI.updateCourse(selectedCourse._id, formData);
       } else {
+        // Create new course
         await courseAPI.createCourse({ ...formData, instructor: user?._id });
       }
       setShowModal(false);
@@ -132,13 +162,23 @@ const ManageCourses: React.FC = () => {
     setFormData({
       title: "",
       description: "",
+      about: "",
       category: "",
       level: "beginner",
       price: 0,
+      thumbnail: "",
       isPublished: true,
       tags: [],
       requirements: [""],
       learningOutcomes: [""],
+      // Reset new fields
+      features: [],
+      techStack: [],
+      skillsGained: [],
+      jobRoles: [],
+      testimonials: [],
+      faqs: [],
+      // curriculum: [],  // Removed as it's auto-generated from modules
     });
   };
 
@@ -201,6 +241,24 @@ const ManageCourses: React.FC = () => {
 
   const removeArrayField = (field: keyof Course, index: number) => {
     const currentArray = [...(formData[field] as string[] || [])];
+    currentArray.splice(index, 1);
+    setFormData({ ...formData, [field]: currentArray });
+  };
+
+  // Helper functions for managing complex array fields
+  const handleComplexArrayInput = (field: keyof Course, index: number, property: string, value: any) => {
+    const currentArray = [...(formData[field] as any[] || [])];
+    currentArray[index] = { ...currentArray[index], [property]: value };
+    setFormData({ ...formData, [field]: currentArray });
+  };
+
+  const addComplexArrayField = (field: keyof Course, defaultValue: any) => {
+    const currentArray = [...(formData[field] as any[] || [])];
+    setFormData({ ...formData, [field]: [...currentArray, defaultValue] });
+  };
+
+  const removeComplexArrayField = (field: keyof Course, index: number) => {
+    const currentArray = [...(formData[field] as any[] || [])];
     currentArray.splice(index, 1);
     setFormData({ ...formData, [field]: currentArray });
   };
@@ -350,7 +408,27 @@ const ManageCourses: React.FC = () => {
                   <button
                     onClick={() => {
                       setSelectedCourse(course);
-                      setFormData(course);
+                      // Populate all fields for editing
+                      setFormData({
+                        title: course.title,
+                        description: course.description,
+                        about: course.about,
+                        category: course.category,
+                        level: course.level,
+                        price: course.price,
+                        thumbnail: course.thumbnail,
+                        isPublished: course.isPublished,
+                        tags: course.tags || [],
+                        requirements: course.requirements || [],
+                        learningOutcomes: course.learningOutcomes || [],
+                        features: course.features || [],
+                        techStack: course.techStack || [],
+                        skillsGained: course.skillsGained || [],
+                        jobRoles: course.jobRoles || [],
+                        testimonials: course.testimonials || [],
+                        faqs: course.faqs || [],
+                        // curriculum: course.curriculum || [],  // Removed as it's auto-generated from modules
+                      });
                       setShowModal(true);
                     }}
                     className="flex-1 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
@@ -456,140 +534,143 @@ const ManageCourses: React.FC = () => {
       {/* Course Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900">
                 {selectedCourse ? "Edit Course" : "Create New Course"}
               </h2>
             </div>
 
-            <div className="p-6 space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
+            <div className="p-6 space-y-6">
+              {/* Basic Information Section */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Course Title *
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter course title"
+                      value={formData.title || ""}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category *
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., Web Development"
+                      value={formData.category || ""}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Level
+                    </label>
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={formData.level || "beginner"}
+                      onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0"
+                      value={formData.price || 0}
+                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Thumbnail URL
+                    </label>
+                    <input
+                      type="url"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://example.com/thumbnail.jpg"
+                      value={formData.thumbnail || ""}
+                      onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Status
+                    </label>
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={formData.isPublished ? "published" : "draft"}
+                      onChange={(e) => setFormData({ ...formData, isPublished: e.target.value === "published" })}
+                    >
+                      <option value="published">Published</option>
+                      <option value="draft">Draft</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Course Title *
+                    Description *
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter course title"
-                    value={formData.title || ""}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24"
+                    placeholder="Describe your course..."
+                    value={formData.description || ""}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
                 </div>
 
-                <div>
+                <div className="mt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category *
+                    About
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., Web Development"
-                    value={formData.category || ""}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24"
+                    placeholder="About this course..."
+                    value={formData.about || ""}
+                    onChange={(e) => setFormData({ ...formData, about: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description *
-                </label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24"
-                  placeholder="Describe your course..."
-                  value={formData.description || ""}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-              </div>
+              
 
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Level
-                  </label>
-                  <select
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={formData.level}
-                    onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                  >
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="0"
-                    value={formData.price || 0}
-                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Status
-                  </label>
-                  <select
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={formData.isPublished ? "published" : "draft"}
-                    onChange={(e) => setFormData({ ...formData, isPublished: e.target.value === "published" })}
-                  >
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Requirements */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Requirements
-                </label>
-                <div className="space-y-2">
-                  {(formData.requirements || [""]).map((req, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="text"
-                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Add a requirement..."
-                        value={req}
-                        onChange={(e) => handleArrayInput("requirements", e.target.value, index)}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeArrayField("requirements", index)}
-                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
+              {/* Learning Outcomes */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Learning Outcomes</h2>
                   <button
                     type="button"
-                    onClick={() => addArrayField("requirements")}
+                    onClick={() => addArrayField("learningOutcomes")}
                     className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Requirement
+                    Add Learning Outcome
                   </button>
                 </div>
-              </div>
-
-              {/* Learning Outcomes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Learning Outcomes
-                </label>
                 <div className="space-y-2">
                   {(formData.learningOutcomes || [""]).map((outcome, index) => (
                     <div key={index} className="flex gap-2">
@@ -609,18 +690,228 @@ const ManageCourses: React.FC = () => {
                       </button>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              
+
+              
+              {/* Job Roles */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Job Roles</h2>
                   <button
                     type="button"
-                    onClick={() => addArrayField("learningOutcomes")}
+                    onClick={() => addArrayField("jobRoles")}
                     className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Learning Outcome
+                    Add Job Role
                   </button>
                 </div>
+                <div className="space-y-2">
+                  {(formData.jobRoles || []).map((role, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Add a job role..."
+                        value={role || ""}
+                        onChange={(e) => handleArrayInput("jobRoles", e.target.value, index)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeArrayField("jobRoles", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* Tags */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Tags</h2>
+                  <button
+                    type="button"
+                    onClick={() => addArrayField("tags")}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Tag
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(formData.tags || []).map((tag, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Add a tag..."
+                        value={tag || ""}
+                        onChange={(e) => handleArrayInput("tags", e.target.value, index)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeArrayField("tags", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tech Stack */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Tech Stack</h2>
+                  <button
+                    type="button"
+                    onClick={() => addComplexArrayField("techStack", { name: "", imageUrl: "" })}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Tech
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {(formData.techStack || []).map((tech, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                      <input
+                        type="text"
+                        className="col-span-2 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Technology name"
+                        value={tech?.name || ""}
+                        onChange={(e) => handleComplexArrayInput("techStack", index, "name", e.target.value)}
+                      />
+                      <input
+                        type="url"
+                        className="col-span-2 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Image URL"
+                        value={tech?.imageUrl || ""}
+                        onChange={(e) => handleComplexArrayInput("techStack", index, "imageUrl", e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeComplexArrayField("techStack", index)}
+                        className="md:col-span-4 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Testimonials */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Testimonials</h2>
+                  <button
+                    type="button"
+                    onClick={() => addComplexArrayField("testimonials", { name: "", imageUrl: "", description: "" })}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Testimonial
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {(formData.testimonials || []).map((testimonial, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                      <input
+                        type="text"
+                        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Name"
+                        value={testimonial?.name || ""}
+                        onChange={(e) => handleComplexArrayInput("testimonials", index, "name", e.target.value)}
+                      />
+                      <input
+                        type="url"
+                        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Image URL"
+                        value={testimonial?.imageUrl || ""}
+                        onChange={(e) => handleComplexArrayInput("testimonials", index, "imageUrl", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        className="md:col-span-2 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Description"
+                        value={testimonial?.description || ""}
+                        onChange={(e) => handleComplexArrayInput("testimonials", index, "description", e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeComplexArrayField("testimonials", index)}
+                        className="md:col-span-4 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FAQs */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">FAQs</h2>
+                  <button
+                    type="button"
+                    onClick={() => addComplexArrayField("faqs", { question: "", answer: "" })}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add FAQ
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {(formData.faqs || []).map((faq, index) => (
+                    <div key={index} className="space-y-2">
+                      <input
+                        type="text"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Question"
+                        value={faq?.question || ""}
+                        onChange={(e) => handleComplexArrayInput("faqs", index, "question", e.target.value)}
+                      />
+                      <textarea
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Answer"
+                        value={faq?.answer || ""}
+                        onChange={(e) => handleComplexArrayInput("faqs", index, "answer", e.target.value)}
+                        rows={2}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeComplexArrayField("faqs", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove FAQ
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Curriculum */}
+              {/* Removed curriculum section as it's automatically generated from modules */}
+              
             </div>
 
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
