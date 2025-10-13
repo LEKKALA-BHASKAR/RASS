@@ -69,9 +69,7 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
       )}
 
       {/* Guarantee */}
-      <p className="mt-6 flex items-center justify-center gap-2 text-sm text-indigo-100">
-        <CheckCircle className="h-4 w-4 text-green-300" /> 100% Refund if not satisfied in first 7 days
-      </p>
+      
     </section>
   );
 };
