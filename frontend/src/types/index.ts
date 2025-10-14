@@ -16,6 +16,7 @@ export interface User {
 }
 
 export interface Course {
+  lessonsCount: any;
   originalPrice: ReactNode;
   learningJourney: any[];
   highlights: any[];

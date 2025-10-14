@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Phone, User, Send, CheckCircle, X, MessageCircle } from 'lucide-react';
-import  useContact  from './ContactContext';
+import  {useContact}  from './ContactContext';
 
 const GlobalContactForm: React.FC = () => {
   const {
