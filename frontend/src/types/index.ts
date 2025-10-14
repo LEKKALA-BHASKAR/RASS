@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface User {
   createdAt: string;
   _id: string;
@@ -17,7 +19,7 @@ export interface User {
 
 export interface Course {
   lessonsCount: any;
-  originalPrice: ReactNode;
+  originalPrice: React.ReactNode;
   learningJourney: any[];
   highlights: any[];
   students: any[];
@@ -48,6 +50,16 @@ export interface Course {
   learningOutcomes: string[];
   createdAt: string;
   updatedAt: string;
+
+  // Curriculum data created by admin
+  curriculum?: {
+    order: number;
+    title: string;
+    sections: {
+      subtitle: string;
+      description?: string;
+    }[];
+  }[];
 
   // Tech Stack/Tools data
   techStack?: { 
