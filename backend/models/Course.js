@@ -41,7 +41,7 @@ const courseSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true },
-    about: { type: String }, // 1️⃣ About the course
+    about: { type: String },
 
     instructor: {
       type: mongoose.Schema.Types.ObjectId,
@@ -62,7 +62,12 @@ const courseSchema = new mongoose.Schema(
       {
         order: Number,
         title: { type: String, required: true },
-        description: String
+        sections: [
+          {
+            subtitle: { type: String, required: true },
+            description: { type: String }
+          }
+        ]
       }
     ],
 

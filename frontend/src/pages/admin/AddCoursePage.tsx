@@ -5,8 +5,10 @@ import Footer from "../../components/layout/Footer";
 interface CurriculumItem {
   order: number;
   title: string;
+  subtitle: string;
   description: string;
 }
+
 
 interface TechStackItem {
   name: string;
@@ -66,7 +68,7 @@ const AddCoursePage: React.FC = () => {
   const [learningOutcomes, setLearningOutcomes] = useState<string[]>([]);
   
   // Temporary input states for array items
-  const [newCurriculumItem, setNewCurriculumItem] = useState({ order: 1, title: '', description: '' });
+  const [newCurriculumItem, setNewCurriculumItem] = useState({ order: 1, title: '', subtitle: '', description: '' });
   const [newFeature, setNewFeature] = useState('');
   const [newTechStackItem, setNewTechStackItem] = useState({ name: '', imageUrl: '' });
   const [newSkill, setNewSkill] = useState('');
@@ -87,7 +89,7 @@ const AddCoursePage: React.FC = () => {
   const addCurriculumItem = () => {
     if (newCurriculumItem.title && newCurriculumItem.description) {
       setCurriculum([...curriculum, { ...newCurriculumItem, order: curriculum.length + 1 }]);
-      setNewCurriculumItem({ order: curriculum.length + 2, title: '', description: '' });
+      setNewCurriculumItem({ order: curriculum.length + 2, title: '', subtitle: '', description: '' });
     }
   };
 
@@ -483,7 +485,100 @@ const AddCoursePage: React.FC = () => {
             </div>
             
             
-            
+<div className="bg-gray-50 p-4 rounded-md">
+  <h2 className="text-lg font-medium text-gray-900 mb-4">Curriculum</h2>
+
+  <div className="space-y-4">
+    {/* Display Curriculum List */}
+    {curriculum.map((item, index) => (
+      <div key={index} className="p-3 bg-white rounded-md shadow space-y-2">
+        <div className="flex justify-between items-center">
+          <p className="font-semibold">
+            {item.order}. {item.title}
+          </p>
+          <button
+            type="button"
+            onClick={() => removeCurriculumItem(index)}
+            className="text-red-600 hover:text-red-800"
+          >
+            Remove
+          </button>
+        </div>
+        {item.subtitle && (
+          <p className="text-sm font-medium text-gray-800">{item.subtitle}</p>
+        )}
+        {item.description && (
+          <p className="text-sm text-gray-600">{item.description}</p>
+        )}
+      </div>
+    ))}
+
+    {/* Add New Curriculum Item */}
+    <div className="p-3 bg-white rounded-md shadow space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input
+          type="number"
+          placeholder="Order"
+          value={newCurriculumItem.order}
+          onChange={(e) =>
+            setNewCurriculumItem({
+              ...newCurriculumItem,
+              order: parseInt(e.target.value, 10),
+            })
+          }
+          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+
+        <input
+          type="text"
+          placeholder="Title"
+          value={newCurriculumItem.title}
+          onChange={(e) =>
+            setNewCurriculumItem({ ...newCurriculumItem, title: e.target.value })
+          }
+          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+
+        <input
+          type="text"
+          placeholder="Subtitle"
+          value={newCurriculumItem.subtitle}
+          onChange={(e) =>
+            setNewCurriculumItem({
+              ...newCurriculumItem,
+              subtitle: e.target.value,
+            })
+          }
+          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <textarea
+        placeholder="Description"
+        value={newCurriculumItem.description}
+        onChange={(e) =>
+          setNewCurriculumItem({
+            ...newCurriculumItem,
+            description: e.target.value,
+          })
+        }
+        className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
+      />
+
+      <div>
+        <button
+          type="button"
+          onClick={addCurriculumItem}
+          className="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+        >
+          Add Curriculum
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
             {/* Job Roles Section */}
             <div className="bg-gray-50 p-4 rounded-md">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Job Roles</h2>
