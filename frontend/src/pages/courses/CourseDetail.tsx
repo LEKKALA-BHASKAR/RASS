@@ -233,44 +233,40 @@ const CourseDetail: React.FC = () => {
 
   const faqs = (course as any).faqs || [];
 
-  return (
-    <div>
+ return (
+    <div className="flex flex-col min-h-screen">
       <Navbar />
 
       {/* ✅ Sticky Navigation */}
-        <div className="sticky top-16 bg-white shadow z-40 border-b">
-          <div className="max-w-7xl mx-auto flex items-center px-6 py-3 overflow-x-auto space-x-3 text-sm font-medium">
-            {[
-              { key: "description", label: "About Course" },
-              { key: "curriculum", label: "Curriculum" },
-              { key: "tools", label: "Tools & Tech" },
-              { key: "jobs", label: "Job Roles" },
-              { key: "details", label: "Course Overview" },
-              { key: "outcomes", label: "Learning Outcomes" },
-              
-              { key: "highlights", label: "Highlights" },
-              
-              { key: "alumni", label: "Alumni Speaks" },
-              { key: "journey", label: "Admission Process" },
-              { key: "companies", label: "Dream Companies" },
-              { key: "fee", label: "Fee & Registration" },
-              { key: "faq", label: "FAQs" },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => scrollToSection(tab.key)}
-                className="px-4 py-2 rounded-full border border-indigo-200 text-gray-700 bg-gray-50 hover:bg-indigo-100 hover:text-indigo-700 transition whitespace-nowrap"
-              >
-                {tab.label}
-              </button>
-            ))}
-
-          </div>
+      <div className="sticky top-16 bg-white shadow z-40 border-b">
+        <div className="max-w-8xl mx-auto flex items-center px-6 py-3 overflow-x-auto space-x-3 text-sm font-medium">
+          {[
+            { key: "description", label: "About Course" },
+            { key: "curriculum", label: "Curriculum" },
+            { key: "tools", label: "Tools & Tech" },
+            { key: "jobs", label: "Job Roles" },
+            { key: "details", label: "Course Overview" },
+            { key: "outcomes", label: "Learning Outcomes" },
+            { key: "highlights", label: "Highlights" },
+            { key: "alumni", label: "Alumni Speaks" },
+            { key: "journey", label: "Admission Process" },
+            { key: "companies", label: "Dream Companies" },
+            { key: "fee", label: "Fee & Registration" },
+            { key: "faq", label: "FAQs" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => scrollToSection(tab.key)}
+              className="px-4 py-2 rounded-full border border-indigo-200 text-gray-700 bg-gray-50 hover:bg-indigo-100 hover:text-indigo-700 transition whitespace-nowrap"
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
+      </div>
 
-
-      {/* ✅ Sections */}
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-16">
+      {/* ✅ Sections - Remove spacing between components */}
+      <div className="flex flex-col min-h-screen">
         <div ref={sectionRefs.hero}>
           <CourseHero course={course} enrollment={enrollment} onEnroll={handleEnroll} />
         </div>
@@ -292,19 +288,15 @@ const CourseDetail: React.FC = () => {
         <div ref={sectionRefs.outcomes}>
           <LearningOutcomes outcomes={course.learningOutcomes || []} />
         </div>
-      
         <div ref={sectionRefs.highlights}>
           <CourseHighlights highlights={highlights} />
         </div>
-        
-        
         <div ref={sectionRefs.alumni}>
           <AlumniSpeaks testimonials={testimonials} />
         </div>
         <div ref={sectionRefs.journey}>
           <LearningJourney journey={learningJourney} />
         </div>
-        
         <div ref={sectionRefs.companies}>
           <ClientsSection/>
         </div>
