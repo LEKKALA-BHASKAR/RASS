@@ -67,7 +67,7 @@ const ToolsTechnologies: React.FC<Props> = ({ tools }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("https://rass-h2s1.onrender.com/api/send-mail", {
+      const response = await fetch("https://rass-2.onrender.com/send-mail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
