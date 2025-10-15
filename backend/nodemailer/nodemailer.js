@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-
+import { Resend } from "resend";
 dotenv.config();
 
 const app = express();
@@ -27,6 +27,10 @@ const transporter = nodemailer.createTransport({
 /* ---------------------------------------------------
    🚀 Email Sending Route
 --------------------------------------------------- */
+
+
+const resend = new Resend(process.env.NODEMAILER_USER_PASSWORD);
+
 app.post("/send-mail", async (req, res) => {
   try {
     const { name, email, mobileNumber } = req.body;
@@ -35,20 +39,22 @@ app.post("/send-mail", async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    const mailOptions = {
-      from: `"RASS Academy" <${process.env.NODEMAILER_USER_EMAIL}>`,
+    const htmlContent = generateEmailTemplate(name, email, mobileNumber);
+
+    await resend.emails.send({
+      from: "RASS Academy <onboarding@resend.dev>",
       to: [process.env.NODEMAILER_USER_EMAIL, "sangarajuvamsi6@gmail.com"],
       subject: `🚀 New Course Inquiry - ${name}`,
-      html: generateEmailTemplate(name, email, mobileNumber),
-    };
+      html: htmlContent,
+    });
 
-    await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "✅ Email sent successfully!" });
   } catch (error) {
     console.error("❌ Error sending email:", error);
     res.status(500).json({ message: "Failed to send email", error });
   }
 });
+
 
 /* ---------------------------------------------------
    💌 HTML Email Template Generator
