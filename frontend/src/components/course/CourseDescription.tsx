@@ -26,20 +26,7 @@ const CourseDescription: React.FC<Props> = ({ description }) => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  };
-
-  const cardHoverVariants = {
-    hover: {
-      y: -2,
-      scale: 1.02,
-      boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
-      transition: {
-        type: "spring",
-        stiffness: 800,
-        damping: 17
+        ease: "easeOut" as const
       }
     }
   };
@@ -123,8 +110,12 @@ const CourseDescription: React.FC<Props> = ({ description }) => {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover="hover"
-                  variants={{ ...itemVariants, hover: cardHoverVariants.hover }}
+                  whileHover={{ 
+                    y: -2,
+                    scale: 1.02,
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                    transition: { type: "spring", stiffness: 800, damping: 17 }
+                  }}
                   className={`${feature.bgColor} border ${feature.borderColor} rounded-2xl p-6 backdrop-blur-sm cursor-pointer group overflow-hidden relative`}
                 >
                   {/* Background Gradient on Hover */}
@@ -159,26 +150,45 @@ const CourseDescription: React.FC<Props> = ({ description }) => {
               <Users className="w-6 h-6 text-blue-500" />
               Who Is This Course For?
             </h3>
-            <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-2xl p-8 border border-gray-200/60">
-              <p className="text-gray-600 text-lg text-center mb-6 font-medium">
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-8 border border-gray-200/60 shadow-lg">
+              <p className="text-gray-700 text-lg text-center mb-6 font-medium">
                 This program is designed for:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  "Freshers who want to kickstart a career in tech",
-                  "Working professionals looking to switch domains",
-                  "Students aiming to strengthen their portfolio",
-                  "Anyone passionate about learning by doing"
+                  {
+                    text: "Freshers who want to kickstart a career in tech",
+                    color: "from-blue-500 to-cyan-500",
+                    icon: "🎓"
+                  },
+                  {
+                    text: "Working professionals looking to switch domains",
+                    color: "from-purple-500 to-pink-500",
+                    icon: "💼"
+                  },
+                  {
+                    text: "Students aiming to strengthen their portfolio",
+                    color: "from-green-500 to-emerald-500",
+                    icon: "📚"
+                  },
+                  {
+                    text: "Anyone passionate about learning by doing",
+                    color: "from-amber-500 to-orange-500",
+                    icon: "💡"
+                  }
                 ].map((item, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300"
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    className="flex items-center gap-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
                   >
-                    <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0" />
-                    <span className="text-gray-700 text-sm font-medium">{item}</span>
+                    <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center text-white text-xl shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                      {item.icon}
+                    </div>
+                    <span className="text-gray-800 text-sm font-medium">{item.text}</span>
                   </motion.div>
                 ))}
               </div>
