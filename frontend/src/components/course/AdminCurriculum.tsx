@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, BookOpen, Mail, Phone, User, Clock, Users, Award, Play, CheckCircle, Star, Zap, Globe, Code, Database, Palette, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Clock, Mail, Phone, Play, User, Zap } from "lucide-react";
 
 interface CurriculumSection {
   subtitle: string;
@@ -57,7 +57,7 @@ const AdminCurriculum: React.FC<Props> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
-  const [activeTab, setActiveTab] = useState<"overview" | "curriculum">("overview");
+  const [activeTab, setActiveTab] = useState<"curriculum">("curriculum");
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
 
   if (!curriculum || curriculum.length === 0) return null;
@@ -71,16 +71,7 @@ const AdminCurriculum: React.FC<Props> = ({
       (item.sections?.reduce((sectionTotal, section) => sectionTotal + (section.duration || 0), 0) || 0);
   }, 0);
 
-  // Icon mapping for different types of curriculum
-  const getIconForCurriculum = (title: string) => {
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes("html") || lowerTitle.includes("css") || lowerTitle.includes("web")) return <Globe className="h-5 w-5" />;
-    if (lowerTitle.includes("javascript") || lowerTitle.includes("react") || lowerTitle.includes("node")) return <Code className="h-5 w-5" />;
-    if (lowerTitle.includes("database") || lowerTitle.includes("sql") || lowerTitle.includes("mongodb")) return <Database className="h-5 w-5" />;
-    if (lowerTitle.includes("design") || lowerTitle.includes("ui") || lowerTitle.includes("ux")) return <Palette className="h-5 w-5" />;
-    if (lowerTitle.includes("security") || lowerTitle.includes("auth")) return <Shield className="h-5 w-5" />;
-    return <BookOpen className="h-5 w-5" />;
-  };
+
 
   // Color mapping for different curriculum items
   const getColorForCurriculum = (index: number) => {
@@ -175,26 +166,8 @@ const AdminCurriculum: React.FC<Props> = ({
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-full shadow-md p-1 flex">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                activeTab === "overview" 
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white" 
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("curriculum")}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                activeTab === "curriculum" 
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white" 
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Curriculum
-            </button>
+
+
           </div>
         </div>
 
@@ -208,56 +181,9 @@ const AdminCurriculum: React.FC<Props> = ({
                 transition={{ duration: 0.5 }}
                 className="space-y-6"
               >
-                {/* Course Overview Card */}
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">What You'll Learn</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {sortedCurriculum.slice(0, 4).map((item, index) => (
-                        <div key={index} className="flex items-start gap-3">
-                          <div className={`p-2 rounded-lg bg-gradient-to-r ${getColorForCurriculum(index)} text-white`}>
-                            {getIconForCurriculum(item.title)}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">{item.title}</h4>
-                            <p className="text-sm text-gray-600">
-                              {item.sections?.length || 0} sections • {formatDuration(item.estimatedDuration || 0)}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
 
-                {/* Instructor Card */}
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Your Instructor</h3>
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <img 
-                          src={instructorImage || "https://via.placeholder.com/100x100?text=Instructor"} 
-                          alt={instructorName}
-                          className="w-20 h-20 rounded-full object-cover border-4 border-indigo-100"
-                        />
-                        <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full flex items-center justify-center">
-                          <CheckCircle className="h-4 w-4 text-white" />
-                        </div>
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-semibold text-gray-900">{instructorName}</h4>
-                        <p className="text-gray-600">Industry Expert with 10+ years experience</p>
-                        <div className="flex items-center gap-1 mt-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          ))}
-                          <span className="text-sm text-gray-600 ml-1">(4.9)</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
+
               </motion.div>
             ) : (
               <div className="space-y-4">
@@ -360,14 +286,14 @@ const AdminCurriculum: React.FC<Props> = ({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: sectionIndex * 0.1 }}
-            onMouseEnter={() => setHoveredSection(`${item._id}-${item.logoUrl}-${sectionIndex}`)}
+            onMouseEnter={() => setHoveredSection(`${item._id}-${item.logoUrl}`)}
             onMouseLeave={() => setHoveredSection(null)}
           >
             {/* Tree branch connector */}
             <div className="absolute -left-6 top-4 w-4 h-0.5 bg-indigo-300 group-hover:bg-indigo-400 transition-colors"></div>
             
             <div className={`flex items-start gap-4 p-4 bg-white rounded-lg border ${
-              hoveredSection === `${item._id}-${sectionIndex}` 
+              hoveredSection === `${item._id}-${item.logoUrl}` 
                 ? "border-indigo-300 shadow-md" 
                 : "border-gray-200"
             } transition-all duration-200 group`}>
@@ -386,12 +312,7 @@ const AdminCurriculum: React.FC<Props> = ({
                         e.currentTarget.parentElement?.nextElementSibling?.classList.remove('hidden');
                       }}
                     />
-                    {/* Hover overlay with icon */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className={`p-2 rounded-lg bg-gradient-to-r ${colorClass} text-white`}>
-                        {getIconForCurriculum(section.subtitle)}
-                      </div>
-                    </div>
+
                   </div>
                 ) : null}
                 
