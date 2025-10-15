@@ -268,31 +268,7 @@ const CourseDetails: React.FC<Props> = ({ course }) => {
           </div>
         </motion.div>
 
-        {/* Level Indicator */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-200/60"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${getLevelColor(course.level)} flex items-center justify-center shadow-lg`}>
-                <Target className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-gray-900">Course Level</h4>
-                <p className="text-gray-600">Designed for {course.level} learners</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-              </div>
-              <div className="text-sm text-gray-500">Perfect starting point</div>
-            </div>
-          </div>
-        </motion.div>
+        
       </div>
     </section>
   );
