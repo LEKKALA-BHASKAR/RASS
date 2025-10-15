@@ -163,34 +163,30 @@ const AdminCurriculum: React.FC<Props> = ({
           
         </motion.div>
 
-        {/* Tab Navigation */}
+        {/* Tab Navigation - Removed overview tab */}
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-full shadow-md p-1 flex">
-
-
+            <button
+              onClick={() => setActiveTab("curriculum")}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                activeTab === "curriculum"
+                  ? "bg-indigo-600 text-white shadow"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Curriculum
+            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {activeTab === "overview" ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-6"
-              >
-
-
-
-              </motion.div>
-            ) : (
-              <div className="space-y-4">
-                {sortedCurriculum.map((item, index) => {
-                  const isOpen = openItems.has(index);
-                  const hasSections = item.sections && item.sections.length > 0;
-                  const colorClass = getColorForCurriculum(index);
+            <div className="space-y-4">
+              {sortedCurriculum.map((item, index) => {
+                const isOpen = openItems.has(index);
+                const hasSections = item.sections && item.sections.length > 0;
+                const colorClass = getColorForCurriculum(index);
                   
                   return (
                     <motion.div
@@ -208,22 +204,28 @@ const AdminCurriculum: React.FC<Props> = ({
                       >
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-3">
-                            {/* Dynamic Number Badge */}
-                            <div className={`relative bg-gradient-to-r ${colorClass} text-white w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold shadow-lg`}>
-                              {item.order}
-                              
-                              {/* Tech Logo Overlay */}
-                              {item.logoUrl && (
+                            {/* Display logo in place of order number */}
+                            {item.logoUrl ? (
+                              <div className="relative">
                                 <img 
                                   src={item.logoUrl} 
                                   alt={`${item.title} logo`}
-                                  className="absolute -bottom-1 -right-1 w-7 h-7 object-contain bg-white rounded-full p-0.5 shadow-md border"
+                                  className="w-14 h-14 object-contain rounded-xl shadow-lg border"
                                   onError={(e) => {
+                                    // Fallback to gradient badge with order number if image fails to load
                                     e.currentTarget.style.display = 'none';
+                                    const fallbackElement = document.createElement('div');
+                                    fallbackElement.className = `relative bg-gradient-to-r ${colorClass} text-white w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold shadow-lg`;
+                                    fallbackElement.textContent = item.order.toString();
+                                    e.currentTarget.parentNode?.appendChild(fallbackElement);
                                   }}
                                 />
-                              )}
-                            </div>
+                              </div>
+                            ) : (
+                              <div className={`relative bg-gradient-to-r ${colorClass} text-white w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold shadow-lg`}>
+                                {item.order}
+                              </div>
+                            )}
                             
                             <div className="text-left">
                               <div className="flex items-center gap-2">
@@ -297,14 +299,14 @@ const AdminCurriculum: React.FC<Props> = ({
                 ? "border-indigo-300 shadow-md" 
                 : "border-gray-200"
             } transition-all duration-200 group`}>
-              {/* Curriculum Image instead of Number Badge */}
+              {/* Curriculum Image instead of Number Badge - Reduced size */}
               <div className="relative group/image">
                 {item.logoUrl ? (
-                  <div className="relative overflow-hidden rounded-lg shadow-md group-hover/image:shadow-lg transition-all duration-300">
+                  <div className="relative overflow-hidden rounded-md shadow group-hover/image:shadow-md transition-all duration-300">
                     <img 
                       src={item.logoUrl} 
                       alt={`${item.title} logo`}
-                      className="w-14 h-14 object-contain bg-white p-1 group-hover/image:scale-110 transition-transform duration-300"
+                      className="w-8 h-8 object-contain bg-white p-0.5 group-hover/image:scale-110 transition-transform duration-300"
                       onError={(e) => {
                         // Fallback to gradient badge if image fails to load
                         e.currentTarget.style.display = 'none';
@@ -316,9 +318,9 @@ const AdminCurriculum: React.FC<Props> = ({
                   </div>
                 ) : null}
                 
-                {/* Fallback to gradient badge if no image */}
+                {/* Fallback to gradient badge if no image - Reduced size */}
                 {(!item.logoUrl || item.logoUrl === '') && (
-                  <div className={`relative bg-gradient-to-r ${colorClass} text-white w-14 h-14 rounded-xl flex items-center justify-center text-lg font-bold shadow-lg group-hover/image:scale-110 transition-transform duration-300`}>
+                  <div className={`relative bg-gradient-to-r ${colorClass} text-white w-8 h-8 rounded-md flex items-center justify-center text-sm font-bold shadow group-hover/image:scale-110 transition-transform duration-300`}>
                     {item.order}
                   </div>
                 )}
@@ -361,7 +363,6 @@ const AdminCurriculum: React.FC<Props> = ({
                   );
                 })}
               </div>
-            )}
           </div>
 
           {/* Right Side - Contact Form */}
