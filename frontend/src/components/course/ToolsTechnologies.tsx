@@ -87,10 +87,8 @@ const ToolsTechnologies: React.FC<Props> = ({ tools }) => {
             className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent"
           >
             Tools & Technologies
+            <br />
           </motion.h2>
-          <p className="text-lg text-gray-600 mt-4">
-            Learn modern tools — displayed in sleek rectangular boxes ✨
-          </p>
         </div>
 
         {/* Centered Rows of 5 Rectangular Tool Cards */}
