@@ -25,6 +25,7 @@ interface Section {
 interface CurriculumItem {
   _id?: string;
   order: number;
+  logoUrl?: string;
   title: string;
   sections: Section[];
 }
@@ -34,18 +35,13 @@ interface Course {
   title: string;
   description: string;
   about?: string;
+  instructor?: string;
   category: string;
   level: string;
   price: number;
   thumbnail?: string;
-  instructor?: string;
   modules: Module[];
   curriculum: CurriculumItem[];
-  isPublished?: boolean;
-  tags?: string[];
-  requirements?: string[];
-  learningOutcomes?: string[];
-  // Added fields from AddCoursePage
   features?: string[];
   techStack?: Array<{
     name: string;
@@ -62,11 +58,17 @@ interface Course {
     question: string;
     answer: string;
   }>;
+  totalDuration?: number;
   enrollmentCount?: number;
   rating?: {
     average: number;
     count: number;
   };
+  slug?: string;
+  isPublished?: boolean;
+  tags?: string[];
+  requirements?: string[];
+  learningOutcomes?: string[];
   createdAt?: string;
 }
 
@@ -94,14 +96,12 @@ const ManageCourses: React.FC = () => {
     requirements: [""],
     learningOutcomes: [""],
     curriculum: [],
-    // Initialize new fields
     features: [],
     techStack: [],
     skillsGained: [],
     jobRoles: [],
     testimonials: [],
     faqs: [],
-    // curriculum: [],  // Removed as it's auto-generated from modules
   });
 
   const [moduleData, setModuleData] = useState<Partial<Module>>({
@@ -186,14 +186,13 @@ const ManageCourses: React.FC = () => {
       requirements: [""],
       learningOutcomes: [""],
       curriculum: [],
-      // Reset new fields
+      // Reset all fields
       features: [],
       techStack: [],
       skillsGained: [],
       jobRoles: [],
       testimonials: [],
       faqs: [],
-      // curriculum: [],  // Removed as it's auto-generated from modules
     });
   };
 
@@ -352,8 +351,6 @@ const ManageCourses: React.FC = () => {
               </svg>
               Create Course
             </button>
-
-              
           </div>
 
           {/* Search Bar */}
@@ -454,6 +451,15 @@ const ManageCourses: React.FC = () => {
                       <span>{course.rating.average.toFixed(1)} ({course.rating.count} reviews)</span>
                     </div>
                   )}
+
+                  {course.enrollmentCount && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                      <span>{course.enrollmentCount} enrolled</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -482,8 +488,8 @@ const ManageCourses: React.FC = () => {
                         thumbnail: course.thumbnail,
                         isPublished: course.isPublished,
                         tags: course.tags || [],
-                        requirements: course.requirements || [],
-                        learningOutcomes: course.learningOutcomes || [],
+                        requirements: course.requirements || [""],
+                        learningOutcomes: course.learningOutcomes || [""],
                         features: course.features || [],
                         techStack: course.techStack || [],
                         skillsGained: course.skillsGained || [],
@@ -717,7 +723,79 @@ const ManageCourses: React.FC = () => {
                 </div>
               </div>
 
-              
+              {/* Features Section */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Course Features</h2>
+                  <button
+                    type="button"
+                    onClick={() => addArrayField("features")}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Feature
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(formData.features || [""]).map((feature, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., Lifetime access"
+                        value={feature}
+                        onChange={(e) => handleArrayInput("features", e.target.value, index)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeArrayField("features", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Requirements Section */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Requirements</h2>
+                  <button
+                    type="button"
+                    onClick={() => addArrayField("requirements")}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Requirement
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(formData.requirements || [""]).map((requirement, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., Basic HTML knowledge"
+                        value={requirement}
+                        onChange={(e) => handleArrayInput("requirements", e.target.value, index)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeArrayField("requirements", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Learning Outcomes */}
               <div className="bg-gray-50 p-4 rounded-md">
@@ -756,9 +834,43 @@ const ManageCourses: React.FC = () => {
                 </div>
               </div>
 
-              
+              {/* Skills Gained */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Skills Gained</h2>
+                  <button
+                    type="button"
+                    onClick={() => addArrayField("skillsGained")}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Skill
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {(formData.skillsGained || [""]).map((skill, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., React Hooks"
+                        value={skill}
+                        onChange={(e) => handleArrayInput("skillsGained", e.target.value, index)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeArrayField("skillsGained", index)}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-              
               {/* Job Roles */}
               <div className="bg-gray-50 p-4 rounded-md">
                 <div className="flex justify-between items-center mb-4">
@@ -1016,6 +1128,13 @@ const ManageCourses: React.FC = () => {
                           onChange={(e) => handleCurriculumInput(index, 'title', e.target.value)}
                           className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
+                        <input
+                          type="url"
+                          placeholder="Logo URL (optional)"
+                          value={item.logoUrl || ''}
+                          onChange={(e) => handleCurriculumInput(index, 'logoUrl', e.target.value)}
+                          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                       </div>
                       
                       <div className="space-y-3">
@@ -1057,7 +1176,6 @@ const ManageCourses: React.FC = () => {
                   ))}
                 </div>
               </div>
-              
             </div>
 
             <div className="p-6 border-t border-gray-200 flex justify-end gap-3">

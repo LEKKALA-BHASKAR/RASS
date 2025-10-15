@@ -61,6 +61,7 @@ const courseSchema = new mongoose.Schema(
     curriculum: [
       {
         order: Number,
+        logoUrl: String,
         title: { type: String, required: true },
         sections: [
           {

@@ -1,4 +1,3 @@
-// frontend/src/pages/admin/SupportManagement.tsx
 import React, { useState, useEffect } from "react";
 import { supportTicketAPI } from "../../services/api";
 import {
