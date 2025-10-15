@@ -57,16 +57,15 @@ const ToolsTechnologies: React.FC<Props> = ({ tools }) => {
 
   const itemVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 20 },
-    visible: (i: number) => ({
+    visible: {
       opacity: 1,
       scale: 1,
       y: 0,
       transition: {
-        delay: Math.abs(i - 2) * 0.05, // center-based stagger animation
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
-    }),
+    },
   };
 
   return (
@@ -84,10 +83,9 @@ const ToolsTechnologies: React.FC<Props> = ({ tools }) => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent"
+            className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight"
           >
             Tools & Technologies
-            <br />
           </motion.h2>
         </div>
 
@@ -104,7 +102,6 @@ const ToolsTechnologies: React.FC<Props> = ({ tools }) => {
               {row.map((tool, i) => (
                 <motion.div
                   key={tool.name}
-                  custom={i}
                   variants={itemVariants}
                   whileHover={{ scale: 1.05, y: -5 }}
                   className="relative group w-52 h-12 sm:w-52 sm:h-24 bg-white/80 backdrop-blur-md border border-gray-200/70 rounded-2xl shadow-md hover:shadow-xl overflow-hidden transition-all"

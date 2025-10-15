@@ -54,7 +54,7 @@ const CourseDescription: React.FC<Props> = ({ description }) => {
               <BookOpen className="w-9 h-4 text-indigo-600" />
               <span className="text-sm font-medium text-gray-700">Course Overview</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight">
               About This Course
             </h2>
           </motion.div>

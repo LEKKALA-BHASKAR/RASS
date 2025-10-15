@@ -139,11 +139,11 @@ const CourseHighlights: React.FC<Props> = ({ highlights }) => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm pb-3 leading-tight">
             <Zap className="w-4 h-4 text-yellow-500 fill-yellow-500" />
             <span className="text-sm font-medium text-gray-700">Highlights</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight">
             Course Highlights
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">

@@ -175,7 +175,7 @@ const CourseDetails: React.FC<Props> = ({ course }) => {
             <Zap className="w-4 h-4 text-yellow-500 fill-yellow-500" />
             <span className="text-sm font-medium text-gray-700">Course Overview</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight">
             Everything You Need to Know
           </h2>
           <p className="text-gray-600 mt-3 max-w-2xl mx-auto">

@@ -102,7 +102,7 @@ const LearningJourney: React.FC<Props> = ({ journey }) => {
             <BookOpen className="w-4 h-4 text-indigo-600" />
             <span className="text-sm font-medium text-gray-700">Admission Process</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight">
             Your Learning Journey
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">

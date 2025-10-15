@@ -52,7 +52,7 @@ const JobRoles: React.FC<Props> = ({ jobRoles }) => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent pb-3 leading-tight">
             Career Opportunities
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
