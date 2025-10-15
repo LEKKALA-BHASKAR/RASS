@@ -11,7 +11,7 @@ import CourseHero from "../../components/course/CourseHero";
 import CourseDetails from "../../components/course/CourseDetails";
 import LearningOutcomes from "../../components/course/LearningOutcomes";
 import CourseHighlights from "../../components/course/CourseHighlights";
-import CourseCurriculum from "../../components/course/CourseCurriculum";
+import AdminCurriculum from "../../components/course/AdminCurriculum";
 import ToolsTechnologies from "../../components/course/ToolsTechnologies";
 import JobRoles from "../../components/course/JobRoles";
 import InstructorCard from "../../components/course/InstructorCard";
@@ -202,6 +202,20 @@ const CourseDetail: React.FC = () => {
     { title: "Job Readiness", desc: "Resume building & mock interviews." },
   ];
 
+  // Use the actual curriculum from the course or fallback to mapping from modules
+  const curriculum = course.curriculum || course.modules?.map((module, index) => ({
+    _id: module._id,
+    order: index + 1,
+    title: module.title,
+    sections: [
+      {
+        subtitle: "Description",
+        description: module.description || "No description available"
+      },
+      // Add more sections as needed
+    ]
+  })) || [];
+
   // Use the actual techStack from the course or fallback to default tools
   const tools = course.techStack || (course as any).tools || [
     { name: "React" },
@@ -274,7 +288,7 @@ const CourseDetail: React.FC = () => {
           <CourseDescription description={course.description || ""} />
         </div>
         <div ref={sectionRefs.curriculum}>
-          <CourseCurriculum modules={course.modules || []} />
+          <AdminCurriculum curriculum={curriculum} />
         </div>
         <div ref={sectionRefs.tools}>
           <ToolsTechnologies tools={tools} />

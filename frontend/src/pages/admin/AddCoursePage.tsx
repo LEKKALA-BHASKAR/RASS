@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
-interface CurriculumItem {
-  order: number;
-  title: string;
+
+interface CurriculumSection {
   subtitle: string;
   description: string;
 }
 
+interface CurriculumItem {
+  order: number;
+  title: string;
+  sections: CurriculumSection[];
+}
 
 interface TechStackItem {
   name: string;
@@ -68,7 +72,11 @@ const AddCoursePage: React.FC = () => {
   const [learningOutcomes, setLearningOutcomes] = useState<string[]>([]);
   
   // Temporary input states for array items
-  const [newCurriculumItem, setNewCurriculumItem] = useState({ order: 1, title: '', subtitle: '', description: '' });
+  const [newCurriculumItem, setNewCurriculumItem] = useState({
+    order: 1,
+    title: '',
+    sections: [{ subtitle: '', description: '' }]
+  });
   const [newFeature, setNewFeature] = useState('');
   const [newTechStackItem, setNewTechStackItem] = useState({ name: '', imageUrl: '' });
   const [newSkill, setNewSkill] = useState('');
@@ -87,15 +95,37 @@ const AddCoursePage: React.FC = () => {
 
   // Helper functions for array management
   const addCurriculumItem = () => {
-    if (newCurriculumItem.title && newCurriculumItem.description) {
+    if (newCurriculumItem.title) {
       setCurriculum([...curriculum, { ...newCurriculumItem, order: curriculum.length + 1 }]);
-      setNewCurriculumItem({ order: curriculum.length + 2, title: '', subtitle: '', description: '' });
+      setNewCurriculumItem({
+        order: curriculum.length + 2,
+        title: '',
+        sections: [{ subtitle: '', description: '' }]
+      });
     }
   };
 
   const removeCurriculumItem = (index: number) => {
     const updated = curriculum.filter((_, i) => i !== index);
     setCurriculum(updated.map((item, i) => ({ ...item, order: i + 1 })));
+  };
+
+  const handleSectionChange = (sectionIndex: number, field: keyof CurriculumSection, value: string) => {
+    const updatedSections = [...newCurriculumItem.sections];
+    updatedSections[sectionIndex][field] = value;
+    setNewCurriculumItem({ ...newCurriculumItem, sections: updatedSections });
+  };
+
+  const addSectionField = () => {
+    setNewCurriculumItem({
+      ...newCurriculumItem,
+      sections: [...newCurriculumItem.sections, { subtitle: '', description: '' }]
+    });
+  };
+
+  const removeSectionField = (index: number) => {
+    const updatedSections = newCurriculumItem.sections.filter((_, i) => i !== index);
+    setNewCurriculumItem({ ...newCurriculumItem, sections: updatedSections });
   };
 
   const addFeature = () => {
@@ -504,12 +534,12 @@ const AddCoursePage: React.FC = () => {
             Remove
           </button>
         </div>
-        {item.subtitle && (
-          <p className="text-sm font-medium text-gray-800">{item.subtitle}</p>
-        )}
-        {item.description && (
-          <p className="text-sm text-gray-600">{item.description}</p>
-        )}
+        {item.sections.map((section, idx) => (
+          <div key={idx} className="ml-4">
+            <p className="text-sm font-medium text-gray-800">{section.subtitle}</p>
+            <p className="text-sm text-gray-600">{section.description}</p>
+          </div>
+        ))}
       </div>
     ))}
 
@@ -538,32 +568,41 @@ const AddCoursePage: React.FC = () => {
           }
           className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
-
-        <input
-          type="text"
-          placeholder="Subtitle"
-          value={newCurriculumItem.subtitle}
-          onChange={(e) =>
-            setNewCurriculumItem({
-              ...newCurriculumItem,
-              subtitle: e.target.value,
-            })
-          }
-          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        />
       </div>
 
-      <textarea
-        placeholder="Description"
-        value={newCurriculumItem.description}
-        onChange={(e) =>
-          setNewCurriculumItem({
-            ...newCurriculumItem,
-            description: e.target.value,
-          })
-        }
-        className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
-      />
+      {/* Sections */}
+      {newCurriculumItem.sections.map((section, index) => (
+        <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+          <input
+            type="text"
+            placeholder="Subtitle"
+            value={section.subtitle}
+            onChange={(e) => handleSectionChange(index, 'subtitle', e.target.value)}
+            className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
+          />
+          <textarea
+            placeholder="Description"
+            value={section.description}
+            onChange={(e) => handleSectionChange(index, 'description', e.target.value)}
+            className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
+          />
+          <button
+            type="button"
+            onClick={() => removeSectionField(index)}
+            className="text-red-600 hover:text-red-800"
+          >
+            Remove Section
+          </button>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={addSectionField}
+        className="text-indigo-600 hover:text-indigo-800 text-sm"
+      >
+        + Add Section
+      </button>
 
       <div>
         <button

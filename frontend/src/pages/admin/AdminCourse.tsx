@@ -17,6 +17,18 @@ interface Module {
   }>;
 }
 
+interface Section {
+  subtitle: string;
+  description: string;
+}
+
+interface CurriculumItem {
+  _id?: string;
+  order: number;
+  title: string;
+  sections: Section[];
+}
+
 interface Course {
   _id?: string;
   title: string;
@@ -28,6 +40,7 @@ interface Course {
   thumbnail?: string;
   instructor?: string;
   modules: Module[];
+  curriculum: CurriculumItem[];
   isPublished?: boolean;
   tags?: string[];
   requirements?: string[];
@@ -80,6 +93,7 @@ const ManageCourses: React.FC = () => {
     tags: [],
     requirements: [""],
     learningOutcomes: [""],
+    curriculum: [],
     // Initialize new fields
     features: [],
     techStack: [],
@@ -171,6 +185,7 @@ const ManageCourses: React.FC = () => {
       tags: [],
       requirements: [""],
       learningOutcomes: [""],
+      curriculum: [],
       // Reset new fields
       features: [],
       techStack: [],
@@ -261,6 +276,54 @@ const ManageCourses: React.FC = () => {
     const currentArray = [...(formData[field] as any[] || [])];
     currentArray.splice(index, 1);
     setFormData({ ...formData, [field]: currentArray });
+  };
+
+  // Helper functions for managing curriculum
+  const handleCurriculumInput = (index: number, field: keyof CurriculumItem, value: any) => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    currentArray[index] = { ...currentArray[index], [field]: value };
+    setFormData({ ...formData, curriculum: currentArray });
+  };
+
+  const handleSectionInput = (curriculumIndex: number, sectionIndex: number, field: keyof Section, value: string) => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    const sections = [...(currentArray[curriculumIndex].sections || [])];
+    sections[sectionIndex] = { ...sections[sectionIndex], [field]: value };
+    currentArray[curriculumIndex] = { ...currentArray[curriculumIndex], sections };
+    setFormData({ ...formData, curriculum: currentArray });
+  };
+
+  const addCurriculumItem = () => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    setFormData({ 
+      ...formData, 
+      curriculum: [
+        ...currentArray, 
+        { order: currentArray.length + 1, title: "", sections: [{ subtitle: "", description: "" }] }
+      ] 
+    });
+  };
+
+  const removeCurriculumItem = (index: number) => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    currentArray.splice(index, 1);
+    setFormData({ ...formData, curriculum: currentArray });
+  };
+
+  const addSection = (curriculumIndex: number) => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    const sections = [...(currentArray[curriculumIndex].sections || [])];
+    sections.push({ subtitle: "", description: "" });
+    currentArray[curriculumIndex] = { ...currentArray[curriculumIndex], sections };
+    setFormData({ ...formData, curriculum: currentArray });
+  };
+
+  const removeSection = (curriculumIndex: number, sectionIndex: number) => {
+    const currentArray = [...(formData.curriculum as CurriculumItem[] || [])];
+    const sections = [...(currentArray[curriculumIndex].sections || [])];
+    sections.splice(sectionIndex, 1);
+    currentArray[curriculumIndex] = { ...currentArray[curriculumIndex], sections };
+    setFormData({ ...formData, curriculum: currentArray });
   };
 
   return (
@@ -427,7 +490,7 @@ const ManageCourses: React.FC = () => {
                         jobRoles: course.jobRoles || [],
                         testimonials: course.testimonials || [],
                         faqs: course.faqs || [],
-                        // curriculum: course.curriculum || [],  // Removed as it's auto-generated from modules
+                        curriculum: course.curriculum || [],
                       });
                       setShowModal(true);
                     }}
@@ -910,7 +973,90 @@ const ManageCourses: React.FC = () => {
               </div>
 
               {/* Curriculum */}
-              {/* Removed curriculum section as it's automatically generated from modules */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-medium text-gray-900">Curriculum</h2>
+                  <button
+                    type="button"
+                    onClick={addCurriculumItem}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Curriculum Item
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {(formData.curriculum || []).map((item, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 bg-white">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="font-medium text-gray-900">Curriculum Item {index + 1}</h3>
+                        <button
+                          type="button"
+                          onClick={() => removeCurriculumItem(index)}
+                          className="text-red-600 hover:text-red-700 text-sm font-medium"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                        <input
+                          type="number"
+                          placeholder="Order"
+                          value={item.order || ''}
+                          onChange={(e) => handleCurriculumInput(index, 'order', parseInt(e.target.value) || 0)}
+                          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={item.title || ''}
+                          onChange={(e) => handleCurriculumInput(index, 'title', e.target.value)}
+                          className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium text-gray-700">Sections</h4>
+                        {item.sections?.map((section, sectionIndex) => (
+                          <div key={sectionIndex} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                            <input
+                              type="text"
+                              placeholder="Subtitle"
+                              value={section.subtitle || ''}
+                              onChange={(e) => handleSectionInput(index, sectionIndex, 'subtitle', e.target.value)}
+                              className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
+                            />
+                            <textarea
+                              placeholder="Description"
+                              value={section.description || ''}
+                              onChange={(e) => handleSectionInput(index, sectionIndex, 'description', e.target.value)}
+                              className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 sm:text-sm"
+                              rows={2}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeSection(index, sectionIndex)}
+                              className="text-red-600 hover:text-red-800 self-start"
+                            >
+                              Remove Section
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => addSection(index)}
+                          className="text-indigo-600 hover:text-indigo-800 text-sm"
+                        >
+                          + Add Section
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
               
             </div>
 
