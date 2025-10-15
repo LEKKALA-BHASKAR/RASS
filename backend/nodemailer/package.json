@@ -2,10 +2,10 @@
   "name": "nodemailer",
   "version": "1.0.0",
   "main": "nodemailer.js",
- "scripts": {
-  "start": "node nodemailer.js",
-  "build": "echo 'No build step needed for backend'"
-},
+  "scripts": {
+    "start": "node nodemailer.js",
+    "build": "echo 'No build step needed for backend'"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
