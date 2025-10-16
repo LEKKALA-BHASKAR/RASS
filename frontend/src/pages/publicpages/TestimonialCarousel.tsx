@@ -23,7 +23,7 @@ const defaultTestimonials: Testimonial[] = [
     content: "The courses completely transformed my career. The hands-on projects and industry-relevant curriculum helped me land my dream job at a top tech company within 3 months of completion.",
     name: "Sarah Chen",
     role: "Senior Developer at TechCorp",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=150&q=80",
+    avatar: "https://plus.unsplash.com/premium_photo-1661515387768-3c4b4ea36743?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bGlua2VkaW4lMjBwcm9maWxlcyUyMHdvbWVufGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600",
     rating: 5,
   },
   {
@@ -245,7 +245,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
             What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Students</span> Say
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of successful learners who transformed their careers through our innovative programs
+            Join the pool of successful learners who transformed their careers through our innovative programs
           </p>
         </motion.div>
 

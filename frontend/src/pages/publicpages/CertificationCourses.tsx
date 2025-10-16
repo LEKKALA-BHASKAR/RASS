@@ -17,7 +17,11 @@ import {
   Shield,
   Star,
   ArrowRight,
-  Apple
+  Apple,
+  UserCheck,
+  Medal,
+  Building2,
+  Book
 } from 'lucide-react';
 
 // Define types for our data
@@ -47,7 +51,7 @@ const CertificationCourses: React.FC = () => {
   const features: Feature[] = [
     {
       id: 1,
-      title: "Flexible Hybrid Learning",
+      title: "Flexible Blended Learning",
       description: "Experience the energy of live, instructor-led classes combined with the freedom of self-paced preparatory modules.",
       icon: <Clock className="w-6 h-6" />,
       color: "from-blue-500 to-cyan-400"
@@ -110,31 +114,25 @@ const CertificationCourses: React.FC = () => {
     }
   ];
 
-  // Data for our benefits
+  // Updated data for our benefits with new content and adjusted descriptions
   const benefits: CourseBenefit[] = [
     {
       id: 1,
-      title: "Mastering the Art of Learning",
-      description: "Develop effective learning strategies that will serve you throughout your career.",
-      icon: <Brain className="w-8 h-8" />
+      title: "Training",
+      description: "🎯 Hands-on learning with live mentors and real projects. Build core, soft, and cultural-fit skills with industry-aligned modules.",
+      icon: <Book className="w-8 h-8" />
     },
     {
       id: 2,
-      title: "Building Skills Through Practice",
-      description: "Reinforce your knowledge with hands-on exercises and real-world applications.",
-      icon: <Target className="w-8 h-8" />
+      title: "Skill Certification",
+      description: "📜 Government-approved skill validation. Advance after clearing national-level skill assessments.",
+      icon: <Medal className="w-8 h-8" />
     },
     {
       id: 3,
-      title: "Learning with a Peer Community",
-      description: "Collaborate and grow with like-minded individuals on the same learning journey.",
-      icon: <Users className="w-8 h-8" />
-    },
-    {
-      id: 4,
-      title: "Proving Talent in Competitions",
-      description: "Test your skills against others and demonstrate your abilities in competitive environments.",
-      icon: <Award className="w-8 h-8" />
+      title: "Internship",
+      description: "💼 Work on real industry or in-house projects. Gain practical experience and launch your career with confidence.",
+      icon: <Building2 className="w-8 h-8" />
     }
   ];
 
@@ -188,47 +186,49 @@ const CertificationCourses: React.FC = () => {
         
         {/* Header Section with iOS-style typography */}
         <header className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200/50 shadow-sm mb-8">
-            <Apple className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-600">Education Pro</span>
-          </div>
-          
-          <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
-            
-            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Certification Courses
+          <h1 className="text-5xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
+            <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-3 leading-tight">
+              How are we different from others 
+
             </span>
           </h1>
           
-          <p className="text-xl lg:text-2xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
-            "From foundational skills to advanced professional mastery — designed with Apple's design philosophy"
+          <p className="text-xl lg:text-2xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed pb-3 leading-tight">
+            Bridging the gap between learning and real-world success
           </p>
         </header>
 
-        {/* Benefits Grid - macOS Style Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+        {/* Benefits Grid - macOS Style Cards with adjusted sizing */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {benefits.map((benefit, index) => (
             <div
               key={benefit.id}
-              className="group bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-200/50 p-6 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2"
+              className="group bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-200/50 p-8 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
               style={{
                 animationDelay: `${index * 100}ms`,
                 animation: 'fadeInUp 0.6s ease-out forwards'
               }}
             >
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="p-3 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 border border-gray-200/50">
                   {benefit.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">{benefit.title}</h3>
+                <h3 className="text-2xl font-bold text-gray-900">{benefit.title}</h3>
               </div>
-              <p className="text-gray-600 text-sm leading-relaxed">{benefit.description}</p>
+              <p className="text-gray-600 text-lg leading-relaxed flex-grow">{benefit.description}</p>
             </div>
           ))}
         </div>
 
-        {/* Featured Learning Feature - iOS 18 Style */}
-       
+        {/* Course Features Header */}
+        <div className="text-center mb-16 mt-16">
+          <h2 className="text-2xl lg:text-2xl font-bold text-gray-900 pb-3 leading-tight ">
+            India's First Full-Cycle Career-Ready Training Pathway
+          </h2>
+          <p className="text-xl text-gray-600 font-light max-w-2xl mx-auto">
+            Building Tomorrow's Workforce, Today
+          </p>
+        </div>
 
         {/* All Features Grid - macOS Dock Style */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
