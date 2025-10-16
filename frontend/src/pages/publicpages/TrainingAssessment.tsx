@@ -49,7 +49,7 @@ const TrainingAssessment: React.FC = () => {
               {/* Image Container */}
               <div className="relative bg-white/5 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-white/10">
                 <img
-                  src="../../public/improve_yourself.png"
+                  src="../../improve_yourself.png"
                   alt="Career Development Pathway"
                   className="w-full h-auto object-contain rounded-2xl"
                 />
