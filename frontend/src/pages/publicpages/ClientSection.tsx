@@ -55,11 +55,11 @@ export function ClientsSection() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl font-bold text-gray-800 mb-4">
+          <h2 className="text-5xl font-bold text-gray-800 pb-3 leading-tight">
             Trusted by Industry Leaders
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We partner with Fortune 500 companies to drive innovation and deliver exceptional results
+            Our instructors and students work at leading companies.
           </p>
         </motion.div>
 

@@ -47,7 +47,7 @@ const CertificationCourses: React.FC = () => {
   const features: Feature[] = [
     {
       id: 1,
-      title: "Flexible Hybrid Learning",
+      title: "Flexible Blended Learning",
       description: "Experience the energy of live, instructor-led classes combined with the freedom of self-paced preparatory modules.",
       icon: <Clock className="w-6 h-6" />,
       color: "from-blue-500 to-cyan-400"
@@ -188,20 +188,18 @@ const CertificationCourses: React.FC = () => {
         
         {/* Header Section with iOS-style typography */}
         <header className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200/50 shadow-sm mb-8">
-            <Apple className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-600">Education Pro</span>
-          </div>
           
-          <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
+          
+          <h1 className="text-5xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
             
             <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-3 leading-tight">
-              Certification Courses
+               How are we different from others 
+
             </span>
           </h1>
           
           <p className="text-xl lg:text-2xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed">
-            "From foundational skills to advanced professional mastery — designed with Apple's design philosophy"
+            "Bridging the gap between learning and real-world success"
           </p>
         </header>
 
