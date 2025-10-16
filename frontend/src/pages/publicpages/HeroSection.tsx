@@ -134,14 +134,14 @@ export function HeroCarousel() {
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                  <div key={index} className="bg-black/10 backdrop-blur-sm rounded-xl p-4 border border-gray/20 hover:bg-black/20 transition-all duration-300">
                     <div className="flex items-center">
-                      <div className="bg-gradient-to-br from-white/20 to-white/5 p-2 rounded-lg mr-4">
-                        <IconComponent className="h-6 w-6 text-white" />
+                      <div className="bg-gradient-to-br from-black/20 to-black/5 p-2 rounded-lg mr-4">
+                        <IconComponent className="h-6 w-6 text-black" />
                       </div>
                       <div>
-                        <div className="text-lg font-bold text-white">{stat.value}</div>
-                        <div className="text-white/80 text-sm font-medium">{stat.label}</div>
+                        <div className="text-lg font-bold text-black">{stat.value}</div>
+                        <div className="text-black/80 text-sm font-medium">{stat.label}</div>
                       </div>
                     </div>
                   </div>
