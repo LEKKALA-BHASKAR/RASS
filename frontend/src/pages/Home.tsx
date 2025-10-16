@@ -14,6 +14,7 @@ import IntroCourse from './publicpages/IntroCourse';
 import AIInsightsDashboard from './publicpages/AIInsightsDashboard';
 import { motion } from 'framer-motion';
 import TestimonialCarousel from './publicpages/TestimonialCarousel';
+import MediaPresenceSection from './publicpages/MediaPresenceSection';
 
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -86,47 +87,44 @@ const Home: React.FC = () => {
   return (
     <div>
       <Navbar/>
-   
-    <div className="min-h-screen overflow-hidden bg-white">
-      
-     
-<HeroCarousel/>
-<ClientsSection/>
-<IntroCourse/>
-<AIInsightsDashboard/>
-<CertificationCourses/>
-<TestimonialCarousel/>
+      <div className="min-h-screen overflow-hidden bg-white">
+        <HeroCarousel/>
+        <ClientsSection/>
+        <IntroCourse/>
+        <AIInsightsDashboard/>
+        <CertificationCourses/>
+        <TestimonialCarousel/>
+        <MediaPresenceSection/>
 
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-indigo-700 to-indigo-800 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Start Your Learning Journey?
-          </h2>
-          <p className="text-xl mb-10 max-w-2xl mx-auto opacity-90">
-            Join thousands of students already learning with RASS Academy. 
-            Start your journey today with our comprehensive courses.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              to="/register" 
-              className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-2"
-            >
-              Join RASS Academy <TrendingUp size={20} />
-            </Link>
-            <Link 
-              to="/courses" 
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-700 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
-            >
-              View Courses <Clock size={20} />
-            </Link>
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-r from-indigo-700 to-indigo-800 text-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Start Your Learning Journey?
+            </h2>
+            <p className="text-xl mb-10 max-w-2xl mx-auto opacity-90">
+              Join thousands of students already learning with RASS Academy. 
+              Start your journey today with our comprehensive courses.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                to="/register" 
+                className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-2"
+              >
+                Join RASS Academy <TrendingUp size={20} />
+              </Link>
+              <Link 
+                to="/courses" 
+                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-700 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
+              >
+                View Courses <Clock size={20} />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
-    <Footer/>
+        </section>
+        <Footer/>
+      </div>
     </div>
-     </div>
   );
 };
 

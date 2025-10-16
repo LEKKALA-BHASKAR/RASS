@@ -12,6 +12,7 @@ import {
   Search,
   MoreHorizontal,
   Activity,
+  Newspaper,
 } from "lucide-react";
 import { User, Course } from "../../types";
 import { useNavigate } from "react-router-dom";
@@ -242,7 +243,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             {
               title: "Add Instructor",
@@ -264,6 +265,13 @@ const AdminDashboard: React.FC = () => {
               icon: <Settings className="h-6 w-6 text-gray-600" />,
               color: "bg-gray-100",
               action: () => navigate("/admin/support"),
+            },
+            {
+              title: "Media Presence",
+              desc: "Manage media mentions and press coverage",
+              icon: <Newspaper className="h-6 w-6 text-purple-600" />,
+              color: "bg-purple-100",
+              action: () => navigate("/admin/media-presence"),
             },
           ].map((action, i) => (
             <motion.button

@@ -14,7 +14,10 @@ import certificateRoutes from './routes/certificates.js';
 import supportTicketRoutes from './routes/supportTickets.js';
 import chatRoutes from './routes/chats.js';
 import paymentRoutes from './routes/payment.js';
+import mediaPresenceRoutes from './routes/mediaPresence.js';
 import nodemailer from "nodemailer";
+
+console.log('Imported mediaPresenceRoutes:', mediaPresenceRoutes);
 
 dotenv.config();
 
@@ -39,16 +42,9 @@ app.use('/api/certificates', certificateRoutes);
 app.use('/api/support-tickets', supportTicketRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/payments', paymentRoutes);
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
-});
+app.use('/api/media-presence', mediaPresenceRoutes);
 
-dotenv.config();
-app.use(express.json());
-app.use(cors());
-
+console.log('Registered media-presence route');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -59,6 +55,12 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('MongoDB connection error:', error);
   });
 
+// Error handling middleware (moved to the end)
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
+
 app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+  console.log(`Server running on port ${PORT}`);
+});

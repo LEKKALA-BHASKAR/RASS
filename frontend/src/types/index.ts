@@ -275,3 +275,15 @@ export interface SupportTicket {
   createdAt: string;
   updatedAt: string;
 }
+// Add this interface to the existing types file
+export interface MediaPresence {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  journalLink: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,11 +1,30 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://rass-h2s1.onrender.com/api";
+// Use a simpler approach for environment variable
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" }, 
 });
+
+// Add request interceptor for logging
+apiClient.interceptors.request.use((config) => {
+  console.log('API Request:', config.method?.toUpperCase(), config.baseURL, config.url, config.data);
+  return config;
+});
+
+// Add response interceptor for logging
+apiClient.interceptors.response.use(
+  (response) => {
+    console.log('API Response:', response.status, response.data);
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error.response?.status, error.response?.data, error.message);
+    return Promise.reject(error);
+  }
+);
 
 // ✅ Attach token automatically
 apiClient.interceptors.request.use((config) => {
@@ -68,7 +87,6 @@ export const enrollmentAPI = {
   getCourseEnrollments: (courseId: string) =>
     apiClient.get(`/enrollments/course/${courseId}`),
 };
-
 
 /* ---------------- ASSIGNMENTS ---------------- */
 export const assignmentAPI = {
@@ -148,8 +166,6 @@ export const liveSessionAPI = {
     apiClient.put(`/live-sessions/${sessionId}/status`, { status }),
 };
 
-
-
 /* ---------------- CERTIFICATES ---------------- */
 export const certificateAPI = {
   getMyCertificates: () => apiClient.get("/certificates/my-certificates"),
@@ -179,8 +195,6 @@ export const supportTicketAPI = {
     apiClient.put(`/support-tickets/${ticketId}/status`, { status, assignedTo }),
 };
 
-
-
 /* ---------------- CHAT ---------------- */
 export const chatAPI = {
   // 📌 Student → Instructor + Admins
@@ -199,6 +213,18 @@ export const chatAPI = {
 
   // 📌 Get a single chat by ID (for refreshing after sending a message)
   getChatById: (chatId: string) => apiClient.get(`/chats/${chatId}`),
+};
+
+/* ---------------- MEDIA PRESENCE ---------------- */
+export const mediaPresenceAPI = {
+  // Public endpoint - no authentication required
+  getActiveMediaItems: () => apiClient.get("/media-presence"),
+  
+  // Admin endpoints - authentication required
+  getAllMediaItems: () => apiClient.get("/media-presence/all"),
+  createMediaItem: (data: any) => apiClient.post("/media-presence", data),
+  updateMediaItem: (id: string, data: any) => apiClient.put(`/media-presence/${id}`, data),
+  deleteMediaItem: (id: string) => apiClient.delete(`/media-presence/${id}`),
 };
 
 export default apiClient;
