@@ -109,7 +109,7 @@ const SkillInsightsDashboard = () => {
       id: 1,
       title: "Internship Seekers",
       value: "93%",
-      change: "Of students actively seek internships in college",
+      change: "93% Of students actively seek internships in college",
       icon: <GraduationCap size={24} />,
       color: "from-blue-500 to-cyan-400",
       source: "https://wheebox.com/assets/pdf/ISR_Report_2025.pdf"
