@@ -24,54 +24,7 @@ const slides = [
     ],
     features: ["Industry-aligned curriculum", "1:1 Mentorship", "Real-world projects"]
   },
-  {
-    id: 2,
-    title: "The Gold Standard in Tech Certifications",
-    subtitle: "Officially recognized partner of NASSCOM's FutureSkills Prime, building India's next generation of tech talent.",
-    image: heroTech,
-    cta: "Learn More",
-    accentColor: "emerald",
-    bgGradient: "from-emerald-900 via-teal-900 to-cyan-900",
-    overlay: "bg-gradient-to-br from-emerald-600/20 to-cyan-600/10",
-    stats: [
-      { value: "NASSCOM", label: "Certified Partner", icon: Award },
-      { value: "4.9/5", label: "Student Rating", icon: Star },
-      { value: "100+", label: "Certifications", icon: CheckCircle }
-    ],
-    features: ["Industry-recognized certificates", "Skill India aligned", "Global recognition"]
-  },
-  {
-    id: 3,
-    title: "Innovative Approach. Backed by Startup India.",
-    subtitle: "Our commitment to revolutionizing education is officially recognized by the Government of India.",
-    image: heroAI,
-    cta: "See Our Recognition",
-    accentColor: "amber",
-    bgGradient: "from-amber-900 via-orange-900 to-red-900",
-    overlay: "bg-gradient-to-br from-amber-600/20 to-red-600/10",
-    stats: [
-      { value: "Startup", label: "India Recognized", icon: Award },
-      { value: "AI-Powered", label: "Learning Platform", icon: TrendingUp },
-      { value: "24/7", label: "Support", icon: Clock }
-    ],
-    features: ["Government recognized", "Cutting-edge technology", "Personalized learning paths"]
-  },
-  {
-    id: 4,
-    title: "Go Beyond Theory. Become Job-Ready.",
-    subtitle: "Translate knowledge into action with virtual internships and real-world job simulations.",
-    image: heroCommunity,
-    cta: "Get Started",
-    accentColor: "violet",
-    bgGradient: "from-violet-900 via-purple-900 to-fuchsia-900",
-    overlay: "bg-gradient-to-br from-violet-600/20 to-fuchsia-600/10",
-    stats: [
-      { value: "6 Months", label: "Average Hiring Time", icon: Clock },
-      { value: "300%", label: "Salary Hike", icon: TrendingUp },
-      { value: "100+", label: "Live Projects", icon: Target }
-    ],
-    features: ["Virtual internships", "Job simulations", "Portfolio building"]
-  },
+  
 ];
 
 const colorMap = {
