@@ -124,7 +124,10 @@ const About: React.FC = () => {
 
             <div className="flex flex-wrap gap-3 items-center">
               <button
-                onClick={() => navigate("/contact")}
+                onClick={() => {
+                  navigate("/contact");
+                  window.scrollTo(0, 0);
+                }}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold shadow hover:bg-indigo-700 transition"
               >
                 Start a Partnership
@@ -341,7 +344,10 @@ const About: React.FC = () => {
               Partner with RASS Academy for curriculum, faculty enablement, and direct hire pipelines for your students.
             </p>
             <div className="flex justify-center gap-4">
-              <button onClick={() => navigate("/contact")} className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-semibold shadow hover:scale-[1.02] transition">Contact Us</button>
+              <button onClick={() => {
+                navigate("/contact");
+                window.scrollTo(0, 0);
+              }} className="px-6 py-3 bg-white text-indigo-700 rounded-xl font-semibold shadow hover:scale-[1.02] transition">Contact Us</button>
               <a href="/partnership" className="px-6 py-3 border border-white/40 rounded-xl text-white hover:bg-white/10 transition">Partnership Details</a>
             </div>
           </div>
