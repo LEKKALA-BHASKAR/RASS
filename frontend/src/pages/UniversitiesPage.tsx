@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const heroImages = [
     "/images/universities/university-cta-bg.jpg",
@@ -25,6 +25,7 @@ const heroImages = [
 ];
 
 const UniversitiesPage: React.FC = () => {
+  const navigate = useNavigate();
   const [currentImage, setCurrentImage] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -138,7 +139,7 @@ const UniversitiesPage: React.FC = () => {
   ];
 
   return (
-    <div className="bg-gray-50 overflow-hidden">
+    <div>
       <Navbar />
 
 {/* Hero Section */}
@@ -207,14 +208,17 @@ const UniversitiesPage: React.FC = () => {
           transition={{ delay: 0.8, duration: 0.5 }}
           className="flex flex-col sm:flex-row gap-4 pt-4"
         >
-          <Link
-            to="/contact"
+          <button
+            onClick={() => {
+              navigate('/contact');
+              window.scrollTo(0, 0);
+            }}
             className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold rounded-2xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             <span className="relative">Start a Partnership</span>
             <ArrowRight className="h-5 w-5 relative transform group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
+          </button>
           
           <Link
             to="/about"
@@ -667,12 +671,15 @@ const UniversitiesPage: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link
-                to="/contact"
+              <button
+                onClick={() => {
+                  navigate('/contact');
+                  window.scrollTo(0, 0);
+                }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
               >
                 Start Partnership <ArrowRight className="h-5 w-5" />
-              </Link>
+              </button>
               <Link
                 to="/about"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/20 transition-all duration-300"
