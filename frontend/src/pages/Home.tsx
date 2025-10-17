@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { BookOpen, Users, Award, Video, MessageCircle, Calendar, ChevronRight, Star, TrendingUp, Clock, Heart, Target, Globe } from 'lucide-react';
 import { HeroCarousel } from './publicpages/HeroSection';
 import { ClientsSection } from './publicpages/ClientSection';
@@ -18,6 +19,8 @@ import MediaPresenceSection from './publicpages/MediaPresenceSection';
 import TrainingAssessment from './publicpages/TrainingAssessment';
 import StudentEventsPage from './StudentEventsPage';
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
@@ -110,12 +113,29 @@ const Home: React.FC = () => {
               Start your journey today with our comprehensive courses.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                to="/register" 
+              <button 
+                onClick={() => {
+                  if (isAuthenticated) {
+                    // Get the user role to navigate to the correct dashboard
+                    let dashboardPath = '/';
+                    if (user?.role === 'admin') {
+                      dashboardPath = '/admin/dashboard';
+                    } else if (user?.role === 'instructor') {
+                      dashboardPath = '/instructor/dashboard';
+                    } else {
+                      dashboardPath = '/student/dashboard';
+                    }
+                    navigate(dashboardPath);
+                    window.scrollTo(0, 0);
+                  } else {
+                    navigate("/register");
+                    window.scrollTo(0, 0);
+                  }
+                }}
                 className="bg-white text-indigo-700 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 shadow-lg flex items-center justify-center gap-2"
               >
                 Join RASS Academy <TrendingUp size={20} />
-              </Link>
+              </button>
               <Link 
                 to="/courses" 
                 className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-indigo-700 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
@@ -132,3 +152,5 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+

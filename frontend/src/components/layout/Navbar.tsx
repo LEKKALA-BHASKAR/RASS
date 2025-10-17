@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <motion.div
@@ -90,36 +90,38 @@ const Navbar: React.FC = () => {
             </form>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* Desktop Navigation - Moved to the right with smaller buttons */}
+          <div className="hidden md:flex items-center space-x-3">
             <Link
               to="/courses"
-              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+              className="px-3 py-1.5 text-sm rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium shadow-sm"
             >
               Courses
             </Link>
             <Link
               to="/companies"
-              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+              className="px-3 py-1.5 text-sm rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium shadow-sm"
             >
               Companies
             </Link>
             <Link
               to="/universities"
-              className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+              className="px-3 py-1.5 text-sm rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium shadow-sm"
             >
               Universities
             </Link>
-
+            
+            {isAuthenticated && (
+              <Link
+                to={getDashboardLink()}
+                className="px-3 py-1.5 text-sm rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium shadow-sm"
+              >
+                Dashboard
+              </Link>
+            )}
+            
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4 relative">
-                <Link
-                  to={getDashboardLink()}
-                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
-                >
-                  Dashboard
-                </Link>
-
+              <div className="flex items-center space-x-3 relative">
                 {/* Notification Bell */}
                 <motion.button
                   whileTap={{ scale: 0.9 }}
@@ -134,76 +136,6 @@ const Navbar: React.FC = () => {
                   )}
                 </motion.button>
 
-                {/* Notification Dropdown */}
-                <AnimatePresence>
-                  {showNotifDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-12 w-80 bg-white shadow-xl rounded-xl border overflow-hidden z-50"
-                    >
-                      <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border-b">
-                        <span className="font-semibold text-gray-700">
-                          Notifications
-                        </span>
-                        <button
-                          onClick={async () => {
-                            await markAllAsRead();
-                          }}
-                          className="text-sm text-indigo-600 hover:underline"
-                        >
-                          Mark all as read
-                        </button>
-                      </div>
-                      <div className="max-h-80 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                          <p className="p-4 text-sm text-gray-500">
-                            No notifications
-                          </p>
-                        ) : (
-                          <ul className="divide-y">
-                            {notifications.map((n) => (
-                              <motion.li
-                                key={n._id}
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className={`p-4 cursor-pointer hover:bg-gray-50 transition ${
-                                  !n.read ? "bg-indigo-50" : ""
-                                }`}
-                                onClick={async () => {
-                                  await markAsRead(n._id);
-                                  if (n.type === "chat") navigate("/instructor/chats");
-                                  if (n.type === "support")
-                                    navigate("/instructor/tickets");
-                                  if (n.type === "forum")
-                                    navigate("/instructor/discussions");
-                                  if (n.type === "assignment")
-                                    navigate("/instructor/courses?tab=assignments");
-                                  if (n.type === "enrollment")
-                                    navigate("/instructor/courses");
-                                  setShowNotifDropdown(false);
-                                }}
-                              >
-                                <p className="text-sm font-medium text-gray-800">
-                                  {n.title}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {n.message}
-                                </p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {new Date(n.createdAt).toLocaleString()}
-                                </p>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
                 {/* Profile Dropdown */}
                 <div className="relative">
                   <button
@@ -215,7 +147,7 @@ const Navbar: React.FC = () => {
                     <div className="h-8 w-8 bg-indigo-100 rounded-full flex items-center justify-center">
                       <User className="h-5 w-5 text-indigo-600" />
                     </div>
-                    <span className="font-medium">{user?.name}</span>
+                    <span className="font-medium hidden lg:inline">{user?.name}</span>
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${
                         isProfileDropdownOpen ? "rotate-180" : ""
@@ -305,20 +237,20 @@ const Navbar: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-col p-4 space-y-4">
-              <Link to="/courses" className="text-gray-700 font-medium" onClick={() => setIsMenuOpen(false)}>Courses</Link>
+              <Link to="/courses" className="px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium text-center shadow-sm" onClick={() => setIsMenuOpen(false)}>Courses</Link>
               {isAuthenticated ? (
                 <>
-                  <Link to={getDashboardLink()} className="text-gray-700 font-medium" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-                  <Link to="/companies" className="text-gray-700 font-medium" onClick={() => setIsMenuOpen(false)}>Companies</Link>
-                  <Link to="/universities" className="text-gray-700 font-medium" onClick={() => setIsMenuOpen(false)}>Universities</Link>
-                  <button onClick={handleLogout} className="flex items-center text-red-600 font-medium">
+                  <Link to={getDashboardLink()} className="px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium text-center shadow-sm" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                  <Link to="/companies" className="px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium text-center shadow-sm" onClick={() => setIsMenuOpen(false)}>Companies</Link>
+                  <Link to="/universities" className="px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium text-center shadow-sm" onClick={() => setIsMenuOpen(false)}>Universities</Link>
+                  <button onClick={handleLogout} className="flex items-center justify-center px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium shadow-sm">
                     <LogOut className="h-5 w-5 mr-2" /> Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="text-gray-700 font-medium" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                  <Link to="/register" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 shadow text-center" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+                  <Link to="/login" className="px-4 py-2 rounded-full bg-indigo-100/80 backdrop-blur-sm border border-indigo-200 hover:bg-indigo-600 hover:text-white transition-all duration-300 font-medium text-center shadow-sm" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                  <Link to="/register" className="px-4 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow text-center transition-all duration-300" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
                 </>
               )}
             </div>

@@ -18,10 +18,35 @@ const MediaPresenceSection: React.FC = () => {
   const [currentGroup, setCurrentGroup] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [itemsPerGroup, setItemsPerGroup] = useState(4); // Default to 4 for large screens
   const autoPlayRef = useRef<NodeJS.Timeout>();
 
-  const itemsPerGroup = 4;
   const totalGroups = Math.ceil(mediaItems.length / itemsPerGroup);
+
+  // Update items per group based on screen size
+  useEffect(() => {
+    const updateItemsPerGroup = () => {
+      if (window.innerWidth < 640) {
+        // Mobile (sm)
+        setItemsPerGroup(1);
+      } else if (window.innerWidth < 1024) {
+        // Tablet (md)
+        setItemsPerGroup(2);
+      } else {
+        // Desktop (lg and above)
+        setItemsPerGroup(4);
+      }
+    };
+
+    // Set initial value
+    updateItemsPerGroup();
+
+    // Add event listener
+    window.addEventListener('resize', updateItemsPerGroup);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', updateItemsPerGroup);
+  }, []);
 
   useEffect(() => {
     const fetchMediaItems = async () => {
@@ -200,22 +225,22 @@ const MediaPresenceSection: React.FC = () => {
             <>
               <motion.button
                 onClick={prevGroup}
-                className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-12 h-12 rounded-full flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+                className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
                 whileHover={{ scale: 1.1, x: -5 }}
                 whileTap={{ scale: 0.95 }}
                 disabled={totalGroups <= 1}
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                <ChevronLeft className="w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
               </motion.button>
 
               <motion.button
                 onClick={nextGroup}
-                className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-12 h-12 rounded-full flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+                className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
                 whileHover={{ scale: 1.1, x: 5 }}
                 whileTap={{ scale: 0.95 }}
                 disabled={totalGroups <= 1}
               >
-                <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                <ChevronRight className="w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
               </motion.button>
 
               <div className="flex justify-center gap-2 mt-8">

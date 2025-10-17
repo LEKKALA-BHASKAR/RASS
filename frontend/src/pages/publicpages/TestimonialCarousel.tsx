@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 
 interface Testimonial {
@@ -100,9 +100,34 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   const [currentGroup, setCurrentGroup] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [testimonialsPerGroup, setTestimonialsPerGroup] = useState(3); // Default to 3 for large screens
   const autoPlayRef = useRef<NodeJS.Timeout>();
 
-  const testimonialsPerGroup = 3;
+  // Update testimonials per group based on screen size
+  useEffect(() => {
+    const updateTestimonialsPerGroup = () => {
+      if (window.innerWidth < 640) {
+        // Mobile (sm)
+        setTestimonialsPerGroup(1);
+      } else if (window.innerWidth < 1024) {
+        // Tablet (md)
+        setTestimonialsPerGroup(2);
+      } else {
+        // Desktop (lg and above)
+        setTestimonialsPerGroup(3);
+      }
+    };
+
+    // Set initial value
+    updateTestimonialsPerGroup();
+
+    // Add event listener
+    window.addEventListener('resize', updateTestimonialsPerGroup);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', updateTestimonialsPerGroup);
+  }, []);
+
   const totalGroups = Math.ceil(testimonials.length / testimonialsPerGroup);
 
   const getCurrentTestimonials = () => {
@@ -160,7 +185,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
     }),
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i: number) => ({
       opacity: 1,
@@ -249,7 +274,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
           </p>
         </motion.div>
 
-        {/* Main Carousel - 3 Testimonials at a time */}
+        {/* Main Carousel - Responsive Testimonials (1 on mobile, 2 on tablet, 3 on desktop) */}
         <div 
           className="relative max-w-7xl mx-auto"
           onMouseEnter={() => {
