@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, TrendingUp, Users, Star, Award, Clock, Target, Building, Brain, Handshake } from "lucide-react";
 
-const heroCode = "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760631051/rass_hero_image_ty1tpb.jpg";
+// Define separate images for desktop and mobile
+const heroImages = {
+  desktop: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760631051/rass_hero_image_ty1tpb.jpg",
+  mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760667108/pinl_1_hem0f0.jpg" // Placeholder - replace with mobile-specific image
+};
 
 const slide = {
   id: 1,
   title: "Become the Talent that every company wants to Hire.",
   subtitle: "India's #1 Outcome-Focused Skill Development Initiative, trusted by learners with proven results.",
-  image: heroCode,
   cta: "Explore Our Impact",
   accentColor: "blue",
   stats: [
@@ -64,10 +67,14 @@ export function HeroCarousel() {
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
-      {/* Background Image - Displayed clearly without any overlay */}
+      {/* Background Image - Separate images for desktop and mobile */}
       <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${currentSlideData.image})` }}
+        className="absolute inset-0 bg-cover bg-center hidden md:block"
+        style={{ backgroundImage: `url(${heroImages.desktop})` }}
+      />
+      <div 
+        className="absolute inset-0 bg-cover bg-center md:hidden"
+        style={{ backgroundImage: `url(${heroImages.mobile})` }}
       />
       
       {/* Animated Background Elements */}
