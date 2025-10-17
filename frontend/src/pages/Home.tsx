@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 import TestimonialCarousel from './publicpages/TestimonialCarousel';
 import MediaPresenceSection from './publicpages/MediaPresenceSection';
 import TrainingAssessment from './publicpages/TrainingAssessment';
+import StudentEventsPage from './StudentEventsPage';
 const Home: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   
@@ -94,6 +95,7 @@ const Home: React.FC = () => {
         <TrainingAssessment/>
         <AIInsightsDashboard/>
         <CertificationCourses/>
+        <StudentEventsPage/>
         <TestimonialCarousel/>
         <MediaPresenceSection/>
 

@@ -21,6 +21,7 @@ import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import AdminCourses from "./AdminCourse";
 import ManageCourses from "./AdminCourse";
+import ManageEventsPage from "./ManageEventsPage";
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -293,6 +294,7 @@ const AdminDashboard: React.FC = () => {
           ))}
         </div>
         <ManageCourses />
+        <ManageEventsPage/>
       </main>
     </div>
       <Footer />

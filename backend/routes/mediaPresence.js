@@ -2,16 +2,13 @@ import express from 'express';
 import MediaPresence from '../models/MediaPresence.js';
 import { authenticate as auth } from '../middleware/auth.js';
 
-console.log('Loading mediaPresence.js route file');
 
 const router = express.Router();
 
-console.log('Created router for mediaPresence');
 
 // Get all active media presence items (public route)
 router.get('/', async (req, res) => {
   try {
-    console.log('GET /api/media-presence called');
     const mediaItems = await MediaPresence.find({ isActive: true })
       .sort({ order: 1, createdAt: -1 });
     
@@ -25,7 +22,6 @@ router.get('/', async (req, res) => {
 // Get all media presence items (admin only)
 router.get('/all', auth, async (req, res) => {
   try {
-    console.log('GET /api/media-presence/all called');
     // Check if user is admin
     if (req.user.role !== 'admin') {
       return res.status(403).json({ msg: 'Not authorized' });
@@ -44,17 +40,12 @@ router.get('/all', auth, async (req, res) => {
 // Create a new media presence item (admin only)
 router.post('/', auth, async (req, res) => {
   try {
-    console.log('POST /api/media-presence called');
-    console.log('User:', req.user);
-    
     // Check if user is admin
     if (req.user.role !== 'admin') {
-      console.log('User is not admin');
       return res.status(403).json({ msg: 'Not authorized' });
     }
 
     const { title, description, imageUrl, journalLink, order, isActive } = req.body;
-    console.log('Request body:', req.body);
 
     const newMediaItem = new MediaPresence({
       title,
@@ -66,7 +57,6 @@ router.post('/', auth, async (req, res) => {
     });
 
     const mediaItem = await newMediaItem.save();
-    console.log('Media item saved:', mediaItem);
     res.json(mediaItem);
   } catch (err) {
     console.error('Error creating media item:', err.message);
@@ -77,7 +67,6 @@ router.post('/', auth, async (req, res) => {
 // Update a media presence item (admin only)
 router.put('/:id', auth, async (req, res) => {
   try {
-    console.log('PUT /api/media-presence/:id called');
     // Check if user is admin
     if (req.user.role !== 'admin') {
       return res.status(403).json({ msg: 'Not authorized' });
@@ -116,7 +105,6 @@ router.put('/:id', auth, async (req, res) => {
 // Delete a media presence item (admin only)
 router.delete('/:id', auth, async (req, res) => {
   try {
-    console.log('DELETE /api/media-presence/:id called');
     // Check if user is admin
     if (req.user.role !== 'admin') {
       return res.status(403).json({ msg: 'Not authorized' });
@@ -130,13 +118,11 @@ router.delete('/:id', auth, async (req, res) => {
 
     await MediaPresence.findByIdAndRemove(req.params.id);
 
-    res.json({ msg: 'Media item removed' });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: 'Server Error' });
   }
 });
 
-console.log('Exporting mediaPresence router');
 
 export default router;

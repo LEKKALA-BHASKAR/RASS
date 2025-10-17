@@ -16,8 +16,9 @@ import chatRoutes from './routes/chats.js';
 import paymentRoutes from './routes/payment.js';
 import mediaPresenceRoutes from './routes/mediaPresence.js';
 import nodemailer from "nodemailer";
+import adminRoutes from "./routes/admin.js";
+import studentRoutes from "./routes/student.js";
 
-console.log('Imported mediaPresenceRoutes:', mediaPresenceRoutes);
 
 dotenv.config();
 
@@ -43,6 +44,8 @@ app.use('/api/support-tickets', supportTicketRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/media-presence', mediaPresenceRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/student", studentRoutes);
 
 console.log('Registered media-presence route');
 
