@@ -38,7 +38,7 @@ import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
 import AdminTicketsPage from './pages/admin/AdminTicketsPage';
 import MediaPresenceManagement from './pages/admin/MediaPresenceManagement';
-
+import ScrollToTop from "./pages/ScrollToTop";
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
   roles 
@@ -218,6 +218,7 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <Router>
+          <ScrollToTop />
           <AppRoutes />
         </Router>
       </NotificationProvider>
