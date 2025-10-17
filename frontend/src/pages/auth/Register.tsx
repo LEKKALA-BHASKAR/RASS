@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { BookOpen, Eye, EyeOff, UserPlus, ArrowLeft, Shield, GraduationCap } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
+import ScrollToTop from '../ScrollToTop';
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -45,6 +46,7 @@ const Register: React.FC = () => {
   return (
     <div>
       <Navbar />
+      <ScrollToTop />
     <div className="min-h-screen flex">
       {/* Left side - Form */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white">
