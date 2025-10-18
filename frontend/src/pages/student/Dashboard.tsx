@@ -153,7 +153,7 @@ const StudentDashboard: React.FC = () => {
             <Zap className="h-6 w-6 text-amber-500" />
             <h2 className="text-2xl font-bold text-gray-900">Quick Access</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { name: "Courses", icon: BookOpen, path: "/courses", color: "blue" },
               { name: "Profile", icon: Users, path: "/profile", color: "emerald" },
@@ -161,7 +161,6 @@ const StudentDashboard: React.FC = () => {
               { name: "Support", icon: MessageSquare, path: "/support-tickets", color: "red" },
               { name: "Discussions", icon: MessageSquare, path: "/student/discussion-forum", color: "purple" },
               { name: "Chat", icon: MessageSquare, path: "/student/chat", color: "green" },
-              { name: "Live Sessions", icon: Video, path: "/student/live-sessions", color: "pink" },
             ].map((item, idx) => {
               const Icon = item.icon;
               const colorClasses = {

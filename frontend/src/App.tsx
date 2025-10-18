@@ -38,6 +38,7 @@ import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
 import AdminTicketsPage from './pages/admin/AdminTicketsPage';
 import MediaPresenceManagement from './pages/admin/MediaPresenceManagement';
+import ManageEventsPage from './pages/admin/ManageEventsPage'; // Added import for event management
 import ScrollToTop from "./pages/ScrollToTop";
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -207,6 +208,7 @@ const AppRoutes: React.FC = () => {
         } />
         <Route path="/admin/support" element={<AdminTicketsPage />} />
         <Route path="/admin/media-presence" element={<MediaPresenceManagement />} />
+        <Route path="/admin/manage-events" element={<ManageEventsPage />} /> {/* Added route for event management */}
     
       </Routes>
     </div>

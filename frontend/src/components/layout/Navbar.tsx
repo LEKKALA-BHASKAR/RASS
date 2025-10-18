@@ -31,6 +31,23 @@ const Navbar: React.FC = () => {
     setIsProfileDropdownOpen(false);
   };
 
+  // Close dropdowns when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showNotifDropdown && !(event.target as Element).closest('.notification-dropdown')) {
+        setShowNotifDropdown(false);
+      }
+      if (isProfileDropdownOpen && !(event.target as Element).closest('.profile-dropdown')) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifDropdown, isProfileDropdownOpen]);
+
   const getDashboardLink = () => {
     if (!user) return "/";
     switch (user.role) {
@@ -136,6 +153,81 @@ const Navbar: React.FC = () => {
                   )}
                 </motion.button>
 
+                {/* Notification Dropdown - Enhanced Design */}
+                <AnimatePresence>
+                  {showNotifDropdown && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-200 overflow-hidden notification-dropdown"
+                      style={{ top: '100%' }}
+                    >
+                      <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-purple-50">
+                        <h3 className="font-semibold text-gray-800">Notifications</h3>
+                        {unreadCount > 0 && (
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markAllAsRead();
+                            }}
+                            className="text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-2 py-1 rounded-full font-medium transition-colors"
+                          >
+                            Mark all as read
+                          </button>
+                        )}
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-gray-500">
+                            <Bell className="h-8 w-8 mx-auto text-gray-300 mb-2" />
+                            <p className="text-sm">No notifications yet</p>
+                          </div>
+                        ) : (
+                          notifications.map((notification) => (
+                            <div 
+                              key={notification._id} 
+                              className={`px-4 py-3 border-b border-gray-50 hover:bg-indigo-50 cursor-pointer transition-colors ${
+                                !notification.read ? 'bg-white border-l-4 border-l-indigo-500' : 'bg-gray-50'
+                              }`}
+                              onClick={() => {
+                                markAsRead(notification._id);
+                              }}
+                            >
+                              <div className="flex justify-between">
+                                <p className="text-sm font-medium text-gray-900 truncate">
+                                  {notification.title}
+                                </p>
+                                {!notification.read && (
+                                  <span className="h-2 w-2 bg-indigo-600 rounded-full"></span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                {notification.message}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-2">
+                                {new Date(notification.createdAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      {notifications.length > 0 && (
+                        <div className="px-4 py-2 text-center bg-gray-50">
+                          <p className="text-xs text-gray-500">
+                            {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
+                          </p>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Profile Dropdown */}
                 <div className="relative">
                   <button
@@ -161,7 +253,7 @@ const Navbar: React.FC = () => {
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
-                        className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
+                        className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200 profile-dropdown"
                       >
                         <div className="px-4 py-2 border-b border-gray-100">
                           <p className="text-sm font-medium text-gray-900">
@@ -194,13 +286,13 @@ const Navbar: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-full font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 shadow transition"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-full font-medium hover:from-indigo-700 hover:to-purple-700 shadow transition-all duration-300"
                 >
                   Sign Up
                 </Link>

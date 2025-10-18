@@ -13,6 +13,7 @@ import {
   MoreHorizontal,
   Activity,
   Newspaper,
+  Calendar,
 } from "lucide-react";
 import { User, Course } from "../../types";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +22,7 @@ import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import AdminCourses from "./AdminCourse";
 import ManageCourses from "./AdminCourse";
-import ManageEventsPage from "./ManageEventsPage";
+// Removed direct import of ManageEventsPage since it will be a separate route
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -244,7 +245,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           {[
             {
               title: "Add Instructor",
@@ -274,6 +275,13 @@ const AdminDashboard: React.FC = () => {
               color: "bg-purple-100",
               action: () => navigate("/admin/media-presence"),
             },
+            {
+              title: "Event Management",
+              desc: "Create and manage events",
+              icon: <Calendar className="h-6 w-6 text-green-600" />,
+              color: "bg-green-100",
+              action: () => navigate("/admin/manage-events"),
+            },
           ].map((action, i) => (
             <motion.button
               key={i}
@@ -294,7 +302,7 @@ const AdminDashboard: React.FC = () => {
           ))}
         </div>
         <ManageCourses />
-        <ManageEventsPage/>
+        {/* Removed ManageEventsPage component since it will be accessed via navigation */}
       </main>
     </div>
       <Footer />
