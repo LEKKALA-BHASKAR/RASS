@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import apiClient from "../../services/api";
 
 interface AgendaItem {
   day: string;
@@ -32,7 +33,7 @@ interface Event {
 }
 
 interface Attendee {
-  userId: string;
+  userId?: string;
   email: string;
 }
 
@@ -90,9 +91,9 @@ export default function UpcomingEvents() {
   const fetchAllEvents = async () => {
     try {
       // Fetch all events with a high limit to get all events
-      const res = await fetch("http://localhost:8000/api/admin/events?limit=100");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await apiClient.get("/admin/events?limit=100");
+      if (res.status === 200) {
+        const data = res.data;
         // Use all events or just the events array from the response
         // Make sure we're handling both possible response formats
         const allEvents = Array.isArray(data) ? data : (data.events || []);
@@ -101,13 +102,13 @@ export default function UpcomingEvents() {
       } else {
         console.error("Failed to fetch events, status:", res.status);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching all events:", error);
       // Fallback to upcoming events if all events fetch fails
       try {
-        const res = await fetch("http://localhost:8000/api/admin/events/upcoming");
-        if (res.ok) {
-          const data = await res.json();
+        const res = await apiClient.get("/admin/events/upcoming");
+        if (res.status === 200) {
+          const data = res.data;
           // Handle both possible response formats for upcoming events too
           const upcomingEvents = Array.isArray(data) ? data : (data.events || []);
           setEvents(upcomingEvents);
@@ -123,16 +124,24 @@ export default function UpcomingEvents() {
   const fetchRegisteredEvents = async () => {
     try {
       // Fetch all events first to get the full list
-      const res = await fetch("http://localhost:8000/api/admin/events?limit=100");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await apiClient.get("/admin/events?limit=100");
+      if (res.status === 200) {
+        const data = res.data;
         // Handle both possible response formats
         const allEvents: EventWithAttendees[] = Array.isArray(data) ? data : (data.events || []);
         
-        // Filter events where the current user is registered by userId
+        // Filter events where the current user is registered
+        // Check both userId (if available) and email for matching
         const userRegisteredEvents = allEvents.filter((event) => 
           event.attendees && event.attendees.some(
-            (attendee) => attendee.userId === user?._id
+            (attendee) => {
+              if (user?._id && attendee.userId) {
+                return attendee.userId === user._id;
+              } else if (user?.email) {
+                return attendee.email === user.email;
+              }
+              return false;
+            }
           )
         );
         

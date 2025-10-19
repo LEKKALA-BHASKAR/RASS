@@ -4,7 +4,7 @@ const attendeeSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Make userId optional to support email-based filtering
   },
   name: {
     type: String,
