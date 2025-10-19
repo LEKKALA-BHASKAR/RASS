@@ -438,10 +438,11 @@ const Navbar: React.FC = () => {
                   <div className="border-t border-gray-200 pt-4">
                     <div className="relative">
                       <button
-                        onClick={() =>
-                          setIsProfileDropdownOpen(!isProfileDropdownOpen)
-                        }
-                        className="flex items-center space-x-3 w-full px-4 py-2 text-left"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsProfileDropdownOpen(!isProfileDropdownOpen);
+                        }}
+                        className="flex items-center space-x-3 w-full px-4 py-3 text-left bg-white rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors duration-200"
                       >
                         <div className="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
                           <User className="h-6 w-6 text-indigo-600" />
@@ -451,7 +452,7 @@ const Navbar: React.FC = () => {
                           <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                         </div>
                         <ChevronDown
-                          className={`h-5 w-5 text-gray-500 transition-transform ${
+                          className={`h-5 w-5 text-gray-500 transition-transform duration-300 ${
                             isProfileDropdownOpen ? "rotate-180" : ""
                           }`}
                         />
@@ -463,11 +464,11 @@ const Navbar: React.FC = () => {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="mt-2 ml-2 bg-gray-50 rounded-lg overflow-hidden"
+                            className="bg-white rounded-lg border border-blue-100 overflow-hidden mt-2"
                           >
                             <Link
                               to="/profile"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                              className="block px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors"
                               onClick={() => {
                                 setIsProfileDropdownOpen(false);
                                 setIsMenuOpen(false);
@@ -475,13 +476,14 @@ const Navbar: React.FC = () => {
                             >
                               Profile
                             </Link>
+                            <div className="border-t border-blue-50 mx-4"></div>
                             <button
                               onClick={() => {
                                 handleLogout();
                                 setIsProfileDropdownOpen(false);
                                 setIsMenuOpen(false);
                               }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors flex items-center"
+                              className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors flex items-center"
                             >
                               <LogOut className="h-4 w-4 mr-2" />
                               Logout
