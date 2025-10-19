@@ -136,7 +136,7 @@ export function HeroCarousel() {
               })}
             </motion.div>
 
-            {/* Stats - Mobile Version (Visible on Mobile) - Square stats on the left */}
+            {/* Stats - Mobile Version (Visible on Mobile) - Silver/Platinum style */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -146,14 +146,14 @@ export function HeroCarousel() {
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-gray-300 hover:bg-black/30 transition-all duration-300 mb-4 w-48">
+                  <div key={index} className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-4 border-2 border-gray-300 shadow-sm hover:from-gray-200 hover:to-gray-300 transition-all duration-300 mb-4 w-48">
                     <div className="flex items-center">
-                      <div className="bg-gradient-to-br from-black/30 to-black/10 p-2 rounded-lg mr-4">
-                        <IconComponent className="h-6 w-6 text-black" />
+                      <div className="bg-white bg-opacity-50 p-2 rounded-lg mr-4 shadow-inner">
+                        <IconComponent className="h-6 w-6 text-gray-700" />
                       </div>
                       <div>
-                        <div className="text-lg font-bold text-black">{stat.value}</div>
-                        <div className="text-black text-sm font-medium leading-tight">{stat.label}</div>
+                        <div className="text-lg font-bold text-gray-800">{stat.value}</div>
+                        <div className="text-gray-700 text-sm font-medium leading-tight">{stat.label}</div>
                       </div>
                     </div>
                   </div>
