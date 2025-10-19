@@ -65,21 +65,41 @@ const colorMap = {
 export function HeroCarousel() {
   const currentSlideData = slide;
   const currentAccent = colorMap[currentSlideData.accentColor];
+  const [typedText, setTypedText] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    let index = 0;
+    const text = currentSlideData.subtitle;
+    
+    const typeInterval = setInterval(() => {
+      if (index < text.length) {
+        setTypedText(text.substring(0, index + 1));
+        index++;
+      } else {
+        clearInterval(typeInterval);
+        // Cursor blinking after typing is complete
+        setTimeout(() => setShowCursor(false), 1000);
+      }
+    }, 50); // Adjust typing speed here (lower = faster)
+
+    return () => clearInterval(typeInterval);
+  }, [currentSlideData.subtitle]);
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
       {/* Background Image - Separate images for desktop, tablet, and mobile */}
       <div 
         className="absolute inset-0 bg-cover bg-center hidden lg:block"
-        style={{ backgroundImage: `url(${heroImages.desktop})` }}
+        style={{ backgroundImage: `url(${heroImages.desktop})`, backgroundSize: '110%' }}
       />
       <div 
         className="absolute inset-0 bg-cover bg-center hidden md:block lg:hidden"
-        style={{ backgroundImage: `url(${heroImages.tablet})`, backgroundSize: 'cover', width: '100%', height: '100%' }}
+        style={{ backgroundImage: `url(${heroImages.tablet})`, backgroundSize: '110%' }}
       />
       <div 
         className="absolute inset-0 bg-cover bg-center md:hidden"
-        style={{ backgroundImage: `url(${heroImages.mobile})` }}
+        style={{ backgroundImage: `url(${heroImages.mobile})`, backgroundSize: '110%' }}
       />
       
       {/* Animated Background Elements */}
@@ -108,7 +128,8 @@ export function HeroCarousel() {
               transition={{ delay: 0.5, duration: 0.8 }}
               className="text-lg sm:text-xl md:text-4xl text-black/90 leading-relaxed mb-6 font-light"
             >
-              {currentSlideData.subtitle}
+              {typedText}
+              <span className={showCursor ? "inline-block w-1 h-8 md:h-10 bg-black ml-1 align-middle" : "hidden"}></span>
             </motion.p>
 
             {/* Stats - Desktop Version (Hidden on Mobile) */}
@@ -121,14 +142,14 @@ export function HeroCarousel() {
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-black/20 backdrop-blur-sm rounded-xl md:rounded-2xl p-2 md:p-3 border border-gray-300 hover:bg-black/30 transition-all duration-300 w-40">
+                  <div key={index} className="bg-blue-100 rounded-xl md:rounded-2xl p-2 md:p-3 border border-blue-200 hover:bg-blue-200 transition-all duration-300 w-40">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="bg-gradient-to-br from-black/30 to-black/10 p-1.5 md:p-2 rounded-lg md:rounded-xl mb-1 md:mb-2">
-                        <IconComponent className="h-5 w-5 md:h-5 md:w-5 text-black" />
+                      <div className="bg-blue-50 p-1.5 md:p-2 rounded-lg md:rounded-xl mb-1 md:mb-2">
+                        <IconComponent className="h-5 w-5 md:h-5 md:w-5 text-blue-700" />
                       </div>
                       <div className="text-center">
-                        <div className="text-xs md:text-base font-bold text-black">{stat.value}</div>
-                        <div className="text-black text-[0.6rem] md:text-xs font-medium mt-0.5 md:mt-1 leading-tight">{stat.label}</div>
+                        <div className="text-xs md:text-base font-bold text-blue-800">{stat.value}</div>
+                        <div className="text-blue-700 text-[0.6rem] md:text-xs font-medium mt-0.5 md:mt-1 leading-tight">{stat.label}</div>
                       </div>
                     </div>
                   </div>
@@ -136,7 +157,7 @@ export function HeroCarousel() {
               })}
             </motion.div>
 
-            {/* Stats - Mobile Version (Visible on Mobile) - Silver/Platinum style */}
+            {/* Stats - Mobile Version (Visible on Mobile) - Now with blue background */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -146,14 +167,14 @@ export function HeroCarousel() {
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl p-4 border-2 border-gray-300 shadow-sm hover:from-gray-200 hover:to-gray-300 transition-all duration-300 mb-4 w-48">
+                  <div key={index} className="bg-blue-100 rounded-xl p-4 border-2 border-blue-200 hover:bg-blue-200 transition-all duration-300 mb-4 w-48">
                     <div className="flex items-center">
-                      <div className="bg-white bg-opacity-50 p-2 rounded-lg mr-4 shadow-inner">
-                        <IconComponent className="h-6 w-6 text-gray-700" />
+                      <div className="bg-blue-50 p-2 rounded-lg mr-4">
+                        <IconComponent className="h-6 w-6 text-blue-700" />
                       </div>
                       <div>
-                        <div className="text-lg font-bold text-gray-800">{stat.value}</div>
-                        <div className="text-gray-700 text-sm font-medium leading-tight">{stat.label}</div>
+                        <div className="text-lg font-bold text-blue-800">{stat.value}</div>
+                        <div className="text-blue-700 text-sm font-medium leading-tight">{stat.label}</div>
                       </div>
                     </div>
                   </div>
