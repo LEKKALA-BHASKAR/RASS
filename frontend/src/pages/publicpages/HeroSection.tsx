@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, TrendingUp, Users, Star, Award, Clock, Target, Building, Brain, Handshake } from "lucide-react";
 
-// Define separate images for desktop, tablet, and mobile
+// Define separate images for desktop and mobile only (tablet removed)
 const heroImages = {
   desktop: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760840218/httpswww.freepik.comfree-vectorhand-drawn-private-school-landing-page_32398807.htm_fromView_search_page_1_position_49_uuid_c9da476c-aca9-4b32-a4eb-26f8201e19bd_query_edtech_landing_page_3_znavyf.jpg",
-  tablet: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760841282/tablet_umaybs.jpg", // Replace with your 2442x1536 image
   mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760842149/mobile_hhhl1j.jpg" // Placeholder - replace with mobile-specific image
 };
 
 const slide = {
   id: 1,
-  title: "Become the Talent that every company wants to Hire.",
+  title: ["Become the Talent", "that every company wants to Hire."],
   subtitle: "India's #1 Outcome-Focused Skill Development Initiative, trusted by learners with proven results.",
   cta: "Explore Our Impact",
   accentColor: "blue",
@@ -88,14 +87,10 @@ export function HeroCarousel() {
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
-      {/* Background Image - Separate images for desktop, tablet, and mobile */}
+      {/* Background Image - Separate images for desktop and mobile only (tablet removed) */}
       <div 
-        className="absolute inset-0 bg-cover bg-center hidden lg:block"
+        className="absolute inset-0 bg-cover bg-center hidden md:block"
         style={{ backgroundImage: `url(${heroImages.desktop})`, backgroundSize: '110%' }}
-      />
-      <div 
-        className="absolute inset-0 bg-cover bg-center hidden md:block lg:hidden"
-        style={{ backgroundImage: `url(${heroImages.tablet})`, backgroundSize: '110%' }}
       />
       <div 
         className="absolute inset-0 bg-cover bg-center md:hidden"
@@ -117,23 +112,16 @@ export function HeroCarousel() {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-5xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-black leading-tight pb-2"
+              className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-blue-700 leading-tight pb-2"
             >
-              <span className="md:hidden">
-                Become the Talent<br />
-                that every company<br />
-                wants to Hire.
-              </span>
-              <span className="hidden md:inline">
-                {currentSlideData.title}
-              </span>
+              {currentSlideData.title[0]}<br/>{currentSlideData.title[1]}
             </motion.h1>
 
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-lg sm:text-xl md:text-4xl text-black/90 leading-relaxed mb-6 font-light"
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-black/90 leading-relaxed mb-6 font-light"
             >
               {typedText}
               <span className={showCursor ? "inline-block w-1 h-8 md:h-10 bg-black ml-1 align-middle" : "hidden"}></span>
