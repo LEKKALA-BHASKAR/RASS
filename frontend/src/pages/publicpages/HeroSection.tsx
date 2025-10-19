@@ -99,7 +99,7 @@ export function HeroCarousel() {
       />
       <div 
         className="absolute inset-0 bg-cover bg-center md:hidden"
-        style={{ backgroundImage: `url(${heroImages.mobile})`, backgroundSize: '110%' }}
+        style={{ backgroundImage: `url(${heroImages.mobile})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
       />
       
       {/* Animated Background Elements */}
@@ -117,7 +117,7 @@ export function HeroCarousel() {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-5xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-black leading-tight pb-2"
+              className="text-5xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-blue-700 leading-tight pb-2"
             >
               {currentSlideData.title[0]}<br/>{currentSlideData.title[1]}
             </motion.h1>
