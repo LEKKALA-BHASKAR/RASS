@@ -27,8 +27,11 @@ const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://rass-h2s1.onrender.com"],
-  credentials: true
+  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://rass-pi.vercel.app", "https://rass-h2s1.onrender.com"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+  exposedHeaders: ["Authorization"]
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
