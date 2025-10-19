@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import apiClient from "../../services/api";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 
@@ -55,14 +56,11 @@ export default function EventDetailPage() {
 
   const fetchEvent = async () => {
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setEvent(data);
-      }
-    } catch (error) {
+      const res = await apiClient.get(`/admin/events/${id}`);
+      setEvent(res.data);
+    } catch (error: any) {
       console.error("Error fetching event:", error);
+      alert(`Error fetching event: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -95,16 +93,9 @@ export default function EventDetailPage() {
 
     try {
       // 1. Create Razorpay order from backend
-      const res = await fetch("http://localhost:8000/api/payments/event-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ eventId: event._id }),
-      });
+      const res = await apiClient.post("/payments/event-order", { eventId: event._id });
 
-      const { order } = await res.json();
+      const { order } = res.data;
       if (!order) {
         alert("Failed to create payment order");
         return;
@@ -144,9 +135,9 @@ export default function EventDetailPage() {
 
       const razor = new (window as any).Razorpay(options);
       razor.open();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment error:", error);
-      alert("Something went wrong during payment.");
+      alert(`Something went wrong during payment: ${error.message}`);
     }
   };
 
@@ -158,21 +149,14 @@ export default function EventDetailPage() {
       // For paid events, we need to verify payment and register
       if (event.type === "Paid" && paymentData) {
         // Verify payment first
-        const verifyRes = await fetch("http://localhost:8000/api/payments/verify-event", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            razorpay_order_id: paymentData.razorpay_order_id,
-            razorpay_payment_id: paymentData.razorpay_payment_id,
-            razorpay_signature: paymentData.razorpay_signature,
-            eventId: event._id,
-          }),
+        const verifyRes = await apiClient.post("/payments/verify-event", {
+          razorpay_order_id: paymentData.razorpay_order_id,
+          razorpay_payment_id: paymentData.razorpay_payment_id,
+          razorpay_signature: paymentData.razorpay_signature,
+          eventId: event._id,
         });
 
-        const result = await verifyRes.json();
+        const result = verifyRes.data;
 
         if (!result.success) {
           alert("Payment verification failed.");
@@ -187,25 +171,20 @@ export default function EventDetailPage() {
         ...(paymentData && { paymentId: paymentData.razorpay_payment_id })
       };
 
-      const res = await fetch(`http://localhost:8000/api/admin/events/${event._id}/attendees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registrationData),
-      });
+      const res = await apiClient.post(`/admin/events/${event._id}/attendees`, registrationData);
 
-      if (res.ok) {
+      if (res.status === 201) {
         setRegistrationSuccess(true);
         setShowRegistrationForm(false);
         setPaymentData(null); // Clear payment data
         // Refresh event data to show updated attendee count
         fetchEvent();
       } else {
-        const error = await res.json();
-        alert(`Registration failed: ${error.error}`);
+        alert(`Registration failed: ${res.data.error}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration error:", error);
-      alert("Registration failed. Please try again.");
+      alert(`Registration failed: ${error.response?.data?.error || "Please try again."}`);
     }
   };
 

@@ -455,7 +455,7 @@ export default function UpcomingEvents() {
           {/* Navigation Arrows */}
           <motion.button
             onClick={prevGroup}
-            className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+            className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -464,7 +464,7 @@ export default function UpcomingEvents() {
 
           <motion.button
             onClick={nextGroup}
-            className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+            className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
             whileHover={{ scale: 1.1, x: 5 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -579,7 +579,7 @@ export default function UpcomingEvents() {
                 <>
                   <motion.button
                     onClick={prevRegisteredGroup}
-                    className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-10 h-10 rounded-xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+                    className="absolute left-4 md:-left-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
                     whileHover={{ scale: 1.1, x: -5 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={registeredEvents.length <= eventsPerGroup}
@@ -590,7 +590,7 @@ export default function UpcomingEvents() {
 
                   <motion.button
                     onClick={nextRegisteredGroup}
-                    className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white shadow-2xl border border-gray-200 w-10 h-10 rounded-xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
+                    className="absolute right-4 md:-right-16 top-1/2 -translate-y-1/2 bg-white/20 shadow-2xl border border-gray-200 w-14 h-14 rounded-2xl flex items-center justify-center group hover:shadow-xl transition-all duration-300"
                     whileHover={{ scale: 1.1, x: 5 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={registeredEvents.length <= eventsPerGroup}

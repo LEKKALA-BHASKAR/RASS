@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import apiClient from "../../services/api";
 
 interface AgendaItem {
   day: string;
@@ -99,14 +100,11 @@ export default function ManageEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch("http://localhost:8000/api/admin/events");
-      if (res.ok) {
-        const data = await res.json();
-        setEvents(data.events || data);
-      }
-    } catch (error) {
+      const res = await apiClient.get("/admin/events");
+      setEvents(res.data.events || res.data);
+    } catch (error: any) {
       console.error("Error fetching events:", error);
+      alert(`Error fetching events: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -114,51 +112,38 @@ export default function ManageEventsPage() {
 
   const fetchDashboardStats = async () => {
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch("http://localhost:8000/api/admin/dashboard/stats");
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
-      }
-    } catch (error) {
+      const res = await apiClient.get("/admin/dashboard/stats");
+      setStats(res.data);
+    } catch (error: any) {
       console.error("Error fetching stats:", error);
+      alert(`Error fetching stats: ${error.message}`);
     }
   };
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch("http://localhost:8000/api/admin/create-event", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await apiClient.post("/admin/create-event", form);
       
-      if (res.ok) {
-        alert("Event created successfully!");
-        setForm({ 
-          title: "", 
-          description: "", 
-          aboutEvent: "",
-          date: "", 
-          location: "", 
-          type: "Free", 
-          price: 0,
-          imageUrl: "",
-          highlights: [],
-          agenda: [],
-          faq: []
-        });
-        setView("list");
-        fetchEvents();
-        fetchDashboardStats();
-      } else {
-        const error = await res.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (error) {
-      alert("Error creating event");
+      alert("Event created successfully!");
+      setForm({ 
+        title: "", 
+        description: "", 
+        aboutEvent: "",
+        date: "", 
+        location: "", 
+        type: "Free", 
+        price: 0,
+        imageUrl: "",
+        highlights: [],
+        agenda: [],
+        faq: []
+      });
+      setView("list");
+      fetchEvents();
+      fetchDashboardStats();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -167,24 +152,14 @@ export default function ManageEventsPage() {
     if (!selectedEvent) return;
 
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${selectedEvent._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await apiClient.put(`/admin/events/${selectedEvent._id}`, form);
       
-      if (res.ok) {
-        alert("Event updated successfully!");
-        setView("list");
-        fetchEvents();
-        fetchDashboardStats();
-      } else {
-        const error = await res.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (error) {
-      alert("Error updating event");
+      alert("Event updated successfully!");
+      setView("list");
+      fetchEvents();
+      fetchDashboardStats();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -192,18 +167,13 @@ export default function ManageEventsPage() {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${id}`, {
-        method: "DELETE",
-      });
+      const res = await apiClient.delete(`/admin/events/${id}`);
       
-      if (res.ok) {
-        alert("Event deleted successfully!");
-        fetchEvents();
-        fetchDashboardStats();
-      }
-    } catch (error) {
-      alert("Error deleting event");
+      alert("Event deleted successfully!");
+      fetchEvents();
+      fetchDashboardStats();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -211,21 +181,16 @@ export default function ManageEventsPage() {
     if (!selectedEvents.length || !confirm("Are you sure you want to delete selected events?")) return;
 
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch("http://localhost:8000/api/admin/events", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventIds: selectedEvents }),
+      const res = await apiClient.delete("/admin/events", {
+        data: { eventIds: selectedEvents }
       });
       
-      if (res.ok) {
-        alert("Events deleted successfully!");
-        setSelectedEvents([]);
-        fetchEvents();
-        fetchDashboardStats();
-      }
-    } catch (error) {
-      alert("Error deleting events");
+      alert("Events deleted successfully!");
+      setSelectedEvents([]);
+      fetchEvents();
+      fetchDashboardStats();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -234,23 +199,13 @@ export default function ManageEventsPage() {
     if (!selectedEvent) return;
 
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${selectedEvent._id}/attendees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(attendeeForm),
-      });
+      const res = await apiClient.post(`/admin/events/${selectedEvent._id}/attendees`, attendeeForm);
       
-      if (res.ok) {
-        alert("Attendee added successfully!");
-        setAttendeeForm({ name: "", email: "", phone: "" });
-        fetchEvents(); // Refresh to get updated attendees
-      } else {
-        const error = await res.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (error) {
-      alert("Error adding attendee");
+      alert("Attendee added successfully!");
+      setAttendeeForm({ name: "", email: "", phone: "" });
+      fetchEvents(); // Refresh to get updated attendees
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -258,54 +213,44 @@ export default function ManageEventsPage() {
     if (!selectedEvent || !confirm("Remove this attendee?")) return;
 
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${selectedEvent._id}/attendees/${attendeeId}`, {
-        method: "DELETE",
-      });
+      const res = await apiClient.delete(`/admin/events/${selectedEvent._id}/attendees/${attendeeId}`);
       
-      if (res.ok) {
-        alert("Attendee removed successfully!");
-        fetchEvents();
-      }
-    } catch (error) {
-      alert("Error removing attendee");
+      alert("Attendee removed successfully!");
+      fetchEvents();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
   const handleExportAttendees = async (eventId: string, eventTitle: string) => {
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/export/${eventId}`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${eventTitle.replace(/\s+/g, '_')}_attendees.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    } catch (error) {
-      alert("Error exporting attendees");
+      const res = await apiClient.get(`/admin/export/${eventId}`, {
+        responseType: 'blob'
+      });
+      
+      const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${eventTitle.replace(/\s+/g, '_')}_attendees.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
   const handleDuplicateEvent = async (eventId: string) => {
     try {
-      // Use local endpoint instead of remote
-      const res = await fetch(`http://localhost:8000/api/admin/events/${eventId}/duplicate`, {
-        method: "POST",
-      });
+      const res = await apiClient.post(`/admin/events/${eventId}/duplicate`);
       
-      if (res.ok) {
-        alert("Event duplicated successfully!");
-        fetchEvents();
-        fetchDashboardStats();
-      }
-    } catch (error) {
-      alert("Error duplicating event");
+      alert("Event duplicated successfully!");
+      fetchEvents();
+      fetchDashboardStats();
+    } catch (error: any) {
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
