@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, TrendingUp, Users, Star, Award, Clock, Target, Building, Brain, Handshake } from "lucide-react";
 
-// Define separate images for desktop and mobile
+// Define separate images for desktop, tablet, and mobile
 const heroImages = {
-  desktop: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760631051/rass_hero_image_ty1tpb.jpg",
-  mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760667108/pinl_1_hem0f0.jpg" // Placeholder - replace with mobile-specific image
+  desktop: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760840218/httpswww.freepik.comfree-vectorhand-drawn-private-school-landing-page_32398807.htm_fromView_search_page_1_position_49_uuid_c9da476c-aca9-4b32-a4eb-26f8201e19bd_query_edtech_landing_page_3_znavyf.jpg",
+  tablet: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760841282/tablet_umaybs.jpg", // Replace with your 2442x1536 image
+  mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760842149/mobile_hhhl1j.jpg" // Placeholder - replace with mobile-specific image
 };
 
 const slide = {
@@ -67,10 +68,14 @@ export function HeroCarousel() {
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
-      {/* Background Image - Separate images for desktop and mobile */}
+      {/* Background Image - Separate images for desktop, tablet, and mobile */}
       <div 
-        className="absolute inset-0 bg-cover bg-center hidden md:block"
+        className="absolute inset-0 bg-cover bg-center hidden lg:block"
         style={{ backgroundImage: `url(${heroImages.desktop})` }}
+      />
+      <div 
+        className="absolute inset-0 bg-cover bg-center hidden md:block lg:hidden"
+        style={{ backgroundImage: `url(${heroImages.tablet})`, backgroundSize: 'cover', width: '100%', height: '100%' }}
       />
       <div 
         className="absolute inset-0 bg-cover bg-center md:hidden"
@@ -116,14 +121,14 @@ export function HeroCarousel() {
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-black/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-2 md:p-3 border border-gray-200 hover:bg-black/20 transition-all duration-300">
+                  <div key={index} className="bg-black/20 backdrop-blur-sm rounded-xl md:rounded-2xl p-2 md:p-3 border border-gray-300 hover:bg-black/30 transition-all duration-300 w-40">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="bg-gradient-to-br from-black/20 to-black/5 p-1.5 md:p-2 rounded-lg md:rounded-xl mb-1 md:mb-2">
-                        <IconComponent className="h-4 w-4 md:h-5 md:w-5 text-black" />
+                      <div className="bg-gradient-to-br from-black/30 to-black/10 p-1.5 md:p-2 rounded-lg md:rounded-xl mb-1 md:mb-2">
+                        <IconComponent className="h-5 w-5 md:h-5 md:w-5 text-black" />
                       </div>
                       <div className="text-center">
                         <div className="text-xs md:text-base font-bold text-black">{stat.value}</div>
-                        <div className="text-black/80 text-[0.6rem] md:text-xs font-medium mt-0.5 md:mt-1">{stat.label}</div>
+                        <div className="text-black text-[0.6rem] md:text-xs font-medium mt-0.5 md:mt-1 leading-tight">{stat.label}</div>
                       </div>
                     </div>
                   </div>
@@ -131,24 +136,24 @@ export function HeroCarousel() {
               })}
             </motion.div>
 
-            {/* Stats - Mobile Version (Visible on Mobile) */}
+            {/* Stats - Mobile Version (Visible on Mobile) - Square stats on the left */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="md:hidden grid grid-cols-1 gap-4 mt-6 mb-6"
+              className="md:hidden flex flex-col items-start mt-6 mb-6"
             >
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
                 return (
-                  <div key={index} className="bg-black/10 backdrop-blur-sm rounded-xl p-4 border border-gray/20 hover:bg-black/20 transition-all duration-300">
+                  <div key={index} className="bg-black/20 backdrop-blur-sm rounded-xl p-4 border border-gray-300 hover:bg-black/30 transition-all duration-300 mb-4 w-48">
                     <div className="flex items-center">
-                      <div className="bg-gradient-to-br from-black/20 to-black/5 p-2 rounded-lg mr-4">
+                      <div className="bg-gradient-to-br from-black/30 to-black/10 p-2 rounded-lg mr-4">
                         <IconComponent className="h-6 w-6 text-black" />
                       </div>
                       <div>
                         <div className="text-lg font-bold text-black">{stat.value}</div>
-                        <div className="text-black/80 text-sm font-medium">{stat.label}</div>
+                        <div className="text-black text-sm font-medium leading-tight">{stat.label}</div>
                       </div>
                     </div>
                   </div>
