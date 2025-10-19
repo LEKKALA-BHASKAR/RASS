@@ -54,6 +54,19 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/student", studentRoutes);
 
 console.log('Registered media-presence route');
+console.log('Registered all routes');
+
+// Add logging for all requests
+app.use((req, res, next) => {
+  console.log(`=== REQUEST: ${req.method} ${req.path} ===`);
+  next();
+});
+
+// Error handling middleware (moved to the end)
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -63,12 +76,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((error) => {
     console.error('MongoDB connection error:', error);
   });
-
-// Error handling middleware (moved to the end)
-app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
-});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

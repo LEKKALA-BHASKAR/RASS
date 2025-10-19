@@ -164,10 +164,9 @@ export default function EventDetailPage() {
         }
       }
 
-      // Register attendee with payment ID for paid events and userId
+      // Register attendee with payment ID for paid events (userId is optional)
       const registrationData = {
         ...registrationForm,
-        userId: user._id,
         ...(paymentData && { paymentId: paymentData.razorpay_payment_id })
       };
 

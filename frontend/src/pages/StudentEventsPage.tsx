@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import apiClient from "../services/api";
 
 interface AgendaItem {
   _id?: string;
@@ -70,9 +71,9 @@ export default function StudentEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch("https://rass-h2s1.onrender.com/api/student/events?limit=20");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await apiClient.get("/student/events?limit=20");
+      if (res.status === 200) {
+        const data = res.data;
         setEvents(data.events || data);
         // Filter registered events based on user's email
         if (user?.email) {
@@ -91,9 +92,9 @@ export default function StudentEventsPage() {
 
   const fetchFeaturedEvents = async () => {
     try {
-      const res = await fetch("https://rass-h2s1.onrender.com/api/student/events/featured");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await apiClient.get("/student/events/featured");
+      if (res.status === 200) {
+        const data = res.data;
         setFeaturedEvents(data);
       }
     } catch (error) {
@@ -117,22 +118,17 @@ export default function StudentEventsPage() {
     if (!selectedEvent) return;
 
     try {
-      const res = await fetch(`http://localhost:8000/api/admin/events/${selectedEvent._id}/attendees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registrationForm),
-      });
+      const res = await apiClient.post(`/admin/events/${selectedEvent._id}/attendees`, registrationForm);
 
-      if (res.ok) {
+      if (res.status === 201) {
         setRegistrationSuccess(true);
         setRegistrationForm({ name: "", email: "", phone: "" });
         fetchEvents(); // Refresh to update attendee count
       } else {
-        const error = await res.json();
-        alert(`Registration failed: ${error.error}`);
+        alert(`Registration failed: ${res.data.error}`);
       }
-    } catch (error) {
-      alert("Registration failed. Please try again.");
+    } catch (error: any) {
+      alert(`Registration failed: ${error.response?.data?.error || "Please try again."}`);
     }
   };
 

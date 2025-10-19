@@ -1,17 +1,17 @@
 import React from "react";
-import axios from "axios";
+import apiClient from "../services/api";
 
 const PaymentPage: React.FC = () => {
   const handlePayment = async () => {
     try {
       // 1️⃣ Create order from backend
-      const { data } = await axios.post("https://rass-h2s1.onrender.com/api/payment/order", {
+      const { data } = await apiClient.post("/payment/order", {
         amount: 500, // INR ₹500
       });
 
       // 2️⃣ Open Razorpay checkout
       const options: any = {
-        key: "rzp_test_RJqt4AZALMZEYE", // Test Key ID
+        key: (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || "rzp_test_RJqt4AZALMZEYE", // Test Key ID
         amount: data.amount,
         currency: data.currency,
         name: "RASS Academy",
@@ -19,7 +19,7 @@ const PaymentPage: React.FC = () => {
         order_id: data.id,
         handler: async function (response: any) {
           // 3️⃣ Verify payment on backend
-          const verifyRes = await axios.post("https://rass-h2s1.onrender.com/api/payment/verify", response);
+          const verifyRes = await apiClient.post("/payment/verify", response);
           if (verifyRes.data.success) {
             alert("✅ Payment Successful! Course Enrolled.");
           } else {

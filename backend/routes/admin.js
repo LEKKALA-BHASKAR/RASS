@@ -236,44 +236,57 @@ router.delete("/events", async (req, res) => {
 // Add Attendee to Event
 router.post("/events/:id/attendees", async (req, res) => {
   try {
+    console.log("=== NEW REGISTRATION ATTEMPT ===");
+    console.log("Route reached: /events/:id/attendees");
+    console.log("Event ID:", req.params.id);
+    
     const { name, email, phone, paymentId, userId } = req.body;
     
-    if (!name || !email || !userId) {
-      return res.status(400).json({ error: "Name, email, and userId are required" });
+    console.log("Registration request body:", req.body);
+    console.log("Checking required fields - Name:", name, "Email:", email);
+    
+    // Require name and email, userId is optional
+    if (!name || !email) {
+      console.log("Validation failed - Missing name or email");
+      return res.status(400).json({ error: "Name and email are required (admin route)" });
     }
 
     const event = await Event.findById(req.params.id);
     if (!event) {
+      console.log("Event not found for ID:", req.params.id);
       return res.status(404).json({ error: "Event not found" });
     }
 
-    // Check if attendee already exists by userId
+    // Check if attendee already exists by email (previous approach)
     const existingAttendee = event.attendees.find(
-      attendee => attendee.userId.toString() === userId
+      attendee => attendee.email === email
     );
 
     if (existingAttendee) {
+      console.log("Attendee already registered with email:", email);
       return res.status(400).json({ error: "Attendee already registered" });
     }
 
     // Add attendee with registration timestamp
     const newAttendee = {
-      userId,
       name,
       email,
       phone: phone || "",
       registeredAt: new Date(),
+      ...(userId && { userId }), // Add userId if provided
       ...(paymentId && { paymentId }) // Add payment ID if provided
     };
 
     event.attendees.push(newAttendee);
     await event.save();
 
+    console.log("Attendee added successfully:", newAttendee);
     res.status(201).json({ 
       message: "Attendee added successfully", 
       attendee: event.attendees[event.attendees.length - 1] 
     });
   } catch (err) {
+    console.error("Error adding attendee:", err);
     res.status(400).json({ error: err.message });
   }
 });

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import apiClient from "../../services/api";
 
 interface AgendaItem {
   day: string;
@@ -42,9 +43,9 @@ export default function AllEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch("https://rass-h2s1.onrender.com/api/admin/events");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await apiClient.get("/admin/events");
+      if (res.status === 200) {
+        const data = res.data;
         setEvents(data.events || data);
       }
     } catch (error) {
