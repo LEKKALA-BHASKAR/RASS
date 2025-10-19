@@ -17,7 +17,7 @@ import { motion } from 'framer-motion';
 import TestimonialCarousel from './publicpages/TestimonialCarousel';
 import MediaPresenceSection from './publicpages/MediaPresenceSection';
 import TrainingAssessment from './publicpages/TrainingAssessment';
-import StudentEventsPage from './StudentEventsPage';
+import UpcomingEvents from '../components/home/UpcomingEvents';
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
         <TrainingAssessment/>
         <AIInsightsDashboard/>
         <CertificationCourses/>
-        <StudentEventsPage/>
+        <UpcomingEvents />
         <TestimonialCarousel/>
         <MediaPresenceSection/>
 
@@ -152,5 +152,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-

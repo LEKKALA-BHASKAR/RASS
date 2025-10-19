@@ -14,7 +14,18 @@ const eventValidation = [
   body("location").notEmpty().withMessage("Location is required"),
   body("type").isIn(["Free", "Paid"]).withMessage("Type must be Free or Paid"),
   body("price").isFloat({ min: 0 }).withMessage("Price must be a positive number"),
-  body("imageUrl").optional().isURL().withMessage("Image URL must be a valid URL")
+  body("imageUrl").optional().isURL().withMessage("Image URL must be a valid URL"),
+  body("aboutEvent").optional().isString(),
+  body("highlights").optional().isArray().withMessage("Highlights must be an array"),
+  body("agenda").optional().isArray().withMessage("Agenda must be an array"),
+  body("faq").optional().isArray().withMessage("FAQ must be an array"),
+  body("highlights.*").optional().isString().withMessage("Each highlight must be a string"),
+  body("agenda.*.day").optional().isString().withMessage("Agenda day must be a string"),
+  body("agenda.*.title").optional().isString().withMessage("Agenda title must be a string"),
+  body("agenda.*.description").optional().isString().withMessage("Agenda description must be a string"),
+  body("agenda.*.time").optional().isString().withMessage("Agenda time must be a string"),
+  body("faq.*.question").optional().isString().withMessage("FAQ question must be a string"),
+  body("faq.*.answer").optional().isString().withMessage("FAQ answer must be a string")
 ];
 
 // Create Event
@@ -25,7 +36,48 @@ router.post("/create-event", eventValidation, async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const event = new Event(req.body);
+    // Ensure default values for new fields if not provided
+    const eventData = { ...req.body };
+    
+    // Set defaults for new fields if not provided or empty
+    if (!eventData.aboutEvent) {
+      eventData.aboutEvent = "Join us for this exciting event that will provide valuable insights and networking opportunities.";
+    }
+    
+    if (!eventData.highlights || eventData.highlights.length === 0) {
+      eventData.highlights = [
+        "Expert-led sessions",
+        "Networking opportunities",
+        "Practical insights",
+        "Interactive workshops"
+      ];
+    }
+    
+    if (!eventData.agenda || eventData.agenda.length === 0) {
+      eventData.agenda = [
+        {
+          day: "Day 1",
+          title: "Introduction and Keynote",
+          description: "Welcome address and opening keynote session",
+          time: "9:00 AM - 10:30 AM"
+        }
+      ];
+    }
+    
+    if (!eventData.faq || eventData.faq.length === 0) {
+      eventData.faq = [
+        {
+          question: "What is this event about?",
+          answer: "This event is designed to provide valuable insights and networking opportunities in the field."
+        },
+        {
+          question: "How do I register?",
+          answer: "You can register through our website by clicking the 'Register Now' button."
+        }
+      ];
+    }
+
+    const event = new Event(eventData);
     await event.save();
     res.status(201).json({ 
       message: "Event created successfully", 
@@ -85,6 +137,22 @@ router.get("/events", async (req, res) => {
   }
 });
 
+// Get upcoming events for home page
+// This route must be defined BEFORE /events/:id to prevent route matching conflicts
+router.get("/events/upcoming", async (req, res) => {
+  try {
+    const upcomingEvents = await Event.find({
+      date: { $gte: new Date() }
+    })
+    .sort({ date: 1 })
+    .limit(6);
+
+    res.json(upcomingEvents);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get Single Event
 router.get("/events/:id", async (req, res) => {
   try {
@@ -94,6 +162,10 @@ router.get("/events/:id", async (req, res) => {
     }
     res.json(event);
   } catch (err) {
+    // Handle cast error for invalid ObjectId
+    if (err.name === 'CastError') {
+      return res.status(400).json({ error: "Invalid event ID" });
+    }
     res.status(500).json({ error: err.message });
   }
 });
@@ -164,10 +236,10 @@ router.delete("/events", async (req, res) => {
 // Add Attendee to Event
 router.post("/events/:id/attendees", async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, paymentId, userId } = req.body;
     
-    if (!name || !email) {
-      return res.status(400).json({ error: "Name and email are required" });
+    if (!name || !email || !userId) {
+      return res.status(400).json({ error: "Name, email, and userId are required" });
     }
 
     const event = await Event.findById(req.params.id);
@@ -175,16 +247,26 @@ router.post("/events/:id/attendees", async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    // Check if attendee already exists
+    // Check if attendee already exists by userId
     const existingAttendee = event.attendees.find(
-      attendee => attendee.email === email
+      attendee => attendee.userId.toString() === userId
     );
 
     if (existingAttendee) {
       return res.status(400).json({ error: "Attendee already registered" });
     }
 
-    event.attendees.push({ name, email, phone, registeredAt: new Date() });
+    // Add attendee with registration timestamp
+    const newAttendee = {
+      userId,
+      name,
+      email,
+      phone: phone || "",
+      registeredAt: new Date(),
+      ...(paymentId && { paymentId }) // Add payment ID if provided
+    };
+
+    event.attendees.push(newAttendee);
     await event.save();
 
     res.status(201).json({ 
@@ -325,15 +407,13 @@ router.get("/dashboard/stats", async (req, res) => {
 
     const recentEvents = await Event.find()
       .sort({ createdAt: -1 })
-      .limit(5)
-      .select("title date attendees imageUrl");
+      .limit(5);
 
     const upcomingEvents = await Event.find({
       date: { $gte: new Date() }
     })
     .sort({ date: 1 })
-    .limit(5)
-    .select("title date location imageUrl");
+    .limit(5);
 
     res.json({
       totalEvents,

@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { authenticate } from "../middleware/auth.js";
 import Enrollment from "../models/Enrollment.js";
 import Course from "../models/Course.js";
+import Event from "../models/Event.js";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const razorpay = new Razorpay({
 });
 
 // ----------------------
-// Create Order
+// Create Order for Course
 // ----------------------
 router.post("/order", authenticate, async (req, res) => {
   try {
@@ -37,7 +38,35 @@ router.post("/order", authenticate, async (req, res) => {
 });
 
 // ----------------------
-// Verify Payment
+// Create Order for Event
+// ----------------------
+router.post("/event-order", authenticate, async (req, res) => {
+  try {
+    const { eventId } = req.body;
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Only paid events can have orders
+    if (event.type !== "Paid") {
+      return res.status(400).json({ message: "Only paid events can have payment orders" });
+    }
+
+    const options = {
+      amount: event.price * 100, // INR → paise
+      currency: "INR",
+      receipt: `event_receipt_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json({ order, event });
+  } catch (err) {
+    console.error("Error creating event order:", err);
+    res.status(500).json({ message: "Error creating event order" });
+  }
+});
+
+// ----------------------
+// Verify Payment for Course
 // ----------------------
 router.post("/verify", authenticate, async (req, res) => {
   try {
@@ -46,7 +75,7 @@ router.post("/verify", authenticate, async (req, res) => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", "LhCRU1mwpEJJRP19te0lv8q0")
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "LhCRU1mwpEJJRP19te0lv8q0")
       .update(body.toString())
       .digest("hex");
 
@@ -80,7 +109,7 @@ router.post("/verify", authenticate, async (req, res) => {
       course.enrollmentCount += 1;
       await course.save();
 
-      // Add course to user’s enrolledCourses
+      // Add course to user's enrolledCourses
       req.user.enrolledCourses.push(courseId);
       await req.user.save();
     }
@@ -92,5 +121,37 @@ router.post("/verify", authenticate, async (req, res) => {
   }
 });
 
+// ----------------------
+// Verify Payment for Event
+// ----------------------
+router.post("/verify-event", authenticate, async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, eventId } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "LhCRU1mwpEJJRP19te0lv8q0")
+      .update(body.toString())
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ success: false, message: "Event payment verification failed" });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ success: false, message: "Event not found" });
+
+    // Return success without adding to attendees - that will be done in the registration step
+    res.json({ 
+      success: true, 
+      message: "Event payment verified successfully!", 
+      paymentId: razorpay_payment_id
+    });
+  } catch (err) {
+    console.error("Error verifying event payment:", err);
+    res.status(500).json({ success: false, message: "Error verifying event payment" });
+  }
+});
 
 export default router;

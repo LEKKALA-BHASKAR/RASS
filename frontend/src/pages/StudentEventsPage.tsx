@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+
+interface AgendaItem {
+  _id?: string;
+  day: string;
+  title: string;
+  description: string;
+  time: string;
+}
+
+interface FAQItem {
+  _id?: string;
+  question: string;
+  answer: string;
+}
 
 interface Event {
   _id: string;
   title: string;
   description: string;
+  aboutEvent: string;
   date: string;
   location: string;
   type: "Free" | "Paid";
   price: number;
   imageUrl: string;
+  highlights: string[];
+  agenda: AgendaItem[];
+  faq: FAQItem[];
   attendees: any[];
 }
 
@@ -19,8 +38,10 @@ interface RegistrationForm {
 }
 
 export default function StudentEventsPage() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [featuredEvents, setFeaturedEvents] = useState<Event[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
@@ -53,6 +74,13 @@ export default function StudentEventsPage() {
       if (res.ok) {
         const data = await res.json();
         setEvents(data.events || data);
+        // Filter registered events based on user's email
+        if (user?.email) {
+          const registered = (data.events || data).filter((event: Event) => 
+            event.attendees.some((attendee: any) => attendee.email === user.email)
+          );
+          setRegisteredEvents(registered);
+        }
       }
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -77,7 +105,11 @@ export default function StudentEventsPage() {
     setSelectedEvent(event);
     setShowRegistrationModal(true);
     setRegistrationSuccess(false);
-    setRegistrationForm({ name: "", email: "", phone: "" });
+    setRegistrationForm({ 
+      name: user?.name || "", 
+      email: user?.email || "", 
+      phone: "" 
+    });
   };
 
   const handleRegistrationSubmit = async (e: React.FormEvent) => {
@@ -85,7 +117,7 @@ export default function StudentEventsPage() {
     if (!selectedEvent) return;
 
     try {
-      const res = await fetch(`https://rass-h2s1.onrender.com/api/student/events/${selectedEvent._id}/register`, {
+      const res = await fetch(`http://localhost:8000/api/admin/events/${selectedEvent._id}/attendees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registrationForm),
@@ -226,22 +258,15 @@ export default function StudentEventsPage() {
         </div>
       )}
 
-      {/* All Events Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">All Events</h2>
-        
-        {events.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
-            <div className="text-6xl mb-4">📅</div>
-            <h3 className="text-2xl font-semibold text-gray-700 mb-2">No events available</h3>
-            <p className="text-gray-500">Check back later for upcoming events!</p>
-          </div>
-        ) : (
+      {/* Registered Events Section */}
+      {registeredEvents.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Your Registered Events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {events.map((event) => (
+            {registeredEvents.map((event) => (
               <div
                 key={event._id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-green-500"
               >
                 {/* Event Image */}
                 <div className="relative h-48 overflow-hidden">
@@ -256,12 +281,12 @@ export default function StudentEventsPage() {
                         ? "bg-green-500 text-white" 
                         : "bg-yellow-500 text-gray-800"
                     }`}>
-                      {event.type === "Free" ? "FREE" : `$${event.price}`}
+                      {event.type === "Free" ? "FREE" : `₹${event.price}`}
                     </span>
                   </div>
                   <div className="absolute bottom-4 left-4">
-                    <span className="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
-                      {event.attendees.length} registered
+                    <span className="bg-green-500 text-white px-2 py-1 rounded text-sm font-bold">
+                      REGISTERED
                     </span>
                   </div>
                 </div>
@@ -289,13 +314,92 @@ export default function StudentEventsPage() {
 
                   <button
                     onClick={() => handleRegisterClick(event)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+                    disabled
                   >
-                    Register Now
+                    Already Registered
                   </button>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* All Events Grid */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          {registeredEvents.length > 0 ? "More Events" : "All Events"}
+        </h2>
+        
+        {events.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
+            <div className="text-6xl mb-4">📅</div>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-2">No events available</h3>
+            <p className="text-gray-500">Check back later for upcoming events!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {events
+              .filter(event => !registeredEvents.some(registered => registered._id === event._id))
+              .map((event) => (
+                <div
+                  key={event._id}
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  {/* Event Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={getImageUrl(event)}
+                      alt={event.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                    <div className="absolute top-4 right-4">
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        event.type === "Free" 
+                          ? "bg-green-500 text-white" 
+                          : "bg-yellow-500 text-gray-800"
+                      }`}>
+                        {event.type === "Free" ? "FREE" : `₹${event.price}`}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-4 left-4">
+                      <span className="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
+                        {event.attendees.length} registered
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Event Details */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-2">{event.title}</h3>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center text-gray-700 text-sm">
+                        <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {formatDate(event.date)}
+                      </div>
+                      <div className="flex items-center text-gray-700 text-sm">
+                        <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {event.location}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleRegisterClick(event)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+                    >
+                      Register Now
+                    </button>
+                  </div>
+                </div>
+              ))}
           </div>
         )}
       </div>
@@ -316,7 +420,10 @@ export default function StudentEventsPage() {
                   You have successfully registered for <strong>{selectedEvent.title}</strong>
                 </p>
                 <button
-                  onClick={() => setShowRegistrationModal(false)}
+                  onClick={() => {
+                    setShowRegistrationModal(false);
+                    fetchEvents(); // Refresh events to show in registered section
+                  }}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
                 >
                   Close

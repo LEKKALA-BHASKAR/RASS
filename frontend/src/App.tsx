@@ -39,7 +39,10 @@ import UniversitiesPage from './pages/UniversitiesPage';
 import AdminTicketsPage from './pages/admin/AdminTicketsPage';
 import MediaPresenceManagement from './pages/admin/MediaPresenceManagement';
 import ManageEventsPage from './pages/admin/ManageEventsPage'; // Added import for event management
+import EventDetailPage from './pages/events/EventDetailPage'; // Added import for event detail page
+import AllEventsPage from './pages/events/AllEventsPage'; // Added import for all events page
 import ScrollToTop from "./pages/ScrollToTop";
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
   roles 
@@ -89,7 +92,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
-        <Route path="/" element={<Home />} />
+        <Route path="/events" element={<AllEventsPage />} />
+        <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/blog" element={<BlogPage/>} />
         <Route path="/about" element={<About />} />
         <Route path="/support-tickets" element={<Support />} />
