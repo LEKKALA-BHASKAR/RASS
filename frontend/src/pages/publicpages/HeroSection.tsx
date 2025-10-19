@@ -11,7 +11,7 @@ const heroImages = {
 
 const slide = {
   id: 1,
-  title: ["Become the Talent", "that every company wants to Hire."],
+  title: "Become the Talent that every company wants to Hire.",
   subtitle: "India's #1 Outcome-Focused Skill Development Initiative, trusted by learners with proven results.",
   cta: "Explore Our Impact",
   accentColor: "blue",
@@ -117,9 +117,16 @@ export function HeroCarousel() {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-5xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-blue-700 leading-tight pb-2"
+              className="text-5xl sm:text-6xl md:text-5xl lg:text-6xl xl:text-6xl font-bold text-black leading-tight pb-2"
             >
-              {currentSlideData.title[0]}<br/>{currentSlideData.title[1]}
+              <span className="md:hidden">
+                Become the Talent<br />
+                that every company<br />
+                wants to Hire.
+              </span>
+              <span className="hidden md:inline">
+                {currentSlideData.title}
+              </span>
             </motion.h1>
 
             <motion.p
