@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, TrendingUp, Users, Star, Award, Clock, Target, Building, Brain, Handshake } from "lucide-react";
 
-// Define separate images for desktop and mobile only (tablet removed)
+// Define separate images for desktop and mobile only
 const heroImages = {
   desktop: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760840218/httpswww.freepik.comfree-vectorhand-drawn-private-school-landing-page_32398807.htm_fromView_search_page_1_position_49_uuid_c9da476c-aca9-4b32-a4eb-26f8201e19bd_query_edtech_landing_page_3_znavyf.jpg",
-  mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760842149/mobile_hhhl1j.jpg" // Placeholder - replace with mobile-specific image
+  mobile: "https://res.cloudinary.com/dc3bi7giu/image/upload/v1760842149/mobile_hhhl1j.jpg"
 };
 
 const slide = {
@@ -87,13 +87,13 @@ export function HeroCarousel() {
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
-      {/* Background Image - Separate images for desktop and mobile only (tablet removed) */}
+      {/* Background Image - Single desktop version for tablet and larger screens, separate mobile version */}
       <div 
-        className="absolute inset-0 bg-cover bg-center hidden md:block"
+        className="absolute inset-0 bg-cover bg-center hidden sm:block"
         style={{ backgroundImage: `url(${heroImages.desktop})`, backgroundSize: '110%' }}
       />
       <div 
-        className="absolute inset-0 bg-cover bg-center md:hidden"
+        className="absolute inset-0 bg-cover bg-center sm:hidden"
         style={{ backgroundImage: `url(${heroImages.mobile})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
       />
       
@@ -127,12 +127,12 @@ export function HeroCarousel() {
               <span className={showCursor ? "inline-block w-1 h-8 md:h-10 bg-black ml-1 align-middle" : "hidden"}></span>
             </motion.p>
 
-            {/* Stats - Desktop Version (Hidden on Mobile) */}
+            {/* Stats - Unified version for tablet and desktop, separate mobile version */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="hidden md:grid grid-cols-3 gap-2 md:gap-3 mt-8 mb-6"
+              className="hidden sm:grid grid-cols-3 gap-2 md:gap-3 mt-8 mb-6"
             >
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
@@ -157,7 +157,7 @@ export function HeroCarousel() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="md:hidden flex flex-col items-start mt-6 mb-6"
+              className="sm:hidden flex flex-col items-start mt-6 mb-6"
             >
               {currentSlideData.stats.map((stat, index) => {
                 const IconComponent = stat.icon;
