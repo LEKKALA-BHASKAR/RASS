@@ -139,8 +139,9 @@ const CompanyPartnershipForm: React.FC = () => {
   }
 
   return (
+    <div>
+    <Navbar />
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Navbar />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
@@ -408,7 +409,8 @@ const CompanyPartnershipForm: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer />
+    </div>
+    <Footer />
     </div>
   );
 };
