@@ -109,7 +109,7 @@ const Home: React.FC = () => {
               Ready to Start Your Learning Journey?
             </h2>
             <p className="text-xl mb-10 max-w-2xl mx-auto opacity-90">
-              Join thousands of students already learning with RASS Academy. 
+              Join a pool of students already learning with RASS Academy. 
               Start your journey today with our comprehensive courses.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
