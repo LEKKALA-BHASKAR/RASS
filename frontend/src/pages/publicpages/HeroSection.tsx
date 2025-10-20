@@ -87,10 +87,13 @@ export function HeroCarousel() {
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden pt-0 mt-0">
+      <br/>
+      <br/>
       {/* Background Image - Single desktop version for tablet and larger screens, separate mobile version */}
       <div 
         className="absolute inset-0 bg-cover bg-center hidden sm:block"
-        style={{ backgroundImage: `url(${heroImages.desktop})`, backgroundSize: '110%' }}
+        
+        style={{ backgroundImage: `url(${heroImages.desktop})`, backgroundSize: '105%' }}
       />
       <div 
         className="absolute inset-0 bg-cover bg-center sm:hidden"
