@@ -88,7 +88,7 @@ export function ClientsSection() {
                 <img 
                   src={client.logo} 
                   alt={client.name} 
-                  className="max-h-12 max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                  className="max-h-12 max-w-full object-contain transition-all duration-300 hover:opacity-80"
                 />
               </div>
             ))}
@@ -113,7 +113,7 @@ export function ClientsSection() {
                 <img 
                   src={client.logo} 
                   alt={client.name} 
-                  className="max-h-12 max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                  className="max-h-12 max-w-full object-contain transition-all duration-300 hover:opacity-80"
                 />
               </div>
             ))}
