@@ -34,6 +34,7 @@ import HelpCenter from './pages/publicpages/Help';
 import BlogPage from './pages/publicpages/Blog';
 import About from './pages/publicpages/About';
 import ContactUs from './pages/publicpages/Contact';
+import Terms from './pages/publicpages/Terms';
 import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
 import AdminTicketsPage from './pages/admin/AdminTicketsPage';
@@ -107,6 +108,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/support-tickets" element={<Support />} />
         <Route path="/contact" element={<ContactUs/>}/>
+        <Route path="/terms" element={<Terms />} />
         <Route path="/faq" element={<HelpCenter/>}/>
         <Route path="/courses" element={<CourseCatalog />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
