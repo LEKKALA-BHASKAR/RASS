@@ -52,7 +52,7 @@ const CampusPartnerForm: React.FC = () => {
   const benefits = [
     {
       icon: <TrendingUp className="h-6 w-6" />,
-      title: "Earn Commissions",
+      title: "Promising Incentives",
       description: "Get paid for every successful referral"
     },
     {
@@ -184,7 +184,7 @@ const CampusPartnerForm: React.FC = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
-                <span className="text-yellow-300 font-semibold">Earn Commissions</span>
+                <span className="text-yellow-300 font-semibold">Promising Incentives</span>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
                 <span className="text-yellow-300 font-semibold">Build Your Network</span>
