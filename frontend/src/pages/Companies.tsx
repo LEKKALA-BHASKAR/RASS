@@ -84,7 +84,7 @@ const Companies: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <a
-                href="/Partnerform"
+                href="/company-partnership"
                 className="px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg font-medium hover:bg-yellow-300 transition-all transform hover:scale-105 shadow-lg"
               >
                 Become a Partner
