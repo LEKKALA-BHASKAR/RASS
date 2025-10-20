@@ -14,15 +14,7 @@ import Footer from "../components/layout/Footer";
 import { Link, useNavigate } from "react-router-dom";
 
 const heroImages = [
-    "/images/universities/university-cta-bg.jpg",
-  "/images/universities/hero-university-campus.jpg",
-  "/images/universities/hero-classroom.jpg",
-  "/images/universities/hero-graduation.jpg",
-  "/images/universities/bridge-learning.jpg",
-  "/images/universities/university-benefits.jpg",
-  "/images/universities/partnership-models.jpg",
-  "/images/universities/success-stories.jpg",
-];
+    "/images/universities/university-cta-bg.jpg",];
 
 const UniversitiesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -201,23 +193,6 @@ const UniversitiesPage: React.FC = () => {
             <ArrowRight className="h-5 w-5 relative transform group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </motion.div>
-
-        {/* Trust Badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="pt-8 border-t border-white/20"
-        >
-          <p className="text-sm text-indigo-200 mb-4">Trusted by leading institutions</p>
-          <div className="flex flex-wrap gap-6 items-center opacity-80">
-            {["IIT", "NIT", "University", "College"].map((institution, index) => (
-              <div key={index} className="text-white/70 text-sm font-medium">
-                {institution}
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </motion.div>
 
       {/* Right Side - Image Carousel */}
@@ -267,20 +242,6 @@ const UniversitiesPage: React.FC = () => {
               </div>
             </div>
           </motion.div>
-
-          {/* Navigation Arrows */}
-          <button
-            onClick={() => setCurrentImage((prev) => (prev === 0 ? heroImages.length - 1 : prev - 1))}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
-          >
-            <ChevronLeft className="h-6 w-6 group-hover:scale-110 transition-transform" />
-          </button>
-          <button
-            onClick={() => setCurrentImage((prev) => (prev === heroImages.length - 1 ? 0 : prev + 1))}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
-          >
-            <ChevronRight className="h-6 w-6 group-hover:scale-110 transition-transform" />
-          </button>
         </div>
 
         {/* Image Indicators */}
@@ -534,62 +495,6 @@ const UniversitiesPage: React.FC = () => {
                     <p className="text-indigo-300 text-sm">{testimonial.university}</p>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium mb-4">
-              <MessageSquare className="h-4 w-4" />
-              FAQ
-            </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-gray-600">
-              Find answers to common questions about our university partnerships
-            </p>
-          </motion.div>
-          
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="bg-gray-50 rounded-xl overflow-hidden"
-              >
-                <button
-                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-100 transition-colors"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
-                  <div className={`w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center transition-transform ${expandedFaq === index ? 'rotate-180' : ''}`}>
-                    <ChevronRight className="h-5 w-5 text-indigo-600" />
-                  </div>
-                </button>
-                
-                {expandedFaq === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="px-6 pb-5"
-                  >
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </motion.div>
-                )}
               </motion.div>
             ))}
           </div>
