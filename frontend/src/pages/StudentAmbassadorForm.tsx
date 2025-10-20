@@ -19,7 +19,8 @@ import {
   Heart,
   Target,
   Rocket,
-  AlertTriangle
+  AlertTriangle,
+  Handshake
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -165,7 +166,7 @@ const CampusPartnerForm: React.FC = () => {
               <div className="relative">
                 <div className="absolute -inset-4 bg-white/20 rounded-full blur-lg"></div>
                 <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4">
-                  <Award className="h-12 w-12 text-yellow-300" />
+                  <Handshake className="h-12 w-12 text-black-400" />
                 </div>
               </div>
             </div>

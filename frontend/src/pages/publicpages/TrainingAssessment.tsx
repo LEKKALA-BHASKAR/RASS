@@ -12,7 +12,9 @@ import {
   Play,
   Clock,
   Shield,
-  Briefcase
+  Briefcase,
+  Rocket,
+  Gem
 } from "lucide-react";
 
 const TrainingAssessment: React.FC = () => {
@@ -46,7 +48,8 @@ const TrainingAssessment: React.FC = () => {
       description: "Comprehensive, hands-on learning with live instructors and industry-aligned modules. Includes core skill training, soft skills, and cultural fitment sessions.",
       features: ["Live Instructor Sessions", "Real-world Projects", "Soft Skills Training", "Industry Expert Sessions"],
       gradient: "from-blue-500 to-cyan-500",
-      delay: 0.2
+      delay: 0.2,
+      icon: <Zap className="h-8 w-8" />
     },
     {
       number: "02",
@@ -54,7 +57,8 @@ const TrainingAssessment: React.FC = () => {
       description: "Candidates undergo Government of India–approved skill assessment to validate technical and professional competence.",
       features: ["Govt. Approved Assessment", "Technical Validation", "Professional Competence", "Skill Certification"],
       gradient: "from-purple-500 to-pink-500",
-      delay: 0.4
+      delay: 0.4,
+      icon: <Shield className="h-8 w-8" />
     },
     {
       number: "03",
@@ -62,7 +66,8 @@ const TrainingAssessment: React.FC = () => {
       description: "Certified learners are placed in internships with industry partners or in-house real-time projects based on performance.",
       features: ["Industry Partnerships", "Real Workplace Experience", "Performance-based Placement", "Project Experience"],
       gradient: "from-orange-500 to-red-500",
-      delay: 0.6
+      delay: 0.6,
+      icon: <Rocket className="h-8 w-8" />
     }
   ];
 
@@ -98,7 +103,7 @@ const TrainingAssessment: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <Star className="h-4 w-4 text-yellow-400" />
+                <Gem className="h-4 w-4 text-yellow-400" />
                 <span className="text-white text-sm font-medium">India's First Full-Cycle Pathway</span>
               </motion.div>
 
@@ -146,30 +151,10 @@ const TrainingAssessment: React.FC = () => {
                 ))}
               </motion.div>
 
-              {/* CTA Buttons */}
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 }}
-              >
-                <button className="group relative bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                  <span className="relative flex items-center justify-center gap-2">
-                    Start Your Journey <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                  </span>
-                </button>
-                
-                <button className="group relative bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-semibold border border-white/20 hover:bg-white/20 transition-all duration-300">
-                  <span className="relative flex items-center justify-center gap-2">
-                    <Play className="h-5 w-5" /> Watch Demo
-                  </span>
-                </button>
-              </motion.div>
             </motion.div>
           </div>
 
-          {/* Right Content - Full Flex Image */}
+          {/* Right Content - Rectangular Image */}
           <motion.div 
             className="lg:w-1/2 w-full flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.95, x: 50 }}
@@ -177,9 +162,9 @@ const TrainingAssessment: React.FC = () => {
             transition={{ duration: 1, delay: 0.5 }}
           >
             <div className="relative w-full max-w-2xl">
-              {/* Main Image Container */}
+              {/* Main Image Container - Rectangular */}
               <motion.div
-                className="relative w-full h-[500px] lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl"
+                className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
@@ -190,39 +175,24 @@ const TrainingAssessment: React.FC = () => {
                 />
                 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-purple-900/30"></div>
-                
-                {/* Floating Elements */}
-                <motion.div 
-                  className="absolute top-6 left-6 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2, duration: 0.5 }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl flex items-center justify-center">
-                      <CheckCircle className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-white font-bold text-sm">100%</p>
-                      <p className="text-gray-200 text-xs">Placement Support</p>
-                    </div>
-                  </div>
-                </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-purple-900/30"></div>
 
+
+                {/* Bottom Info Bar */}
                 <motion.div 
-                  className="absolute bottom-6 right-6 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20"
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600/90 to-purple-600/90 backdrop-blur-sm p-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.4, duration: 0.5 }}
+                  transition={{ delay: 1.6, duration: 0.5 }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-pink-400 rounded-2xl flex items-center justify-center">
-                      <Users className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-white" />
+                      <span className="text-white text-sm font-medium">6 Months Program</span>
                     </div>
-                    <div>
-                      <p className="text-white font-bold text-sm">5000+</p>
-                      <p className="text-gray-200 text-xs">Students Trained</p>
+                    <div className="flex items-center gap-2">
+                      <Star className="h-4 w-4 text-yellow-400" />
+                      <span className="text-white text-sm font-medium">Industry Ready</span>
                     </div>
                   </div>
                 </motion.div>
@@ -232,12 +202,13 @@ const TrainingAssessment: React.FC = () => {
               <div className="absolute -z-10 -inset-4">
                 <div className="absolute -top-4 -left-4 w-24 h-24 bg-blue-400/20 rounded-full blur-xl"></div>
                 <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-pink-400/20 rounded-full blur-xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-purple-400/10 rounded-full blur-2xl"></div>
               </div>
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Process Steps - Mobile & Compact View */}
+        {/* Process Steps Section */}
         <motion.div 
           className="px-4 sm:px-6 lg:px-8 pb-12 lg:pb-20"
           initial={{ opacity: 0, y: 40 }}
@@ -271,32 +242,41 @@ const TrainingAssessment: React.FC = () => {
                   transition={{ duration: 0.6, delay: step.delay }}
                   whileHover={{ scale: 1.02 }}
                 >
-                  {/* Step Number */}
-                  <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <span className="text-white font-bold text-2xl">{step.number}</span>
+                  {/* Step Number and Icon */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <span className="text-white font-bold text-2xl">{step.number}</span>
+                    </div>
+                    <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                      {step.icon}
+                    </div>
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-2xl font-bold text-white mb-4">{step.title}</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
+                    {step.title}
+                  </h3>
                   <p className="text-gray-300 leading-relaxed mb-6">{step.description}</p>
 
                   {/* Features */}
                   <div className="space-y-3">
                     {step.features.map((feature, featureIndex) => (
                       <div key={featureIndex} className="flex items-center gap-3">
-                        <div className="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center">
+                        <div className="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
                           <CheckCircle className="h-3 w-3 text-green-400" />
                         </div>
-                        <span className="text-gray-200 text-sm">{feature}</span>
+                        <span className="text-gray-200 text-sm group-hover:text-white transition-colors duration-300">{feature}</span>
                       </div>
                     ))}
                   </div>
 
-                  {/* Hover Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {/* Hover Gradient Effect */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${step.gradient} rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity duration-300 -z-10`}></div>
                 </motion.div>
               ))}
             </div>
+
+
           </div>
         </motion.div>
       </div>
