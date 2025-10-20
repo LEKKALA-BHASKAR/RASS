@@ -165,9 +165,9 @@ const UniversitiesPage: React.FC = () => {
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
             Empower
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400">
-              Universities.
+              Universities. and 
             </span>
-            Transform
+            Transforming 
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
               Students.
             </span>
@@ -181,25 +181,6 @@ const UniversitiesPage: React.FC = () => {
             preparing students with real-world skills and industry-recognized certifications.
           </p>
         </div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="grid grid-cols-3 gap-6 py-6"
-        >
-          {[
-            { number: "50+", label: "Partner Universities" },
-            { number: "10K+", label: "Students Trained" },
-            { number: "95%", label: "Placement Rate" }
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-yellow-400">{stat.number}</div>
-              <div className="text-sm text-indigo-200 mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
 
         {/* CTA Buttons */}
         <motion.div
@@ -219,14 +200,6 @@ const UniversitiesPage: React.FC = () => {
             <span className="relative">Start a Partnership</span>
             <ArrowRight className="h-5 w-5 relative transform group-hover:translate-x-1 transition-transform duration-300" />
           </button>
-          
-          <Link
-            to="/about"
-            className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 hover:border-white/40 transition-all duration-300"
-          >
-            <span>Learn More</span>
-            <ChevronRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
         </motion.div>
 
         {/* Trust Badges */}
@@ -359,30 +332,6 @@ const UniversitiesPage: React.FC = () => {
   </motion.div>
 </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="flex justify-center mb-3">
-                  <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
-                    <stat.icon className="h-8 w-8 text-yellow-400" />
-                  </div>
-                </div>
-                <div className="text-4xl font-bold mb-1">{stat.value}</div>
-                <div className="text-indigo-100">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Bridging the Gap Section */}
       <section className="py-20 bg-white">
@@ -680,12 +629,7 @@ const UniversitiesPage: React.FC = () => {
               >
                 Start Partnership <ArrowRight className="h-5 w-5" />
               </button>
-              <Link
-                to="/about"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-full hover:bg-white/20 transition-all duration-300"
-              >
-                Learn More <ChevronRight className="h-5 w-5" />
-              </Link>
+
             </div>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center text-indigo-200">
