@@ -14,7 +14,6 @@ import CourseHighlights from "../../components/course/CourseHighlights";
 import AdminCurriculum from "../../components/course/AdminCurriculum";
 import ToolsTechnologies from "../../components/course/ToolsTechnologies";
 import JobRoles from "../../components/course/JobRoles";
-import InstructorCard from "../../components/course/InstructorCard";
 import AlumniSpeaks from "../../components/course/AlumniSpeaks";
 import LearningJourney from "../../components/course/LearningJourney";
 import CourseDescription from "../../components/course/CourseDescription";
@@ -58,7 +57,7 @@ const CourseDetail: React.FC = () => {
 
   useEffect(() => {
     if (id) fetchCourseData();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   const fetchCourseData = async () => {
     try {
@@ -85,6 +84,12 @@ const CourseDetail: React.FC = () => {
 
   const handleEnroll = async () => {
     if (!isAuthenticated || !course) return;
+
+    // If user is already enrolled and payment is completed, go directly to course
+    if (enrollment && enrollment.paymentStatus === "completed") {
+      navigate(`/learn/${course._id}`);
+      return;
+    }
 
     // 🆓 Free course → enroll directly
     if (course.price === 0) {

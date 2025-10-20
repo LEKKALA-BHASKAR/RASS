@@ -51,7 +51,7 @@ const FeeRegistration: React.FC<Props> = ({ course, enrollment, onEnroll }) => {
         </div>
       </div>
 
-      {enrollment ? (
+      {enrollment && enrollment.paymentStatus === "completed" ? (
         <Link
           to={`/learn/${course._id}`}
           className="inline-block px-8 py-3 bg-white text-indigo-700 rounded-lg font-semibold shadow hover:bg-gray-100 transition"

@@ -35,9 +35,8 @@ const Footer = () => {
             <h3 className="text-white text-xl font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="/help-center" className="hover:text-white transition">Help Center</a></li>
-              <li><a href="/terms" className="hover:text-white transition">Terms of Service</a></li>
+              <li><a href="/terms" className="hover:text-white transition">Terms and Conditions</a></li>
               <li><a href="/privacy" className="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="/refund-policy" className="hover:text-white transition">Refund Policy</a></li>
             </ul>
           </div>
           
@@ -80,7 +79,7 @@ const Footer = () => {
         <div className="mt-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
           <p>© {new Date().getFullYear()} RASS Academy. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
-            <a href="/terms" className="hover:text-white transition">Terms of Service</a>
+            <a href="/terms" className="hover:text-white transition">Terms and Conditions</a>
             <span className="text-gray-600">·</span>
             <a href="/privacy" className="hover:text-white transition">Privacy Policy</a>
           </div>
