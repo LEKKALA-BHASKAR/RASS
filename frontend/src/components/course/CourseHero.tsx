@@ -7,6 +7,7 @@ import {
   Award,
   Shield,
 } from "lucide-react";
+import { Enrollment } from "../../types"; // Import the Enrollment type
 
 interface CourseHeroProps {
   course: {
@@ -22,7 +23,7 @@ interface CourseHeroProps {
     totalDuration?: number;
     tags?: string[];
   };
-  enrollment?: any;
+  enrollment?: Enrollment | null; // Use proper type instead of 'any'
   onEnroll?: () => void;
   onPreview?: () => void;
 }
@@ -84,10 +85,10 @@ const CourseHero: React.FC<CourseHeroProps> = ({
           {/* Buttons */}
           <div className="flex flex-wrap gap-4 pt-4">
             <button
-              onClick={enrollment ? onEnroll : onEnroll}
+              onClick={onEnroll}
               className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition"
             >
-              {enrollment ? "Continue Learning" : "Enroll Now"}
+              {enrollment && enrollment.paymentStatus === "completed" ? "Continue Learning" : "Enroll Now"}
             </button>
           </div>
         </motion.div>
