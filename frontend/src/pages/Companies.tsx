@@ -164,7 +164,7 @@ const Companies: React.FC = () => {
                 </li>
               </ul>
               <a
-                href="/contact"
+                href="/company-partnership"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition transform hover:scale-105 shadow-lg"
               >
                 Learn More <ArrowRight className="h-5 w-5" />
@@ -219,7 +219,7 @@ const Companies: React.FC = () => {
                 </li>
               </ul>
               <a
-                href="/contact"
+                href="/company-partnership"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-teal-700 transition transform hover:scale-105 shadow-lg"
               >
                 Learn More <ArrowRight className="h-5 w-5" />
@@ -368,7 +368,7 @@ const Companies: React.FC = () => {
               projects. Join our hiring network today.
             </p>
             <a
-              href="/contact"
+              href="/company-partnership"
               className="inline-flex items-center gap-2 px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105"
             >
               <Phone className="h-5 w-5" /> Become a Partner
@@ -378,8 +378,8 @@ const Companies: React.FC = () => {
 
         <Footer />
       </div>
-      
-      <style jsx>{`
+
+      <style>{`
         @keyframes blob {
           0% {
             transform: translate(0px, 0px) scale(1);

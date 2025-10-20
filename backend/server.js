@@ -20,6 +20,8 @@ import adminRoutes from "./routes/admin.js";
 import studentRoutes from "./routes/student.js";
 import StudentAmbassadorForm from './routes/StudentAmbassadorForm.js';
 import CompanyPartnershipForm from './routes/CompanyPartnershipForm.js';
+import universityPartnershipRoutes from "./routes/universityPartnership.js";
+
 
 
 
@@ -51,9 +53,10 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/student-ambassador-form", StudentAmbassadorForm);
 app.use("/api/company-partnership", CompanyPartnershipForm);
+app.use("/api/university-partnership", universityPartnershipRoutes);
 
-console.log('Registered media-presence route');
-console.log('Registered all routes');
+
+
 
 // Add logging for all requests
 app.use((req, res, next) => {

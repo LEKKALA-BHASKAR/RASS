@@ -46,6 +46,8 @@ import StudentAmbassadorForm from './pages/StudentAmbassadorForm';
 import StudentAmbassadorList from './pages/admin/StudentAmbassadorList';
 import CompanyPartnershipForm from './pages/CompanyPartnershipForm';
 import CompanyPartnershipList from './pages/admin/CompanyPartnershipForm';
+import UniversityPartnershipForm from './pages/UniversityPartnershipForm';
+import UniversityPartnershipList from './pages/admin/UniversityPartnershipList';
 
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
@@ -96,9 +98,11 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/StudentAmbassadorForm" element={<StudentAmbassadorForm />} />
+        <Route path="/university-partnership" element={<UniversityPartnershipForm />} />
         <Route path="/company-partnership" element={<CompanyPartnershipForm />} />
         <Route path="/admin/company-partnership-list" element={<CompanyPartnershipList />} />
         <Route path="/admin/student-ambassador-list" element={<StudentAmbassadorList />} />
+        <Route path="/admin/university-partnership-list" element={<UniversityPartnershipList />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/events" element={<AllEventsPage />} />
