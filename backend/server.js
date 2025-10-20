@@ -18,6 +18,10 @@ import mediaPresenceRoutes from './routes/mediaPresence.js';
 import nodemailer from "nodemailer";
 import adminRoutes from "./routes/admin.js";
 import studentRoutes from "./routes/student.js";
+import StudentAmbassadorForm from './routes/StudentAmbassadorForm.js';
+
+
+
 
 
 dotenv.config();
@@ -25,14 +29,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Middleware
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://rass-pi.vercel.app", "https://rass-h2s1.onrender.com"],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-  exposedHeaders: ["Authorization"]
-}));
+app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -52,6 +49,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/media-presence', mediaPresenceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/student-ambassador-form", StudentAmbassadorForm);
 
 console.log('Registered media-presence route');
 console.log('Registered all routes');
