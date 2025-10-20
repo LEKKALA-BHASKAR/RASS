@@ -497,7 +497,7 @@ const Navbar: React.FC = () => {
               ) : (
                 <>
                   <Link to="/login" className="px-4 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow text-center" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                  <Link to="/register" className="px-4 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow text-center transition-all duration-300" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+                  <Link to="/help-center" className="px-4 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow text-center transition-all duration-300" onClick={() => setIsMenuOpen(false)}>Help Center</Link>
                 </>
               )}
             </div>
