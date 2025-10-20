@@ -60,59 +60,62 @@ const Companies: React.FC = () => {
     <div>
       <Navbar />
       <div className="bg-white overflow-hidden">
-        {/* 🟣 Hero Section */}
-        <section className="relative h-[90vh] flex flex-col md:flex-row items-center justify-between px-6 md:px-12 lg:px-20 overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500">
-          {/* Decorative elements */}
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-          
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="md:w-1/2 text-center md:text-left z-10"
-          >
-            <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-              Hire <span className="text-yellow-300">Certified Talent</span>{" "}
-              Ready Before Day One
-            </h1>
-            <p className="text-lg text-white/90 mb-8 max-w-md mx-auto md:mx-0">
-              Partner with RASS Academy to access pre-trained, project-ready
-              professionals who contribute from the very first day.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <a
-                href="/company-partnership"
-                className="px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg font-medium hover:bg-yellow-300 transition-all transform hover:scale-105 shadow-lg"
-              >
-                Become a Partner
-              </a>
-            </div>
-          </motion.div>
+{/* 🟣 Hero Section - Fixed for Mobile */}
+<section className="relative min-h-screen md:h-[90vh] flex flex-col md:flex-row items-center justify-between px-6 md:px-12 lg:px-20 overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 py-10 md:py-0">
+  {/* Decorative elements */}
+  <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+  <div className="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+  <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+  
+  {/* Left Content */}
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+    className="md:w-1/2 text-center md:text-left z-10 order-2 md:order-1 mt-8 md:mt-0"
+  >
+    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+      Hire <span className="text-yellow-300">Certified Talent</span>{" "}
+      Ready Before Day One
+    </h1>
+    <p className="text-lg text-white/90 mb-8 max-w-md mx-auto md:mx-0">
+      Partner with RASS Academy to access pre-trained, project-ready
+      professionals who contribute from the very first day.
+    </p>
+    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+      <a
+        href="/company-partnership"
+        className="px-8 py-3 bg-yellow-400 text-gray-900 rounded-lg font-medium hover:bg-yellow-300 transition-all transform hover:scale-105 shadow-lg text-center"
+      >
+        Become a Partner
+      </a>
+    </div>
+  </motion.div>
 
-          {/* Right Image Player */}
-          <div className="md:w-1/2 relative h-[60vh] md:h-[80vh] mt-10 md:mt-0 rounded-2xl overflow-hidden shadow-2xl">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={heroImages[currentImage].src}
-                src={heroImages[currentImage].src}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2 }}
-                className="absolute inset-0 w-full h-full object-cover"
-                alt="Hero"
-              />
-            </AnimatePresence>
-            <div
-              className={`absolute inset-0 ${
-                heroImages[currentImage].dark ? "bg-black/40" : "bg-gradient-to-t from-purple-900/50 to-transparent"
-              }`}
-            />
-          </div>
-        </section>
+  {/* Right Image Player - Fixed for Mobile */}
+  <div className="md:w-1/2 relative w-full h-[280px] sm:h-[320px] md:h-[400px] lg:h-[500px] mt-6 md:mt-0 rounded-2xl overflow-hidden shadow-2xl order-1 md:order-2 z-0">
+    <AnimatePresence mode="wait">
+      <motion.img
+        key={heroImages[currentImage].src}
+        src={heroImages[currentImage].src}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1.2 }}
+        className="absolute inset-0 w-full h-full object-cover"
+        alt="Hero"
+      />
+    </AnimatePresence>
+    <div
+      className={`absolute inset-0 ${
+        heroImages[currentImage].dark
+          ? "bg-black/40"
+          : "bg-gradient-to-t from-purple-900/50 to-transparent"
+      }`}
+    />
+  </div>
+</section>
+
 
         {/* 🧠 About Section */}
         <motion.section
@@ -120,13 +123,13 @@ const Companies: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100 text-center px-6"
+          className="py-16 md:py-20 bg-gradient-to-br from-blue-50 to-indigo-100 text-center px-6"
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
               About RASS Academy
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 leading-relaxed">
               We bridge the gap between academia and industry by providing
               students with real-world, project-based training and certifications.
               Our mission: empower graduates to be industry-ready while giving
@@ -134,22 +137,24 @@ const Companies: React.FC = () => {
             </p>
           </div>
         </motion.section>
+        
         <HTDSection />
+        
         {/* 💼 Partnership Models */}
-        <section className="py-20 max-w-7xl mx-auto px-6 space-y-24">
+        <section className="py-16 md:py-20 max-w-7xl mx-auto px-6 space-y-16 md:space-y-24">
           {/* Direct Hire */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-10 items-center"
+            className="grid md:grid-cols-2 gap-8 md:gap-10 items-center"
           >
-            <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-gray-900">
+            <div className="space-y-6 order-2 md:order-1">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
                 Direct Hire: Access Pre-Screened Talent
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-base md:text-lg">
                 Ideal for companies that need skilled talent immediately. Access
                 job-ready interns who require no additional onboarding effort.
               </p>
@@ -165,19 +170,19 @@ const Companies: React.FC = () => {
               </ul>
               <a
                 href="/company-partnership"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition transform hover:scale-105 shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition transform hover:scale-105 shadow-lg text-sm md:text-base"
               >
                 Learn More <ArrowRight className="h-5 w-5" />
               </a>
             </div>
-            <div className="relative">
+            <div className="relative order-1 md:order-2">
               <img
                 src="/images/companies/hire-model.jpg"
                 alt="Hire model"
-                className="rounded-2xl shadow-lg object-cover"
+                className="rounded-2xl shadow-lg object-cover w-full h-auto"
               />
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                <Zap className="h-10 w-10 text-gray-900" />
+              <div className="absolute -bottom-4 -right-4 w-16 h-16 md:w-24 md:h-24 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                <Zap className="h-6 w-6 md:h-10 md:w-10 text-gray-900" />
               </div>
             </div>
           </motion.div>
@@ -188,23 +193,23 @@ const Companies: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-10 items-center"
+            className="grid md:grid-cols-2 gap-8 md:gap-10 items-center"
           >
-            <div className="relative order-2 md:order-1">
+            <div className="relative order-1 md:order-1">
               <img
                 src="/images/companies/training-hire.jpg"
                 alt="Training program"
-                className="rounded-2xl shadow-lg object-cover"
+                className="rounded-2xl shadow-lg object-cover w-full h-auto"
               />
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-pink-500 rounded-full flex items-center justify-center shadow-lg">
-                <Award className="h-10 w-10 text-white" />
+              <div className="absolute -top-4 -left-4 w-16 h-16 md:w-24 md:h-24 bg-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <Award className="h-6 w-6 md:h-10 md:w-10 text-white" />
               </div>
             </div>
-            <div className="space-y-6 order-1 md:order-2">
-              <h3 className="text-3xl font-bold text-gray-900">
+            <div className="space-y-6 order-2 md:order-2">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
                 Training-to-Hire: Custom Workforce Development
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-base md:text-lg">
                 Build a custom-trained workforce aligned with your project goals.
                 Reduce hiring risks while improving team productivity.
               </p>
@@ -220,7 +225,7 @@ const Companies: React.FC = () => {
               </ul>
               <a
                 href="/company-partnership"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-teal-700 transition transform hover:scale-105 shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-teal-700 transition transform hover:scale-105 shadow-lg text-sm md:text-base"
               >
                 Learn More <ArrowRight className="h-5 w-5" />
               </a>
@@ -229,31 +234,31 @@ const Companies: React.FC = () => {
         </section>
 
         {/* ⚙️ Startup Challenges & Solutions */}
-        <section className="py-20 bg-gradient-to-br from-orange-50 to-red-100 px-6">
+        <section className="py-16 md:py-20 bg-gradient-to-br from-orange-50 to-red-100 px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-start"
+            className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 md:gap-10 items-start"
           >
             {/* Challenges */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <AlertTriangle className="text-red-500 h-7 w-7" /> Startup
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <AlertTriangle className="text-red-500 h-6 w-6 md:h-7 md:w-7" /> Startup
                 Challenges
               </h3>
-              <ul className="space-y-5 text-gray-700">
+              <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">💸</span>
+                  <span className="text-xl md:text-2xl">💸</span>
                   <span>High hiring costs & limited access to skilled talent.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">⚡</span>
+                  <span className="text-xl md:text-2xl">⚡</span>
                   <span>Risk of mismatched hires slowing project delivery.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">⏱️</span>
+                  <span className="text-xl md:text-2xl">⏱️</span>
                   <span>Long onboarding times that delay productivity.</span>
                 </li>
               </ul>
@@ -261,20 +266,20 @@ const Companies: React.FC = () => {
 
             {/* Solutions */}
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Lightbulb className="text-green-500 h-7 w-7" /> RASS Solutions
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <Lightbulb className="text-green-500 h-6 w-6 md:h-7 md:w-7" /> RASS Solutions
               </h3>
-              <ul className="space-y-5 text-gray-700">
+              <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">✅</span>
+                  <span className="text-xl md:text-2xl">✅</span>
                   <span>Access pre-trained, certified professionals ready from day one.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">🧠</span>
+                  <span className="text-xl md:text-2xl">🧠</span>
                   <span>Reduce onboarding & training costs through verified skills.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-2xl">🚀</span>
+                  <span className="text-xl md:text-2xl">🚀</span>
                   <span>Flexible hire models: project-based or full-time talent.</span>
                 </li>
               </ul>
@@ -288,45 +293,45 @@ const Companies: React.FC = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="py-20 max-w-7xl mx-auto px-6 text-center bg-gradient-to-br from-purple-50 to-pink-50"
+          className="py-16 md:py-20 max-w-7xl mx-auto px-6 text-center bg-gradient-to-br from-purple-50 to-pink-50"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 md:mb-10">
             Why Partner with RASS Academy
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {[
               {
-                icon: <Clock className="h-10 w-10 text-indigo-600 mb-4" />,
+                icon: <Clock className="h-8 w-8 md:h-10 md:w-10 text-indigo-600 mb-4" />,
                 title: "Immediate Productivity",
                 desc: "Interns require minimal onboarding.",
                 color: "from-blue-500 to-indigo-600"
               },
               {
-                icon: <Users className="h-10 w-10 text-green-600 mb-4" />,
+                icon: <Users className="h-8 w-8 md:h-10 md:w-10 text-green-600 mb-4" />,
                 title: "Zero-Cost Pipeline",
                 desc: "Access skilled, pre-trained students for free.",
                 color: "from-green-500 to-teal-600"
               },
               {
-                icon: <Lightbulb className="h-10 w-10 text-yellow-500 mb-4" />,
+                icon: <Lightbulb className="h-8 w-8 md:h-10 md:w-10 text-yellow-500 mb-4" />,
                 title: "Fresh Perspectives",
                 desc: "Students bring creativity & innovation.",
                 color: "from-yellow-500 to-orange-600"
               },
               {
-                icon: <TrendingUp className="h-10 w-10 text-purple-600 mb-4" />,
+                icon: <TrendingUp className="h-8 w-8 md:h-10 md:w-10 text-purple-600 mb-4" />,
                 title: "Scalable Workforce",
                 desc: "Scale your team up or down as needed.",
                 color: "from-purple-500 to-pink-600"
               },
               {
-                icon: <Shield className="h-10 w-10 text-red-600 mb-4" />,
+                icon: <Shield className="h-8 w-8 md:h-10 md:w-10 text-red-600 mb-4" />,
                 title: "Verified Skills",
                 desc: "All candidates are certified and tested.",
                 color: "from-red-500 to-pink-600"
               },
               {
-                icon: <Target className="h-10 w-10 text-indigo-600 mb-4" />,
+                icon: <Target className="h-8 w-8 md:h-10 md:w-10 text-indigo-600 mb-4" />,
                 title: "Project-Ready",
                 desc: "Talent trained specifically for your industry.",
                 color: "from-indigo-500 to-purple-600"
@@ -338,12 +343,12 @@ const Companies: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:-translate-y-2 overflow-hidden relative"
+                className="bg-white rounded-xl shadow-lg p-6 md:p-8 hover:shadow-xl transition-all transform hover:-translate-y-2 overflow-hidden relative"
               >
                 <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${b.color}`}></div>
                 {b.icon}
-                <h4 className="text-xl font-bold mb-2">{b.title}</h4>
-                <p className="text-gray-600">{b.desc}</p>
+                <h4 className="text-lg md:text-xl font-bold mb-2">{b.title}</h4>
+                <p className="text-gray-600 text-sm md:text-base">{b.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -351,7 +356,7 @@ const Companies: React.FC = () => {
 
         {/* 🚀 Final CTA */}
         <section
-          className="relative py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white"
+          className="relative py-16 md:py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white"
         >
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
@@ -360,16 +365,16 @@ const Companies: React.FC = () => {
           </div>
           
           <div className="relative max-w-5xl mx-auto px-6 text-center">
-            <h2 className="text-4xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Ready to Access Job-Ready Talent?
             </h2>
-            <p className="text-lg text-white/90 mb-8">
+            <p className="text-base md:text-lg text-white/90 mb-8">
               Zero-cost, pre-trained professionals — certified and ready for your
               projects. Join our hiring network today.
             </p>
             <a
               href="/company-partnership"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105"
+              className="inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 text-sm md:text-base"
             >
               <Phone className="h-5 w-5" /> Become a Partner
             </a>

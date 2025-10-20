@@ -134,7 +134,6 @@ const UniversitiesPage: React.FC = () => {
   return (
     <div>
       <Navbar />
-
 {/* Hero Section */}
 <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
   <div className="absolute inset-0">
@@ -146,6 +145,7 @@ const UniversitiesPage: React.FC = () => {
 
   <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
       {/* Left Side - Content */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
@@ -153,24 +153,17 @@ const UniversitiesPage: React.FC = () => {
         transition={{ duration: 0.8 }}
         className="text-white space-y-8"
       >
-        {/* Main Heading */}
+        {/* Main Heading - Forced into 2 lines */}
         <div className="space-y-6">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-            Empower
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400">
-              Universities. and 
-            </span>
-            Transforming 
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-              Students.
-            </span>
+          <h1 className="text-5xl md:text-5xl lg:text-5xl font-extrabold leading-tight">
+            <span className="block text-blue-400">Empowering Universities</span>
+            <span className="block text-pink-400">& Transforming Students</span>
           </h1>
-          
-          <p className="text-xl md:text-2xl text-indigo-100 leading-relaxed max-w-2xl">
-            RASS Academy partners with institutions to bridge the gap between 
-            <span className="font-semibold text-yellow-300"> education </span>
-            and
-            <span className="font-semibold text-yellow-300"> employability</span>, 
+
+          <p className="text-lg md:text-xl text-indigo-100 leading-relaxed max-w-2xl">
+            RASS Academy partners with institutions to bridge the gap between{" "}
+            <span className="font-semibold text-yellow-300">education</span> and{" "}
+            <span className="font-semibold text-yellow-300">employability</span>, 
             preparing students with real-world skills and industry-recognized certifications.
           </p>
         </div>
@@ -196,20 +189,20 @@ const UniversitiesPage: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* Right Side - Image Carousel */}
+      {/* Right Side - Image Carousel (Reduced Size) */}
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
+        initial={{ opacity: 1, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
         className="relative"
       >
-        {/* Main Image Container */}
-        <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+        {/* Main Image Container - Reduced Height */}
+        <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-xl">
           <motion.div
             key={currentImage}
-            initial={{ opacity: 0, scale: 1.1, x: 100 }}
+            initial={{ opacity: 0, scale: 1.05, x: 80 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.9, x: -100 }}
+            exit={{ opacity: 0, scale: 0.95, x: -80 }}
             transition={{ duration: 1, ease: "easeInOut" }}
             className="absolute inset-0"
           >
@@ -218,11 +211,10 @@ const UniversitiesPage: React.FC = () => {
               alt="University partnership"
               className="w-full h-full object-cover"
             />
-            {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/40 via-transparent to-purple-900/20"></div>
           </motion.div>
 
-          {/* Floating Cards */}
+          {/* Floating Info Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -232,8 +224,8 @@ const UniversitiesPage: React.FC = () => {
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-full flex items-center justify-center">
-                    <Check className="h-6 w-6 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-400 rounded-full flex items-center justify-center">
+                    <Check className="h-5 w-5 text-white" />
                   </div>
                 </div>
                 <div>
@@ -246,13 +238,13 @@ const UniversitiesPage: React.FC = () => {
         </div>
 
         {/* Image Indicators */}
-        <div className="flex justify-center gap-3 mt-6">
+        <div className="flex justify-center gap-5 mt-8">
           {heroImages.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentImage(index)}
               className={`relative group transition-all duration-300 ${
-                currentImage === index ? "w-12" : "w-8"
+                currentImage === index ? "w-10" : "w-6"
               }`}
             >
               <div
@@ -262,14 +254,9 @@ const UniversitiesPage: React.FC = () => {
                     : "bg-white/30 hover:bg-white/50"
                 }`}
               />
-              <div className="absolute inset-0 -m-2 rounded-full group-hover:bg-white/10 transition-colors duration-300"></div>
             </button>
           ))}
         </div>
-
-        {/* Decorative Elements */}
-        <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl"></div>
-        <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-pink-400/20 rounded-full blur-xl"></div>
       </motion.div>
     </div>
   </div>
@@ -293,6 +280,7 @@ const UniversitiesPage: React.FC = () => {
     </div>
   </motion.div>
 </section>
+
 
 
       {/* Bridging the Gap Section */}
