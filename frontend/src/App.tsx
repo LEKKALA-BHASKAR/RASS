@@ -43,6 +43,10 @@ import EventDetailPage from './pages/events/EventDetailPage'; // Added import fo
 import AllEventsPage from './pages/events/AllEventsPage'; // Added import for all events page
 import ScrollToTop from "./pages/ScrollToTop";
 import StudentAmbassadorForm from './pages/StudentAmbassadorForm';
+import StudentAmbassadorList from './pages/admin/StudentAmbassadorList';
+import CompanyPartnershipForm from './pages/CompanyPartnershipForm';
+import CompanyPartnershipList from './pages/admin/CompanyPartnershipForm';
+
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -92,6 +96,9 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/StudentAmbassadorForm" element={<StudentAmbassadorForm />} />
+        <Route path="/company-partnership" element={<CompanyPartnershipForm />} />
+        <Route path="/admin/company-partnership-list" element={<CompanyPartnershipList />} />
+        <Route path="/admin/student-ambassador-list" element={<StudentAmbassadorList />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/universities" element={<UniversitiesPage />} />
         <Route path="/events" element={<AllEventsPage />} />
@@ -204,6 +211,7 @@ const AppRoutes: React.FC = () => {
             <AddUserPage  />
           </ProtectedRoute>
         } />
+
 
         <Route path="/admin/add-course" element={<AddCoursePage />} />
 

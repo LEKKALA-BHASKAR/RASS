@@ -14,6 +14,8 @@ import {
   Activity,
   Newspaper,
   Calendar,
+  FileText,
+  ForkKnife,
 } from "lucide-react";
 import { User, Course } from "../../types";
 import { useNavigate } from "react-router-dom";
@@ -281,6 +283,21 @@ const AdminDashboard: React.FC = () => {
               icon: <Calendar className="h-6 w-6 text-green-600" />,
               color: "bg-green-100",
               action: () => navigate("/admin/manage-events"),
+            },
+             {
+              title: "Student Ambassador List",
+              desc: "View and manage student ambassadors",
+              icon: <FileText className="h-6 w-6 text-red-600" />,
+              color: "bg-green-100",
+              action: () => navigate("/admin/student-ambassador-list"),
+            },
+            
+             {
+              title: "Student Ambassador List",
+              desc: "View and manage student ambassadors",
+              icon: <ForkKnife className="h-6 w-6 text-red-600" />,
+              color: "bg-green-100",
+              action: () => navigate("/admin/company-partnership-list"),
             },
           ].map((action, i) => (
             <motion.button

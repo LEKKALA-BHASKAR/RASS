@@ -19,7 +19,7 @@ import nodemailer from "nodemailer";
 import adminRoutes from "./routes/admin.js";
 import studentRoutes from "./routes/student.js";
 import StudentAmbassadorForm from './routes/StudentAmbassadorForm.js';
-
+import CompanyPartnershipForm from './routes/CompanyPartnershipForm.js';
 
 
 
@@ -50,6 +50,7 @@ app.use('/api/media-presence', mediaPresenceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/student-ambassador-form", StudentAmbassadorForm);
+app.use("/api/company-partnership", CompanyPartnershipForm);
 
 console.log('Registered media-presence route');
 console.log('Registered all routes');
