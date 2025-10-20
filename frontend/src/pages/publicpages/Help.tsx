@@ -17,12 +17,13 @@ import {
   ArrowRight,
   HeadphonesIcon
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import Footer from '../../components/layout/Footer';
 import Navbar from '../../components/layout/Navbar';
 
-
 const HelpCenter = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('general');
   const [openItems, setOpenItems] = useState<{[key: string]: boolean}>({});
   const [searchQuery, setSearchQuery] = useState('');
@@ -289,7 +290,10 @@ const HelpCenter = () => {
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
               Our support team is here to assist you with any questions or issues you might have. We're committed to providing the best learning experience.
             </p>
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center mx-auto">
+            <button 
+              onClick={() => navigate('/contact')}
+              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center mx-auto"
+            >
               Contact Support
               <ArrowRight className="ml-2 h-5 w-5" />
             </button>
