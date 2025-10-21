@@ -8,7 +8,10 @@ import {
   MessageCircle,
   ArrowRight,
   Building,
-  Smartphone
+  Smartphone,
+  Globe,
+  Users,
+  Headphones
 } from 'lucide-react';
 import Footer from '../../components/layout/Footer';
 import Navbar from '../../components/layout/Navbar';
@@ -18,10 +21,12 @@ const ContactUs = () => {
     name: '',
     email: '',
     mobileNumber: '',
+    subject: '',
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -47,6 +52,8 @@ const ContactUs = () => {
           name: "",
           email: "",
           mobileNumber: "",
+          subject: "",
+          message: ""
         });
       } else {
         alert("❌ Failed to send your message. Please try again later.");
@@ -60,31 +67,10 @@ const ContactUs = () => {
     }
   };
 
-  const officeLocations = [
-    {
-      city: 'Bengaluru',
-      address: '123, Tech Park, Koramangala, Bengaluru - 560034',
-      phone: '+91 98765 43210',
-      image: 'https://images.unsplash.com/photo-1588416499018-d8c621b1b3cf?auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      city: 'Hyderabad',
-      address: '456, Business Hub, Hitech City, Hyderabad - 500081',
-      phone: '+91 87654 32109',
-      image: 'https://images.unsplash.com/photo-1590649880760-2d4b0f523de7?auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      city: 'Delhi NCR',
-      address: '789, Corporate Tower, Gurugram - 122002',
-      phone: '+91 76543 21098',
-      image: 'https://images.unsplash.com/photo-1588416499018-d8c621b1b3cf?auto=format&fit=crop&w=300&h=200&q=80'
-    }
-  ];
-
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
         <div className="max-w-7xl mx-auto text-center mb-16">
@@ -96,30 +82,30 @@ const ContactUs = () => {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Contact Form */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8">
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
               <MessageCircle className="h-6 w-6 mr-2 text-blue-600" />
               Send us a Message
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-                  placeholder="Ajay Kumar"
-                />
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                    placeholder="Your Name"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
                   <input
@@ -129,10 +115,12 @@ const ContactUs = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-                    placeholder="ajay@example.com"
+                    placeholder="your@email.com"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Number *</label>
                   <input
@@ -142,9 +130,38 @@ const ContactUs = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-                    placeholder="+91 9876543210"
+                    placeholder="+91 90631 94887"
                   />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                  <select
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                  >
+                    <option value="">Select a subject</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="admissions">Admissions</option>
+                    <option value="courses">Course Information</option>
+                    <option value="partnerships">Partnerships</option>
+                    <option value="support">Technical Support</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  rows={5}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                  placeholder="Tell us how we can help you..."
+                ></textarea>
               </div>
 
               <button
@@ -169,42 +186,83 @@ const ContactUs = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-8">
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
+          <div className="space-y-6">
+            {/* Quick Contact Cards */}
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
               
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                    <Phone className="h-5 w-5 mr-2 text-blue-600" /> Phone
-                  </h3>
-                  <p className="text-gray-600 pl-7">+91 98765 43210</p>
-                  <p className="text-gray-600 pl-7">+91 87654 32109</p>
+              <div className="space-y-5">
+                <a 
+                  href="tel:+919063194887" 
+                  className="flex items-start group hover:bg-blue-50 p-3 rounded-lg transition-all duration-300"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <Phone className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Phone</h3>
+                    <p className="text-gray-600">+91 90631 94887</p>
+                  </div>
+                </a>
+
+                <a 
+                  href="https://wa.me/919063194887" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-start group hover:bg-green-50 p-3 rounded-lg transition-all duration-300"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors">
+                    <MessageCircle className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">WhatsApp</h3>
+                    <p className="text-gray-600">Chat with us</p>
+                  </div>
+                </a>
+
+                <div className="flex items-start group hover:bg-blue-50 p-3 rounded-lg transition-all duration-300">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <Mail className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Email</h3>
+                    <p className="text-gray-600">info@raasacademy.com</p>
+                    <p className="text-gray-600">contact@raasacademy.com</p>
+                    <p className="text-gray-600">support@raasacademy.com</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                    <Mail className="h-5 w-5 mr-2 text-blue-600" /> Email
-                  </h3>
-                  <p className="text-gray-600 pl-7">info@raasacademy.com</p>
-                  <p className="text-gray-600 pl-7">support@raasacademy.com</p>
+                <div className="flex items-start group hover:bg-blue-50 p-3 rounded-lg transition-all duration-300">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <Users className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Partnerships</h3>
+                    <p className="text-gray-600">partnerships@raasacademy.com</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                    <MapPin className="h-5 w-5 mr-2 text-blue-600" /> Head Office
-                  </h3>
-                  <p className="text-gray-600 pl-7">
-                    123, Tech Park, Koramangala<br />Bengaluru, Karnataka 560034
-                  </p>
+                <div className="flex items-start group hover:bg-blue-50 p-3 rounded-lg transition-all duration-300">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <MapPin className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Address</h3>
+                    <p className="text-gray-600">1-60, A & B, 3rd Floor, KNR Square</p>
+                    <p className="text-gray-600">opp. The Platina, Gachibowli</p>
+                    <p className="text-gray-600">Hyderabad, Telangana, India 500032</p>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                    <Clock className="h-5 w-5 mr-2 text-blue-600" /> Office Hours
-                  </h3>
-                  <p className="text-gray-600 pl-7">Mon - Fri: 9 AM - 6 PM</p>
-                  <p className="text-gray-600 pl-7">Saturday: 10 AM - 4 PM</p>
+                <div className="flex items-start group hover:bg-blue-50 p-3 rounded-lg transition-all duration-300">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                    <Clock className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Office Hours</h3>
+                    <p className="text-gray-600">Mon - Fri: 9 AM - 6 PM</p>
+                    <p className="text-gray-600">Saturday: 10 AM - 4 PM</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -213,17 +271,54 @@ const ContactUs = () => {
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
-                  <Smartphone className="h-6 w-6" />
+                  <Headphones className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Need Immediate Assistance?</h3>
-                  <p className="text-blue-100">Call us now for quick support</p>
+                  <p className="text-blue-100">Call or WhatsApp us now</p>
                 </div>
               </div>
-              <button className="w-full bg-white text-blue-600 py-3 px-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 flex items-center justify-center">
-                <Phone className="h-4 w-4 mr-2" />
-                Call +91 98765 43210
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a 
+                  href="tel:+919063194887"
+                  className="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 flex items-center justify-center"
+                >
+                  <Phone className="h-4 w-4 mr-2" />
+                  Call Now
+                </a>
+                <a 
+                  href="https://wa.me/919063194887"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-green-500 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-600 transition-all duration-300 flex items-center justify-center"
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Map Section */}
+        <div className="max-w-7xl mx-auto mt-16">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <MapPin className="h-6 w-6 mr-2 text-blue-600" />
+                Find Us
+              </h2>
+            </div>
+            <div className="h-96 bg-gray-100 relative">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.4115445347433!2d78.351941314878!3d17.4386786880475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93e4b5b5b5b5%3A0x5b5b5b5b5b5b5b5b!2sKNR%20Square!5e0!3m2!1sen!2sin!4v1629386400000!5m2!1sen!2sin" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy"
+                title="RAAS Academy Location"
+              ></iframe>
             </div>
           </div>
         </div>

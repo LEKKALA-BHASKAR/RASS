@@ -58,6 +58,33 @@ app.post("/send-mail", async (req, res) => {
 });
 
 
+
+app.post("/send-mail/support", async (req, res) => {
+  try {
+    const { name, email, mobileNumber } = req.body;
+
+    if (!name || !email || !mobileNumber) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const htmlContent = generateEmailTemplate(name, email, mobileNumber);
+
+    await resend.emails.send({
+      from: "RASS Academy <onboarding@resend.dev>",
+      to: [process.env.NODEMAILER_USER_EMAIL, process.env.NODEMAILER_USER_EMAIL1],
+      subject: `🚀 New Course Inquiry - ${name}`,
+      html: htmlContent,
+    });
+
+    res.status(200).json({ message: "✅ Email sent successfully!" });
+  } catch (error) {
+    console.error("❌ Error sending email:", error);
+    res.status(500).json({ message: "Failed to send email", error });
+  }
+});
+
+
+
 /* ---------------------------------------------------
    💌 HTML Email Template Generator
 --------------------------------------------------- */
