@@ -10,20 +10,42 @@ import {
   BookOpen,
   CheckCircle,
   XCircle,
+  AlertCircle,
 } from "lucide-react";
 import { User } from "../../types";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 
+interface Course {
+  _id: string;
+  title: string;
+  instructor: string;
+  progress: number;
+  status: string;
+}
+
+interface ExtendedUser extends User {
+  enrolledCourses?: Course[];
+  hasEnrollments?: boolean;
+}
+
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<ExtendedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [enrollmentFilter, setEnrollmentFilter] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [courseLoading, setCourseLoading] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalInstructors: 0,
+    enrolledStudents: 0,
+    unenrolledStudents: 0,
+  });
 
   const [newUser, setNewUser] = useState({
     name: "",
@@ -34,21 +56,100 @@ const UserManagement: React.FC = () => {
 
   useEffect(() => {
     fetchUsers();
+    fetchStats();
   }, [searchTerm, roleFilter, enrollmentFilter]);
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
       const params: any = {};
       if (searchTerm) params.search = searchTerm;
       if (roleFilter) params.role = roleFilter;
-      if (enrollmentFilter) params.enrollment = enrollmentFilter;
-
-      const response = await userAPI.getAllUsers(params);
-      setUsers(response.data);
-    } catch (error) {
+      
+      let response;
+      if (enrollmentFilter && roleFilter === "student") {
+        // Use the dedicated method for enrollment filtering
+        response = await userAPI.getStudentsByEnrollment(
+          enrollmentFilter as 'enrolled' | 'unenrolled' | 'all',
+          params
+        );
+      } else {
+        // Use the general getAllUsers method
+        if (enrollmentFilter) {
+          params.hasEnrollments = enrollmentFilter === 'enrolled';
+        }
+        response = await userAPI.getAllUsers(params);
+      }
+      
+      setUsers(response.data || []);
+    } catch (error: any) {
       console.error("Error fetching users:", error);
+      setError(error.response?.data?.message || "Failed to fetch users");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const statsData = await userAPI.getEnrollmentStats();
+      setStats(statsData.data || {
+        totalStudents: 0,
+        totalInstructors: 0,
+        enrolledStudents: 0,
+        unenrolledStudents: 0,
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
+
+  const fetchUserCourses = async (userId: string) => {
+    try {
+      setCourseLoading(prev => [...prev, userId]);
+      const response = await userAPI.getStudentCourses(userId);
+      
+      setUsers(prev => prev.map(user => 
+        user._id === userId 
+          ? { ...user, enrolledCourses: response.data.courses || [] }
+          : user
+      ));
+    } catch (error: any) {
+      console.error("Error fetching courses:", error);
+      setError(error.response?.data?.message || "Failed to fetch courses");
+    } finally {
+      setCourseLoading(prev => prev.filter(id => id !== userId));
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await userAPI.createUser(newUser);
+      setShowCreateModal(false);
+      setNewUser({ name: "", email: "", role: "student", password: "password123" });
+      fetchUsers();
+      fetchStats();
+    } catch (error: any) {
+      console.error("Error creating user:", error);
+      setError(error.response?.data?.message || "Failed to create user");
+    }
+  };
+
+  const handleEnrollmentAction = async (studentId: string, courseId: string, action: 'enroll' | 'unenroll') => {
+    try {
+      if (action === 'enroll') {
+        await userAPI.enrollStudent(studentId, courseId);
+      } else {
+        await userAPI.unenrollStudent(studentId, courseId);
+      }
+      fetchUserCourses(studentId);
+      fetchStats();
+    } catch (error: any) {
+      console.error(`Error ${action}ing student:`, error);
+      setError(error.response?.data?.message || `Failed to ${action} student`);
     }
   };
 
@@ -66,19 +167,25 @@ const UserManagement: React.FC = () => {
   };
 
   const toggleRowExpansion = (userId: string) => {
+    const isExpanded = expandedRows.includes(userId);
     setExpandedRows(prev => 
-      prev.includes(userId) 
+      isExpanded 
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
+    
+    // Fetch courses only when expanding
+    if (!isExpanded) {
+      const user = users.find(u => u._id === userId);
+      if (user && (!user.enrolledCourses || user.enrolledCourses.length === 0)) {
+        fetchUserCourses(userId);
+      }
+    }
   };
 
-  const getEnrollmentStatus = (user: User) => {
+  const getEnrollmentStatus = (user: ExtendedUser) => {
     if (user.role !== "student") return null;
-    
-    // This would come from the API, but for now we'll simulate it
-    const hasEnrollments = user.enrolledCourses && user.enrolledCourses.length > 0;
-    return hasEnrollments;
+    return user.hasEnrollments || (user.enrolledCourses && user.enrolledCourses.length > 0);
   };
 
   if (loading) {
@@ -93,6 +200,24 @@ const UserManagement: React.FC = () => {
     <div>
       <Navbar />
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Error Alert */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3"
+          >
+            <AlertCircle className="h-5 w-5 text-red-600" />
+            <span className="text-red-800">{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="ml-auto text-red-600 hover:text-red-800"
+            >
+              ×
+            </button>
+          </motion.div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-center">
           <div>
@@ -118,7 +243,7 @@ const UserManagement: React.FC = () => {
             <Users className="h-8 w-8 text-blue-600 mb-2" />
             <h3 className="text-sm text-gray-600">Total Students</h3>
             <p className="text-2xl font-bold text-blue-700">
-              {users.filter((u) => u.role === "student").length}
+              {stats.totalStudents || users.filter((u) => u.role === "student").length}
             </p>
           </motion.div>
           <motion.div
@@ -128,7 +253,7 @@ const UserManagement: React.FC = () => {
             <Shield className="h-8 w-8 text-green-600 mb-2" />
             <h3 className="text-sm text-gray-600">Instructors</h3>
             <p className="text-2xl font-bold text-green-700">
-              {users.filter((u) => u.role === "instructor").length}
+              {stats.totalInstructors || users.filter((u) => u.role === "instructor").length}
             </p>
           </motion.div>
           <motion.div
@@ -138,7 +263,7 @@ const UserManagement: React.FC = () => {
             <CheckCircle className="h-8 w-8 text-purple-600 mb-2" />
             <h3 className="text-sm text-gray-600">Enrolled Students</h3>
             <p className="text-2xl font-bold text-purple-700">
-              {users.filter((u) => u.role === "student" && getEnrollmentStatus(u)).length}
+              {stats.enrolledStudents || users.filter((u) => u.role === "student" && getEnrollmentStatus(u)).length}
             </p>
           </motion.div>
           <motion.div
@@ -148,7 +273,7 @@ const UserManagement: React.FC = () => {
             <XCircle className="h-8 w-8 text-orange-600 mb-2" />
             <h3 className="text-sm text-gray-600">Unenrolled Students</h3>
             <p className="text-2xl font-bold text-orange-700">
-              {users.filter((u) => u.role === "student" && !getEnrollmentStatus(u)).length}
+              {stats.unenrolledStudents || users.filter((u) => u.role === "student" && !getEnrollmentStatus(u)).length}
             </p>
           </motion.div>
         </div>
@@ -178,7 +303,8 @@ const UserManagement: React.FC = () => {
           <select
             value={enrollmentFilter}
             onChange={(e) => setEnrollmentFilter(e.target.value)}
-            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+            disabled={roleFilter && roleFilter !== "student"}
+            className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">All Students</option>
             <option value="enrolled">Enrolled Students</option>
@@ -279,17 +405,21 @@ const UserManagement: React.FC = () => {
                               <BookOpen className="h-5 w-5 text-indigo-600" />
                               Enrolled Courses
                             </h4>
-                            {user.enrolledCourses && user.enrolledCourses.length > 0 ? (
+                            {courseLoading.includes(user._id) ? (
+                              <div className="flex items-center justify-center py-8">
+                                <Loader2 className="h-6 w-6 text-indigo-600 animate-spin" />
+                              </div>
+                            ) : user.enrolledCourses && user.enrolledCourses.length > 0 ? (
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {user.enrolledCourses.map((course, index) => (
-                                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                {user.enrolledCourses.map((course) => (
+                                  <div key={course._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                     <div>
                                       <p className="font-medium text-gray-900">{course.title}</p>
                                       <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
                                     </div>
                                     <div className="text-right">
                                       <p className="text-sm text-gray-500">Progress</p>
-                                      <p className="font-medium text-indigo-600">{course.progress || "0"}%</p>
+                                      <p className="font-medium text-indigo-600">{course.progress || 0}%</p>
                                     </div>
                                   </div>
                                 ))}
@@ -324,7 +454,7 @@ const UserManagement: React.FC = () => {
                 className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md"
               >
                 <h3 className="text-lg font-semibold mb-4">Add New User</h3>
-                <form className="space-y-4">
+                <form onSubmit={handleCreateUser} className="space-y-4">
                   <input
                     type="text"
                     placeholder="Full Name"
@@ -333,6 +463,7 @@ const UserManagement: React.FC = () => {
                     onChange={(e) =>
                       setNewUser({ ...newUser, name: e.target.value })
                     }
+                    required
                   />
                   <input
                     type="email"
@@ -342,6 +473,7 @@ const UserManagement: React.FC = () => {
                     onChange={(e) =>
                       setNewUser({ ...newUser, email: e.target.value })
                     }
+                    required
                   />
                   <select
                     className="w-full px-4 py-2 border rounded-lg"
