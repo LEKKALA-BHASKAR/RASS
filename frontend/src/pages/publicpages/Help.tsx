@@ -110,7 +110,9 @@ const HelpCenter = () => {
 
   const supportOptions = [
     {
-      icon: <MessageCircle className="h-8 w-8" />,
+      icon: (
+        <img src="/whatsapp.jpg" alt="WhatsApp" className="w-full h-full object-cover rounded-2xl" />
+      ),
       title: 'Live Chat',
       description: 'Get instant help from our support team',
       availability: 'Available 24/7',
@@ -200,7 +202,7 @@ const HelpCenter = () => {
               key={index}
               className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center group"
             >
-              <div className={`inline-flex items-center justify-center w-16 h-16 ${option.color} text-white rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`inline-flex items-center justify-center w-16 h-16 ${option.color} text-white rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300 overflow-hidden`}>
                 {option.icon}
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">{option.title}</h3>

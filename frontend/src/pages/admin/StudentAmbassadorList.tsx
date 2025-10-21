@@ -16,6 +16,7 @@ import {
   X
 } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 interface StudentForm {
   _id: string;
@@ -595,6 +596,7 @@ const StudentAmbassadorList: React.FC = () => {
           </div>
         )}
       </div>
+      <Footer/>
     </div>
   );
 };

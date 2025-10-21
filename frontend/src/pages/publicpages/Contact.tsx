@@ -211,8 +211,8 @@ const ContactUs = () => {
                   rel="noopener noreferrer"
                   className="flex items-start group hover:bg-green-50 p-3 rounded-lg transition-all duration-300"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors">
-                    <MessageCircle className="h-5 w-5 text-green-600" />
+                  <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors overflow-hidden">
+                    <img src="/whatsapp.jpg" alt="WhatsApp" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800">WhatsApp</h3>
@@ -292,7 +292,9 @@ const ContactUs = () => {
                   rel="noopener noreferrer"
                   className="flex-1 bg-green-500 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-600 transition-all duration-300 flex items-center justify-center"
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <div className="w-4 h-4 mr-2 overflow-hidden rounded flex items-center justify-center">
+                    <img src="/whatsapp.jpg" alt="WhatsApp" className="w-full h-full object-cover" />
+                  </div>
                   WhatsApp
                 </a>
               </div>
