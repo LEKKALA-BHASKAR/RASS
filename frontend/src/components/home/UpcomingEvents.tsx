@@ -154,21 +154,12 @@ export default function UpcomingEvents() {
     }
   };
 
-  // Create an extended array of events to allow continuous scrolling
-  const getExtendedEvents = () => {
+  // Get current events to display based on the current group
+  const getCurrentEvents = () => {
     if (events.length === 0) return [];
     
-    // Create a larger array by repeating the events
-    const extended = [...events, ...events, ...events];
-    return extended;
-  };
-
-  const getCurrentEvents = () => {
-    const extendedEvents = getExtendedEvents();
-    if (extendedEvents.length === 0) return [];
-    
     const startIndex = currentGroup * eventsPerGroup;
-    return extendedEvents.slice(startIndex, startIndex + eventsPerGroup);
+    return events.slice(startIndex, startIndex + eventsPerGroup);
   };
 
   const startAutoPlay = useCallback(() => {
@@ -338,21 +329,9 @@ export default function UpcomingEvents() {
     );
   }
 
-  // Instead of returning null when there are no events, show a message
+  // Hide the entire section if there are no events
   if (events.length === 0) {
-    return (
-      <div className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">All Events</h2>
-            <p className="text-xl text-gray-600">Discover our events and workshops</p>
-          </div>
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No events available at the moment. Check back later!</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -387,7 +366,13 @@ export default function UpcomingEvents() {
                   x: { type: "spring", stiffness: 300, damping: 30 },
                   opacity: { duration: 0.4 },
                 }}
-                className="absolute w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4"
+                className={`absolute w-full grid gap-8 px-4 ${
+                  getCurrentEvents().length === 1 
+                    ? 'grid-cols-1 max-w-md mx-auto' 
+                    : getCurrentEvents().length === 2
+                    ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto'
+                    : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                }`}
               >
                 {getCurrentEvents().map((event, index) => (
                   <motion.div
@@ -510,7 +495,13 @@ export default function UpcomingEvents() {
                       x: { type: "spring", stiffness: 300, damping: 30 },
                       opacity: { duration: 0.4 },
                     }}
-                    className="absolute w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4"
+                    className={`absolute w-full grid gap-6 px-4 ${
+                      getRegisteredEventsForCurrentGroup().length === 1 
+                        ? 'grid-cols-1 max-w-md mx-auto' 
+                        : getRegisteredEventsForCurrentGroup().length === 2
+                        ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto'
+                        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                    }`}
                   >
                     {getRegisteredEventsForCurrentGroup().map((event) => (
                       <motion.div
