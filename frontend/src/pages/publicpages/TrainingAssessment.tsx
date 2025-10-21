@@ -18,17 +18,17 @@ import {
 } from "lucide-react";
 
 const TrainingAssessment: React.FC = () => {
-  // Consistent color palette
+  // Updated color palette for white background
   const colors = {
     primary: "#4f46e5",
     primaryLight: "#6366f1",
     primaryDark: "#4338ca",
     secondary: "#8b5cf6",
     accent: "#06b6d4",
-    background: "#0f172a",
-    surface: "#1e293b",
-    text: "#f8fafc",
-    textMuted: "#cbd5e1"
+    background: "#ffffff",
+    surface: "#f8fafc",
+    text: "#1e293b",
+    textMuted: "#64748b"
   };
 
   const features = [
@@ -96,15 +96,15 @@ const TrainingAssessment: React.FC = () => {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 relative overflow-hidden">
-      {/* Enhanced Animated Background */}
+    <div className="w-full min-h-screen bg-white relative overflow-hidden">
+      {/* Light Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl animate-pulse delay-500"></div>
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
       </div>
 
       {/* Header Section */}
@@ -121,65 +121,59 @@ const TrainingAssessment: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-center"
           >
-            {/* Enhanced Badge */}
-            <motion.div 
-              className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 mb-8 shadow-2xl shadow-blue-500/10"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Gem className="h-5 w-5 text-cyan-400" />
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
-                </div>
-                <span className="text-white font-semibold text-sm bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                  India's First Full-Cycle Pathway
-                </span>
-              </div>
-              <div className="w-1 h-1 bg-white/30 rounded-full"></div>
-              <div className="flex items-center gap-1">
-                <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-                <span className="text-white/80 text-xs">Proven Success</span>
-              </div>
-            </motion.div>
-
             {/* Main Heading */}
             <motion.h1
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-6 leading-tight"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                Full-Cycle
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                India's First Full-Cycle
               </span>{" "}
               <br className="hidden md:block" />
-              Career-Ready Training
+              Career-Ready Training Pathway
             </motion.h1>
 
             {/* Enhanced Subtitle */}
             <motion.p
-              className="text-xl lg:text-2xl text-gray-300 font-light mb-12 leading-relaxed max-w-4xl mx-auto"
+              className="text-xl lg:text-2xl text-gray-700 font-light mb-12 leading-relaxed max-w-4xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               Transforming Aspirants into Industry-Ready Professionals through{" "}
-              <span className="text-cyan-300 font-semibold">Intensive Training</span>,{" "}
-              <span className="text-purple-300 font-semibold">Govt. Certification</span>, and{" "}
-              <span className="text-blue-300 font-semibold">Guaranteed Internships</span>
+              <span className="text-cyan-600 font-semibold">Intensive Training</span>,{" "}
+              <span className="text-purple-600 font-semibold">Govt. Certification</span>, and{" "}
+              <span className="text-blue-600 font-semibold">Guaranteed Internships</span>
             </motion.p>
           </motion.div>
         </div>
       </motion.div>
 
+      {/* Image Section with Different Images for Mobile and Desktop */}
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 mb-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Desktop Image - Hidden on Mobile */}
+          <div className="hidden md:block">
+            <img
+              src="https://res.cloudinary.com/dtag1rpvv/image/upload/v1761016091/RASS_IMAGE-01_gkbbck.jpg"
+              alt="Career Development Pathway"
+              className="w-full h-auto rounded-2xl shadow-xl"
+            />
+          </div>
+          
+          {/* Mobile Image - Hidden on Desktop */}
+          <div className="md:hidden">
+            <img
+              src="https://res.cloudinary.com/dtag1rpvv/image/upload/v1761016026/RASS_IMAGE-02_bjxr2q.jpg"
+              alt="Career Development Pathway"
+              className="w-full h-auto rounded-2xl shadow-xl"
+            />
+          </div>
+        </div>
+      </div>
 
-          <img
-            src="../../RASS01.jpg"
-            alt="Career Development Pathway"
-            className="w-full h-full object-cover"
-          />
       {/* Process Steps Section */}
       <motion.div 
         className="relative z-10 px-4 sm:px-6 py-16 lg:py-24"
@@ -196,19 +190,19 @@ const TrainingAssessment: React.FC = () => {
             transition={{ duration: 0.6, delay: 1.4 }}
           >
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full border border-cyan-500/20 mb-4"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-100 rounded-full border border-cyan-200 mb-4"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 1.5 }}
             >
-              <Zap className="h-4 w-4 text-cyan-400" />
-              <span className="text-cyan-300 text-sm font-medium">Proven Pathway</span>
+              <Zap className="h-4 w-4 text-cyan-600" />
+              <span className="text-cyan-700 text-sm font-medium">Proven Pathway</span>
             </motion.div>
             
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Your <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">3-Step</span> Success Journey
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Your <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">3-Step</span> Success Journey
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               From beginner to industry professional with our structured, results-driven pathway
             </p>
           </motion.div>
@@ -227,7 +221,7 @@ const TrainingAssessment: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 1.6 + index * 0.2 }}
                 >
-                  <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all duration-500 h-full group-hover:shadow-2xl group-hover:shadow-purple-500/10">
+                  <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 hover:border-gray-300 transition-all duration-500 h-full group-hover:shadow-2xl group-hover:shadow-purple-200/50">
                     {/* Step Number Badge */}
                     <div className="absolute -top-4 -left-4">
                       <div className={`flex items-center justify-center w-12 h-12 bg-gradient-to-br ${step.gradient} rounded-2xl shadow-2xl shadow-blue-500/20 font-bold text-white text-lg`}>
@@ -241,11 +235,11 @@ const TrainingAssessment: React.FC = () => {
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
                       {step.title}
                     </h3>
                     
-                    <p className="text-gray-300 leading-relaxed mb-6 text-base">
+                    <p className="text-gray-700 leading-relaxed mb-6 text-base">
                       {step.description}
                     </p>
 
@@ -259,10 +253,10 @@ const TrainingAssessment: React.FC = () => {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.4, delay: 1.8 + index * 0.2 + featureIndex * 0.1 }}
                         >
-                          <div className="flex-shrink-0 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center group-hover/item:bg-green-500/30 transition-colors duration-300">
-                            <CheckCircle className="h-3 w-3 text-green-400" />
+                          <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center group-hover/item:bg-green-200 transition-colors duration-300">
+                            <CheckCircle className="h-3 w-3 text-green-600" />
                           </div>
-                          <span className="text-gray-200 text-sm font-medium group-hover/item:text-white transition-colors duration-300">
+                          <span className="text-gray-700 text-sm font-medium group-hover/item:text-gray-900 transition-colors duration-300">
                             {feature}
                           </span>
                         </motion.div>
@@ -271,7 +265,7 @@ const TrainingAssessment: React.FC = () => {
 
                     {/* Hover Arrow */}
                     <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                      <ArrowRight className="h-5 w-5 text-cyan-400" />
+                      <ArrowRight className="h-5 w-5 text-cyan-600" />
                     </div>
                   </div>
                 </motion.div>
@@ -300,7 +294,7 @@ const TrainingAssessment: React.FC = () => {
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             </motion.button>
             
-            <p className="text-gray-400 text-sm mt-4">
+            <p className="text-gray-600 text-sm mt-4">
               Join 1000+ successful professionals who transformed their careers
             </p>
           </motion.div>
