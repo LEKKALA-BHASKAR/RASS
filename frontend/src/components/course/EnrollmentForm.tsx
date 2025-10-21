@@ -251,7 +251,7 @@ const EnrollmentForm: React.FC<EnrollmentFormProps> = ({ course, onSubmit, onCan
                   Processing...
                 </>
               ) : (
-                "Proceed to Payment"
+                "Next"
               )}
             </button>
           </div>
