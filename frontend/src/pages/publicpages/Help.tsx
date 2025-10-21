@@ -115,7 +115,11 @@ const HelpCenter = () => {
       description: 'Get instant help from our support team',
       availability: 'Available 24/7',
       action: 'Start Chat',
-      color: 'bg-blue-500'
+      color: 'bg-green-500',
+      onClick: () => {
+        // WhatsApp link for the support number
+        window.open('https://wa.me/919063194887', '_blank');
+      }
     },
     {
       icon: <Phone className="h-8 w-8" />,
@@ -123,7 +127,11 @@ const HelpCenter = () => {
       description: 'Talk directly with our support specialists',
       availability: 'Mon-Sat, 9AM-9PM IST',
       action: 'Call Now',
-      color: 'bg-green-500'
+      color: 'bg-green-500',
+      onClick: () => {
+        // Redirect to dialer with the phone number
+        window.location.href = 'tel:+919063194887';
+      }
     },
     {
       icon: <Mail className="h-8 w-8" />,
@@ -131,15 +139,11 @@ const HelpCenter = () => {
       description: 'Send us your queries and get detailed responses',
       availability: 'Response within 4 hours',
       action: 'Send Email',
-      color: 'bg-purple-500'
-    },
-    {
-      icon: <Users className="h-8 w-8" />,
-      title: 'Community Forum',
-      description: 'Get help from fellow students and alumni',
-      availability: 'Always available',
-      action: 'Visit Forum',
-      color: 'bg-orange-500'
+      color: 'bg-purple-500',
+      onClick: () => {
+        // Open email client in a new tab with the support email
+        window.open('mailto:support@raasacademy.com', '_blank');
+      }
     }
   ];
 
@@ -190,7 +194,7 @@ const HelpCenter = () => {
       {/* Support Options */}
       <div className="max-w-7xl mx-auto mb-20">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Get Support</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {supportOptions.map((option, index) => (
             <div 
               key={index}
@@ -205,7 +209,17 @@ const HelpCenter = () => {
                 <Clock className="h-4 w-4 mr-1" />
                 {option.availability}
               </div>
-              <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5">
+              <button 
+                onClick={() => {
+                  if (option.onClick) {
+                    option.onClick();
+                  } else {
+                    // Default behavior for other options
+                    console.log(`Action for ${option.title}`);
+                  }
+                }}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5"
+              >
                 {option.action}
               </button>
             </div>
@@ -308,7 +322,7 @@ const HelpCenter = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl mb-4">
               <Clock className="h-8 w-8" />
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">Under 5 min</div>
+            <div className="text-3xl font-bold text-gray-900 mb-2">Under 30 min</div>
             <div className="text-gray-600">Average response time</div>
           </div>
           <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-lg">

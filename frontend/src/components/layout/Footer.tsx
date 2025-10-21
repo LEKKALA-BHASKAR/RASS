@@ -65,8 +65,8 @@ const Footer = () => {
             </p>
             <p className="text-sm mt-1">
               <strong>Phone:</strong>{" "}
-              <a href="tel:+1234567890" className="hover:text-white transition">
-                +1 (234) 567-890
+              <a href="tel:+919063194887" className="hover:text-white transition">
+                +91 9063194887
               </a>
             </p>
           </div>
