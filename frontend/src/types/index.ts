@@ -1,6 +1,7 @@
 import React from 'react';
 
 export interface User {
+  enrolledCourses: boolean;
   createdAt: string;
   _id: string;
   id: string;

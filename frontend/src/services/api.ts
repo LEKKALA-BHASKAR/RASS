@@ -137,9 +137,154 @@ export const userAPI = {
       else throw new Error("An unexpected error occurred.");
     }
   },
-  getAllUsers: (params?: any) => apiClient.get("/users", { params }),
+
+  getAllUsers: (params?: any) => {
+    // Support for enrollment filtering
+    if (params?.enrollment) {
+      // Convert enrollment filter to backend format
+      if (params.enrollment === 'enrolled') {
+        params.hasEnrollments = true;
+      } else if (params.enrollment === 'unenrolled') {
+        params.hasEnrollments = false;
+      }
+      delete params.enrollment;
+    }
+    return apiClient.get("/users", { params });
+  },
+
   updateUserStatus: (id: string, isActive: boolean) =>
     apiClient.put(`/users/${id}/status`, { isActive }),
+
+  // New API methods for enrollment features
+  
+  // Get students with enrollment status
+  getStudentsByEnrollment: async (status: 'enrolled' | 'unenrolled' | 'all', params?: any) => {
+    try {
+      const requestParams: any = { ...params };
+      if (status !== 'all') {
+        requestParams.hasEnrollments = status === 'enrolled';
+      }
+      requestParams.role = 'student'; // Only get students
+      
+      const response = await apiClient.get("/users", { params: requestParams });
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to fetch students.");
+    }
+  },
+
+  // Get student's enrolled courses
+  getStudentCourses: async (studentId: string) => {
+    try {
+      const response = await apiClient.get(`/users/${studentId}/courses`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to fetch student courses.");
+    }
+  },
+
+  // Enroll student in a course
+  enrollStudent: async (studentId: string, courseId: string) => {
+    try {
+      const response = await apiClient.post(`/users/${studentId}/enroll`, { courseId });
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to enroll student.");
+    }
+  },
+
+  // Unenroll student from a course
+  unenrollStudent: async (studentId: string, courseId: string) => {
+    try {
+      const response = await apiClient.delete(`/users/${studentId}/courses/${courseId}`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to unenroll student.");
+    }
+  },
+
+  // Get enrollment statistics
+  getEnrollmentStats: async () => {
+    try {
+      const response = await apiClient.get("/users/stats/enrollment");
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to fetch enrollment statistics.");
+    }
+  },
+
+  // Update user profile
+  updateUser: async (id: string, userData: any) => {
+    try {
+      const response = await apiClient.put(`/users/${id}`, userData);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to update user.");
+    }
+  },
+
+  // Delete user
+  deleteUser: async (id: string) => {
+    try {
+      const response = await apiClient.delete(`/users/${id}`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to delete user.");
+    }
+  },
+
+  // Get user by ID
+  getUserById: async (id: string) => {
+    try {
+      const response = await apiClient.get(`/users/${id}`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to fetch user details.");
+    }
+  },
+
+  // Bulk operations
+  bulkUpdateUsers: async (userIds: string[], updates: any) => {
+    try {
+      const response = await apiClient.put("/users/bulk", { userIds, updates });
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to update users.");
+    }
+  },
+
+  // Export users data
+  exportUsers: async (params?: any) => {
+    try {
+      const response = await apiClient.get("/users/export", { 
+        params,
+        responseType: 'blob'
+      });
+      return response.data;
+    } catch (error: any) {
+      if (error.response) throw error;
+      else if (error.request) throw new Error("Network error. Please check your connection.");
+      else throw new Error("Failed to export users.");
+    }
+  }
 };
 
 /* ---------------- LIVE SESSIONS ---------------- */// ✅ make sure this import exists at top

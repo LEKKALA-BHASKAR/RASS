@@ -45,7 +45,7 @@ app.post("/send-mail", async (req, res) => {
 
     await resend.emails.send({
       from: "RASS Academy <onboarding@resend.dev>",
-      to: [process.env.NODEMAILER_USER_EMAIL, "sangarajuvamsi6@gmail.com"],
+      to: [process.env.NODEMAILER_USER_EMAIL, "raasacademy2024@gmail.com ","sangarajuvamsi6@gmail.com"],
       subject: `🚀 New Course Inquiry - ${name}`,
       html: htmlContent,
     });
