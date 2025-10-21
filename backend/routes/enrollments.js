@@ -8,46 +8,87 @@ const router = express.Router();
 // Enroll in course
 router.post('/', authenticate, async (req, res) => {
   try {
+    console.log("=== Enrollment Request Received ===");
+    console.log("User ID:", req.user._id);
+    console.log("Request body:", JSON.stringify(req.body, null, 2));
+    
     const { courseId } = req.body;
+    
+    // Validate required fields
+    if (!courseId) {
+      console.log("Missing courseId in request");
+      return res.status(400).json({ message: 'Course ID is required' });
+    }
 
     // Check if already enrolled
     const existingEnrollment = await Enrollment.findOne({
       student: req.user._id,
       course: courseId
     });
+    console.log("Existing enrollment check:", existingEnrollment);
 
     if (existingEnrollment) {
+      console.log("User already enrolled in this course");
       return res.status(400).json({ message: 'Already enrolled in this course' });
     }
 
     const course = await Course.findById(courseId);
     if (!course) {
+      console.log("Course not found:", courseId);
       return res.status(404).json({ message: 'Course not found' });
     }
+    console.log("Course found:", course.title, "Modules count:", course.modules?.length || 0);
 
     // Create enrollment with progress tracking
+    let progressData = [];
+    if (course.modules && Array.isArray(course.modules)) {
+      console.log("Processing modules for progress tracking");
+      progressData = course.modules
+        .filter(module => module && module._id) // Filter out any invalid modules
+        .map(module => ({
+          moduleId: module._id,
+          completed: false,
+          watchTime: 0
+        }));
+      console.log("Progress data created with", progressData.length, "items");
+    } else {
+      console.log("No valid modules found for progress tracking");
+    }
+
     const enrollment = new Enrollment({
       student: req.user._id,
       course: courseId,
-      progress: course.modules.map(module => ({
-        moduleId: module._id,
-        completed: false,
-        watchTime: 0
-      }))
+      progress: progressData
     });
+    console.log("Enrollment object created with progress items:", enrollment.progress.length);
 
     await enrollment.save();
+    console.log("Enrollment saved successfully");
 
     // Update course enrollment count
     course.enrollmentCount += 1;
     await course.save();
+    console.log("Course enrollment count updated");
 
     // Add to user's enrolled courses
     req.user.enrolledCourses.push(courseId);
     await req.user.save();
+    console.log("User enrolled courses updated");
 
+    console.log("=== Enrollment Completed Successfully ===");
     res.status(201).json(enrollment);
   } catch (error) {
+    console.error("Enrollment error:", error);
+    console.error("Enrollment error stack:", error.stack);
+    // Send more detailed error information
+    if (error.name === 'ValidationError') {
+      console.error("Validation error details:", error.errors);
+      return res.status(400).json({ 
+        message: 'Validation error', 
+        details: error.message,
+        errors: Object.keys(error.errors || {})
+      });
+    }
     res.status(500).json({ message: error.message });
   }
 });

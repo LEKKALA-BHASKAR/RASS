@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { courseAPI, enrollmentAPI } from "../../services/api";
+import { courseAPI, enrollmentAPI, enrollmentFormAPI } from "../../services/api";
 import { Course, Enrollment } from "../../types";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
@@ -20,6 +20,7 @@ import CourseDescription from "../../components/course/CourseDescription";
 import DreamCompanies from "../../components/course/DreamCompanies";
 import FeeRegistration from "../../components/course/FeeRegistration";
 import FAQSection from "../../components/course/FAQSection";
+import EnrollmentForm from "../../components/course/EnrollmentForm";
 
 // ✅ Import local assets
 import googleLogo from "../../assets/companies/google.png";
@@ -36,6 +37,7 @@ const CourseDetail: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEnrollmentForm, setShowEnrollmentForm] = useState(false);
 
   // ✅ Section Refs
   const sectionRefs: Record<string, React.RefObject<HTMLDivElement>> = {
@@ -91,22 +93,46 @@ const CourseDetail: React.FC = () => {
       return;
     }
 
+    // Show enrollment form first
+    setShowEnrollmentForm(true);
+  };
+
+  const handleEnrollmentFormSubmit = async (formData: any) => {
+    try {
+      // Submit enrollment form
+      const formResponse = await enrollmentFormAPI.submitForm(formData);
+      
+      // Close the form
+      setShowEnrollmentForm(false);
+      
+      // Proceed with payment
+      await processPayment();
+    } catch (error: any) {
+      console.error("Error submitting enrollment form:", error);
+      alert(error.response?.data?.message || "Failed to submit enrollment form");
+    }
+  };
+
+  const processPayment = async () => {
+    if (!course) return;
+
     // 🆓 Free course → enroll directly
     if (course.price === 0) {
       try {
         await enrollmentAPI.enrollInCourse(course._id);
         await fetchCourseData();
         navigate(`/learn/${course._id}`);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error enrolling free course:", error);
+        alert("Failed to enroll in free course: " + (error.response?.data?.message || error.message));
       }
       return;
     }
 
     // 💳 Paid course → Razorpay flow
     try {
-      // 1. Create Razorpay order from backend
-      const res = await fetch("https://rass-h2s1.onrender.com/api/payments/order", {
+      // 1. Create Razorpay order from backend using our API client
+      const orderRes = await fetch(`${(import.meta as any).env?.VITE_API_BASE_URL || "https://rass-h2s1.onrender.com/api"}/payments/order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,14 +141,14 @@ const CourseDetail: React.FC = () => {
         body: JSON.stringify({ courseId: course._id }),
       });
 
-      const { order } = await res.json();
+      const { order } = await orderRes.json();
       if (!order) {
         alert("Failed to create payment order");
         return;
       }
 
       const options = {
-        key: "rzp_test_RJqt4AZALMZEYE", // ✅ Test key
+        key: (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || "rzp_test_RJqt4AZALMZEYE", // ✅ Use env var
         amount: order.amount,
         currency: order.currency,
         name: "RASS Academy",
@@ -131,7 +157,7 @@ const CourseDetail: React.FC = () => {
         handler: async function (response: any) {
           try {
             const verifyRes = await fetch(
-              "https://rass-h2s1.onrender.com/api/payments/verify",
+              `${(import.meta as any).env?.VITE_API_BASE_URL || "https://rass-h2s1.onrender.com/api"}/payments/verify`,
               {
                 method: "POST",
                 headers: {
@@ -139,7 +165,9 @@ const CourseDetail: React.FC = () => {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify({
-                  ...response,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
                   courseId: course._id,
                 }),
               }
@@ -148,10 +176,43 @@ const CourseDetail: React.FC = () => {
             const result = await verifyRes.json();
 
             if (result.success) {
-              await fetchCourseData();
-              navigate(`/learn/${course._id}`);
+              // Instead of immediately fetching course data, check if enrollment is confirmed
+              const maxRetries = 5;
+              let retries = 0;
+              
+              const checkEnrollment = async () => {
+                try {
+                  const enrollmentsRes = await enrollmentAPI.getMyEnrollments();
+                  const userEnrollment = enrollmentsRes.data.find(
+                    (e: Enrollment) => e.course._id === course._id
+                  );
+                  
+                  if (userEnrollment) {
+                    // Enrollment confirmed, now navigate
+                    await fetchCourseData();
+                    navigate(`/learn/${course._id}`);
+                  } else if (retries < maxRetries) {
+                    // Retry after a short delay
+                    retries++;
+                    setTimeout(checkEnrollment, 1000);
+                  } else {
+                    // Max retries reached, still navigate but show warning
+                    await fetchCourseData();
+                    navigate(`/learn/${course._id}`);
+                    console.warn("Enrollment confirmation timed out, but proceeding to course");
+                  }
+                } catch (err) {
+                  console.error("Error checking enrollment status:", err);
+                  // Still navigate to course
+                  await fetchCourseData();
+                  navigate(`/learn/${course._id}`);
+                }
+              };
+              
+              // Start checking enrollment
+              checkEnrollment();
             } else {
-              alert("Payment verified but enrollment failed.");
+              alert("Payment verified but enrollment failed: " + (result.message || "Unknown error"));
             }
           } catch (err) {
             console.error("Verification error:", err);
@@ -182,7 +243,6 @@ const CourseDetail: React.FC = () => {
     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
   }
 };
-
 
   if (loading) {
     return (
@@ -326,6 +386,15 @@ const CourseDetail: React.FC = () => {
           <FAQSection faqs={faqs} />
         </div>
       </div>
+
+      {/* Enrollment Form Modal */}
+      {showEnrollmentForm && (
+        <EnrollmentForm 
+          course={course} 
+          onSubmit={handleEnrollmentFormSubmit} 
+          onCancel={() => setShowEnrollmentForm(false)} 
+        />
+      )}
 
       <Footer />
     </div>

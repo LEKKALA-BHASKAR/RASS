@@ -285,7 +285,7 @@ const AdminDashboard: React.FC = () => {
               color: "bg-green-100",
               action: () => navigate("/admin/manage-events"),
             },
-             {
+            {
               title: "Student Ambassador List",
               desc: "View and manage student ambassadors",
               icon: <FileText className="h-6 w-6 text-red-600" />,
@@ -293,19 +293,26 @@ const AdminDashboard: React.FC = () => {
               action: () => navigate("/admin/student-ambassador-list"),
             },
             
-             {
+            {
               title: "Company Partnership List",
               desc: "View and manage company partnerships",
               icon: <ForkKnife className="h-6 w-6 text-red-600" />,
               color: "bg-green-100",
               action: () => navigate("/admin/company-partnership-list"),
             },
-             {
+            {
               title: "University Partnership List",
               desc: "View and manage university partnerships",
               icon: <SheetIcon className="h-6 w-6 text-blue-600" />,
               color: "bg-green-100",
               action: () => navigate("/admin/university-partnership-list"),
+            },
+            {
+              title: "Enrollment Management",
+              desc: "Manage course enrollment forms and payments",
+              icon: <UserPlus className="h-6 w-6 text-indigo-600" />,
+              color: "bg-indigo-100",
+              action: () => navigate("/admin/enrollments"),
             },
           ].map((action, i) => (
             <motion.button
