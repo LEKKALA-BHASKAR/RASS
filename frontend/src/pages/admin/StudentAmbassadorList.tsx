@@ -41,6 +41,8 @@ const StudentAmbassadorList: React.FC = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedUniversity, setSelectedUniversity] = useState("all");
   const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedForm, setSelectedForm] = useState<StudentForm | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   useEffect(() => {
     const fetchForms = async () => {
@@ -156,6 +158,18 @@ const StudentAmbassadorList: React.FC = () => {
   // Go back to previous page
   const goBack = () => {
     window.history.back();
+  };
+
+  // Handle view details
+  const handleViewDetails = (form: StudentForm) => {
+    setSelectedForm(form);
+    setShowDetailsModal(true);
+  };
+
+  // Close details modal
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedForm(null);
   };
 
   if (loading) return (
@@ -415,7 +429,10 @@ const StudentAmbassadorList: React.FC = () => {
                           {new Date(form.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                         <div className="mt-2">
-                          <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                          <button 
+                            onClick={() => handleViewDetails(form)}
+                            className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+                          >
                             View Details
                           </button>
                         </div>
@@ -442,6 +459,141 @@ const StudentAmbassadorList: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Details Modal */}
+        {showDetailsModal && selectedForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-6 py-4 rounded-t-xl flex justify-between items-center sticky top-0">
+                <h2 className="text-2xl font-bold">Application Details</h2>
+                <button
+                  onClick={closeDetailsModal}
+                  className="text-white hover:text-gray-200 transition-colors p-1 hover:bg-white/20 rounded-lg"
+                  aria-label="Close modal"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6">
+                {/* Personal Information Section */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <User className="h-5 w-5 mr-2 text-indigo-600" />
+                    Personal Information
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Full Name</p>
+                        <p className="text-base text-gray-900 font-medium">{selectedForm.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Email Address</p>
+                        <p className="text-base text-gray-900 flex items-center">
+                          <Mail className="h-4 w-4 mr-2 text-indigo-600" />
+                          <a href={`mailto:${selectedForm.email}`} className="hover:text-indigo-600">
+                            {selectedForm.email}
+                          </a>
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                        <p className="text-base text-gray-900 flex items-center">
+                          <Phone className="h-4 w-4 mr-2 text-indigo-600" />
+                          <a href={`tel:${selectedForm.phone}`} className="hover:text-indigo-600">
+                            {selectedForm.phone}
+                          </a>
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Application Date</p>
+                        <p className="text-base text-gray-900 flex items-center">
+                          <Calendar className="h-4 w-4 mr-2 text-indigo-600" />
+                          {new Date(selectedForm.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Academic Information Section */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <GraduationCap className="h-5 w-5 mr-2 text-indigo-600" />
+                    Academic Information
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">University</p>
+                        <p className="text-base text-gray-900 font-medium">{selectedForm.university}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Department</p>
+                        <p className="text-base text-gray-900 flex items-center">
+                          <BookOpen className="h-4 w-4 mr-2 text-indigo-600" />
+                          {selectedForm.department}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Current Year</p>
+                        <p className="text-base text-gray-900 flex items-center">
+                          <Briefcase className="h-4 w-4 mr-2 text-indigo-600" />
+                          {selectedForm.currentYear}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Graduation Year</p>
+                        <p className="text-base text-gray-900">{selectedForm.graduationYear}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Competencies Section */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-indigo-600" />
+                    Competencies & Skills
+                  </h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-base text-gray-900 whitespace-pre-wrap leading-relaxed">
+                      {selectedForm.competencies}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <button
+                    onClick={closeDetailsModal}
+                    className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                  >
+                    Close
+                  </button>
+                  <a
+                    href={`mailto:${selectedForm.email}?subject=Student Ambassador Application - ${selectedForm.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center gap-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Contact Applicant
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
