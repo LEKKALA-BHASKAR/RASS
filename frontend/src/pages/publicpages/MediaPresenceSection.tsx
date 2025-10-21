@@ -184,14 +184,23 @@ const MediaPresenceSection: React.FC = () => {
                   x: { type: "spring", stiffness: 300, damping: 30 },
                   opacity: { duration: 0.4 },
                 }}
-                className="absolute w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4"
+                className={`absolute w-full grid gap-6 px-4 ${
+                  getCurrentItems().length === 1 
+                    ? 'grid-cols-1 max-w-md mx-auto' 
+                    : getCurrentItems().length === 2
+                    ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto'
+                    : getCurrentItems().length === 3
+                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto'
+                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+                }`}
               >
-                {getCurrentItems().map((item) => (
+                {getCurrentItems().map((item, index) => (
                   <motion.div
                     key={item._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -8, transition: { duration: 0.3 } }}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
                     onClick={() => {
                       if (item.journalLink) {
@@ -201,10 +210,12 @@ const MediaPresenceSection: React.FC = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <div className="h-32 overflow-hidden">
-                      <img 
+                      <motion.img 
                         src={item.imageUrl} 
                         alt={item.title} 
                         className="w-full h-full object-contain p-4"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'https://placehold.co/300x200?text=Image+Not+Found';
