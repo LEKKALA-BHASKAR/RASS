@@ -116,11 +116,12 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ msg: 'Media item not found' });
     }
 
-    await MediaPresence.findByIdAndRemove(req.params.id);
+    await MediaPresence.findByIdAndDelete(req.params.id);
 
+    res.json({ msg: 'Media item deleted successfully' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Delete error:', err.message);
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 
