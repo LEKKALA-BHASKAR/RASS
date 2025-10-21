@@ -50,7 +50,7 @@ import CompanyPartnershipForm from './pages/CompanyPartnershipForm';
 import CompanyPartnershipList from './pages/admin/CompanyPartnershipForm';
 import UniversityPartnershipForm from './pages/UniversityPartnershipForm';
 import UniversityPartnershipList from './pages/admin/UniversityPartnershipList';
-
+import EnrollmentManagement from './pages/admin/EnrollmentManagement';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> = ({ 
   children, 
@@ -231,6 +231,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/admin/support" element={<AdminTicketsPage />} />
         <Route path="/admin/media-presence" element={<MediaPresenceManagement />} />
         <Route path="/admin/manage-events" element={<ManageEventsPage />} /> {/* Added route for event management */}
+        <Route path="/admin/enrollments" element={<EnrollmentManagement />} />
     
       </Routes>
     </div>

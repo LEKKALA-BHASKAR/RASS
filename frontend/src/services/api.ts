@@ -88,6 +88,15 @@ export const enrollmentAPI = {
     apiClient.get(`/enrollments/course/${courseId}`),
 };
 
+// ✅ New Enrollment Form API
+export const enrollmentFormAPI = {
+  submitForm: (data: any) => apiClient.post("/enrollment-forms", data),
+  getMyForms: () => apiClient.get("/enrollment-forms/my-forms"),
+  getCourseForms: (courseId: string) => apiClient.get(`/enrollment-forms/course/${courseId}`),
+  updatePaymentStatus: (id: string, paymentStatus: string) => 
+    apiClient.put(`/enrollment-forms/${id}/payment-status`, { paymentStatus }),
+};
+
 /* ---------------- ASSIGNMENTS ---------------- */
 export const assignmentAPI = {
   getCourseAssignments: (courseId: string) =>
