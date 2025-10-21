@@ -13,7 +13,8 @@ import {
   XCircle, 
   Clock, 
   Eye,
-  IndianRupee
+  IndianRupee,
+  Download
 } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
@@ -59,13 +60,11 @@ const EnrollmentManagement: React.FC = () => {
       for (const course of courses) {
         try {
           const res = await enrollmentFormAPI.getCourseForms(course._id);
-          console.log(`Forms for course ${course.title}:`, res.data);
           allForms.push(...res.data.map((form: any) => ({ ...form, courseTitle: course.title })));
         } catch (error) {
           console.error(`Error fetching forms for course ${course._id}:`, error);
         }
       }
-      console.log('All forms:', allForms);
       setForms(allForms);
     } catch (error) {
       console.error("Error fetching all enrollment forms:", error);
@@ -105,6 +104,49 @@ const EnrollmentManagement: React.FC = () => {
     console.log('Viewing form details:', form);
     setSelectedForm(form);
     setShowFormDetails(true);
+  };
+
+  const exportToCSV = () => {
+    if (filteredForms.length === 0) return;
+    
+    // Create CSV content
+    const headers = [
+      "Student Name",
+      "Email",
+      "Mobile Number",
+      "Student Status",
+      "Prior Experience",
+      "Experience Details",
+      "Course",
+      "Payment Status",
+      "Submitted Date"
+    ];
+    
+    const csvContent = [
+      headers.join(","),
+      ...filteredForms.map(form => [
+        `"${form.fullName || form.name || 'Unknown Student'}"`,
+        `"${form.email || ''}"`,
+        `"${form.mobileNumber || ''}"`,
+        `"${form.isStudent === 'yes' ? 'Student' : 'Non-student'}"`,
+        `"${form.hasPriorExperience === 'yes' ? 'Yes' : 'No'}"`,
+        `"${form.experienceDetails || ''}"`,
+        `"${form.courseTitle || courses.find(c => c._id === form.course)?.title || 'Unknown Course'}"`,
+        `"${form.paymentStatus || 'pending'}"`,
+        `"${form.submittedAt ? new Date(form.submittedAt).toLocaleDateString() : ''}"`
+      ].join(","))
+    ].join("\n");
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `enrollment_forms_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const filteredForms = forms.filter(form => {
@@ -152,19 +194,26 @@ const EnrollmentManagement: React.FC = () => {
               <label htmlFor="course" className="block text-sm font-medium text-gray-700 mb-2">
                 Filter by Course
               </label>
-              <select
-                id="course"
-                value={selectedCourse}
-                onChange={(e) => setSelectedCourse(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              >
-                <option value="">All Courses</option>
-                {courses.map(course => (
-                  <option key={course._id} value={course._id}>
-                    {course.title}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  id="course"
+                  value={selectedCourse}
+                  onChange={(e) => setSelectedCourse(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none bg-white"
+                >
+                  <option value="">All Courses</option>
+                  {courses.map(course => (
+                    <option key={course._id} value={course._id}>
+                      {course.title.length > 30 ? `${course.title.substring(0, 30)}...` : course.title}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -197,17 +246,28 @@ const EnrollmentManagement: React.FC = () => {
             <h2 className="text-lg font-medium text-gray-900">
               Enrollment Forms ({filteredForms.length})
             </h2>
-            {(selectedCourse || forms.length > 0) && (
-              <div className="text-sm">
-                {selectedCourse 
-                  ? <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white shadow-lg">
-                      Showing forms for: <span className="font-bold ml-2">{courses.find(c => c._id === selectedCourse)?.title || "Selected Course"}</span>
-                    </span>
-                  : <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-600 text-white shadow-lg">
-                      Showing forms for: <span className="font-bold ml-2">All Courses</span>
-                    </span>}
-              </div>
-            )}
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              {(selectedCourse || forms.length > 0) && (
+                <div className="text-sm">
+                  {selectedCourse 
+                    ? <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-indigo-600 text-white shadow-lg">
+                        Showing forms for: <span className="font-bold ml-2">{courses.find(c => c._id === selectedCourse)?.title || "Selected Course"}</span>
+                      </span>
+                    : <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-600 text-white shadow-lg">
+                        Showing forms for: <span className="font-bold ml-2">All Courses</span>
+                      </span>}
+                </div>
+              )}
+              {filteredForms.length > 0 && (
+                <button
+                  onClick={exportToCSV}
+                  className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </button>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -227,37 +287,16 @@ const EnrollmentManagement: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Student
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contact
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Experience
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Submitted
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+            <>
+              {/* Mobile view - Card layout */}
+              <div className="md:hidden">
+                <div className="px-4 py-4 space-y-4">
                   {filteredForms.map((form) => (
-                    <tr key={form._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
+                    <div key={form._id} className="border border-gray-200 rounded-lg p-4 shadow-sm">
+                      <div className="flex justify-between items-start">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-8 w-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <User className="h-4 w-4 text-indigo-600" />
+                          <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <User className="h-5 w-5 text-indigo-600" />
                           </div>
                           <div className="ml-3">
                             <div className="text-sm font-medium text-gray-900">{form.fullName || form.name || 'Unknown Student'}</div>
@@ -266,47 +305,58 @@ const EnrollmentManagement: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-col">
-                          <div className="flex items-center text-sm text-gray-900">
-                            <Mail className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
-                            <span className="truncate max-w-[100px]">{form.email || 'No email'}</span>
-                          </div>
-                          <div className="flex items-center text-xs text-gray-500 mt-1">
-                            <Phone className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
-                            <span className="truncate max-w-[100px]">{form.mobileNumber || 'No phone'}</span>
+                        <div className="flex-shrink-0">
+                          {getPaymentStatusBadge(form.paymentStatus)}
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <div className="text-xs">
+                          <div className="text-gray-500">Email</div>
+                          <div className="text-gray-900 truncate">{form.email || 'No email'}</div>
+                        </div>
+                        <div className="text-xs">
+                          <div className="text-gray-500">Phone</div>
+                          <div className="text-gray-900 truncate">{form.mobileNumber || 'No phone'}</div>
+                        </div>
+                        <div className="text-xs">
+                          <div className="text-gray-500">Course</div>
+                          <div className="text-gray-900 truncate" title={form.courseTitle || courses.find(c => c._id === form.course)?.title || "Unknown Course"}>
+                            {form.courseTitle || courses.find(c => c._id === form.course)?.title || "Unknown Course"}
                           </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="text-sm text-gray-900">
-                          {form.hasPriorExperience === "yes" ? "Yes" : "No"}
+                        <div className="text-xs">
+                          <div className="text-gray-500">Experience</div>
+                          <div className="text-gray-900">
+                            {form.hasPriorExperience === "yes" ? "Yes" : "No"}
+                          </div>
                         </div>
                         {form.hasPriorExperience === "yes" && (
-                          <div className="text-xs text-gray-500 truncate max-w-[80px]" title={form.experienceDetails}>
-                            {form.experienceDetails}
+                          <div className="text-xs col-span-2">
+                            <div className="text-gray-500">Experience Details</div>
+                            <div className="text-gray-900 truncate" title={form.experienceDetails}>
+                              {form.experienceDetails || 'No details provided'}
+                            </div>
                           </div>
                         )}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        {getPaymentStatusBadge(form.paymentStatus)}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-gray-500">
-                        <div className="flex items-center">
-                          <Calendar className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
-                          <span className="truncate max-w-[70px]">{new Date(form.submittedAt).toLocaleDateString()}</span>
+                        <div className="text-xs col-span-2">
+                          <div className="text-gray-500">Submitted</div>
+                          <div className="text-gray-900 flex items-center">
+                            <Calendar className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
+                            {new Date(form.submittedAt).toLocaleDateString()}
+                          </div>
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium">
-                        <div className="flex space-x-1">
-                          <button
-                            onClick={() => viewFormDetails(form)}
-                            className="text-indigo-600 hover:text-indigo-900 p-1 rounded-full hover:bg-indigo-50"
-                            title="View Details"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
+                      </div>
+                      
+                      <div className="mt-3 flex justify-between">
+                        <button
+                          onClick={() => viewFormDetails(form)}
+                          className="text-indigo-600 hover:text-indigo-900 text-sm font-medium flex items-center"
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </button>
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => updatePaymentStatus(form._id, "completed")}
                             className="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-50"
@@ -324,12 +374,125 @@ const EnrollmentManagement: React.FC = () => {
                             <XCircle className="h-4 w-4" />
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </div>
+              </div>
+              
+              {/* Desktop view - Table layout */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Student
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Course
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Experience
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Submitted
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredForms.map((form) => (
+                      <tr key={form._id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-8 w-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                              <User className="h-4 w-4 text-indigo-600" />
+                            </div>
+                            <div className="ml-3">
+                              <div className="text-sm font-medium text-gray-900">{form.fullName || form.name || 'Unknown Student'}</div>
+                              <div className="text-xs text-gray-500">
+                                {form.isStudent === "yes" ? "Student" : "Non-student"}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col">
+                            <div className="flex items-center text-sm text-gray-900">
+                              <Mail className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
+                              <span className="truncate max-w-[100px]">{form.email || 'No email'}</span>
+                            </div>
+                            <div className="flex items-center text-xs text-gray-500 mt-1">
+                              <Phone className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
+                              <span className="truncate max-w-[100px]">{form.mobileNumber || 'No phone'}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-sm text-gray-900 max-w-[120px] truncate" title={form.courseTitle || courses.find(c => c._id === form.course)?.title || "Unknown Course"}>
+                            {form.courseTitle || courses.find(c => c._id === form.course)?.title || "Unknown Course"}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-sm text-gray-900">
+                            {form.hasPriorExperience === "yes" ? "Yes" : "No"}
+                          </div>
+                          {form.hasPriorExperience === "yes" && (
+                            <div className="text-xs text-gray-500 truncate max-w-[80px]" title={form.experienceDetails}>
+                              {form.experienceDetails}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          {getPaymentStatusBadge(form.paymentStatus)}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="flex-shrink-0 mr-1 h-4 w-4 text-gray-400" />
+                            <span className="truncate max-w-[70px]">{new Date(form.submittedAt).toLocaleDateString()}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm font-medium">
+                          <div className="flex space-x-1">
+                            <button
+                              onClick={() => viewFormDetails(form)}
+                              className="text-indigo-600 hover:text-indigo-900 p-1 rounded-full hover:bg-indigo-50"
+                              title="View Details"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => updatePaymentStatus(form._id, "completed")}
+                              className="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-50"
+                              title="Mark as completed"
+                              disabled={form.paymentStatus === "completed"}
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => updatePaymentStatus(form._id, "failed")}
+                              className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"
+                              title="Mark as failed"
+                              disabled={form.paymentStatus === "failed"}
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -337,7 +500,7 @@ const EnrollmentManagement: React.FC = () => {
       {/* Form Details Modal */}
       {showFormDetails && selectedForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl w-full max-w-2xl">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Enrollment Form Details</h2>
               <button 
