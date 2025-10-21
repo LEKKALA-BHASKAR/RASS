@@ -38,7 +38,7 @@ import Terms from './pages/publicpages/Terms';
 import PrivacyPolicy from './pages/publicpages/PrivacyPolicy'; // Added import for Privacy Policy
 import Companies from './pages/Companies';
 import UniversitiesPage from './pages/UniversitiesPage';
-import AdminTicketsPage from './pages/admin/AdminTicketsPage';
+import AdminTicketsPage from './pages/admin/SupportManagement';
 import MediaPresenceManagement from './pages/admin/MediaPresenceManagement';
 import ManageEventsPage from './pages/admin/ManageEventsPage'; // Added import for event management
 import EventDetailPage from './pages/events/EventDetailPage'; // Added import for event detail page

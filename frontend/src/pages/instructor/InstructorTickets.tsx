@@ -70,9 +70,11 @@ const InstructorTickets: React.FC = () => {
         selectedTicket._id,
         status
       );
-      setSelectedTicket(response.data);
+      // Ensure the updated ticket has all the necessary populated fields
+      const updatedTicket = response.data;
+      setSelectedTicket(updatedTicket);
       setTickets((prev) =>
-        prev.map((t) => (t._id === selectedTicket._id ? response.data : t))
+        prev.map((t) => (t._id === selectedTicket._id ? updatedTicket : t))
       );
     } catch (error) {
       console.error("Error updating status:", error);
@@ -105,7 +107,7 @@ const InstructorTickets: React.FC = () => {
   return (
     <div>
       <Navbar />
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Tickets List */}
@@ -130,7 +132,7 @@ const InstructorTickets: React.FC = () => {
             <option value="closed">Closed</option>
           </select>
 
-          <div className="space-y-3 max-h-[70vh] overflow-y-auto">
+          <div className="space-y-3">
             {tickets.length === 0 ? (
               <p className="text-center text-gray-500 py-6">No tickets found.</p>
             ) : (
@@ -166,9 +168,9 @@ const InstructorTickets: React.FC = () => {
         >
           {selectedTicket ? (
             <>
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
                 <h2 className="font-bold text-2xl">{selectedTicket.subject}</h2>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {["open", "in-progress", "resolved", "closed"].map((s) => (
                     <button
                       key={s}
@@ -186,7 +188,7 @@ const InstructorTickets: React.FC = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+              <div className="flex-1 space-y-4 mb-4">
                 {selectedTicket.messages.map((m) => (
                   <motion.div
                     key={m._id}
@@ -214,7 +216,7 @@ const InstructorTickets: React.FC = () => {
 
               {/* Reply Form */}
               {selectedTicket.status !== "closed" && (
-                <form onSubmit={handleAddMessage} className="flex gap-3">
+                <form onSubmit={handleAddMessage} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     value={newMessage}
@@ -225,7 +227,7 @@ const InstructorTickets: React.FC = () => {
                   <button
                     type="submit"
                     disabled={sendingMessage || !newMessage.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg flex items-center transition disabled:opacity-50"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg flex items-center justify-center transition disabled:opacity-50"
                   >
                     {sendingMessage ? "Sending..." : <Send className="h-4 w-4" />}
                   </button>
@@ -234,7 +236,11 @@ const InstructorTickets: React.FC = () => {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center text-gray-500">
-              Select a ticket to view details
+              <div className="text-center">
+                <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No ticket selected</h3>
+                <p className="text-sm">Select a ticket from the list to view details</p>
+              </div>
             </div>
           )}
         </motion.div>

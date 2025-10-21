@@ -216,7 +216,8 @@ router.put("/:id/status", authenticate, async (req, res) => {
 
     const updatedTicket = await SupportTicket.findById(ticket._id)
       .populate("user", "name email")
-      .populate("assignedTo", "name email");
+      .populate("assignedTo", "name email")
+      .populate("messages.sender", "name email role");
 
     // 🔔 Notify student of status change
     await new Notification({
@@ -322,6 +323,7 @@ router.get('/admin', authenticate, authorize('admin'), async (req, res) => {
     const tickets = await SupportTicket.find(query)
       .populate('user', 'name email role')
       .populate('assignedTo', 'name email')
+      .populate('messages.sender', 'name email role')
       .sort({ createdAt: -1 })
       .skip((+page - 1) * +limit)
       .limit(+limit);

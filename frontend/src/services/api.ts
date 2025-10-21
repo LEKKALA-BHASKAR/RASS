@@ -339,8 +339,7 @@ export const supportTicketAPI = {
   getInstructorTickets: () => apiClient.get("/support-tickets/instructor"),
 
   // 📌 Admin – all tickets across all users & courses
-  getAllTickets: (filters?: any) =>
-    apiClient.get("/admin/support", { params: filters }),
+  getAllTickets: () => apiClient.get("/support-tickets/admin"),
 
   // 📌 Common actions
   addMessage: (ticketId: string, message: string) =>
