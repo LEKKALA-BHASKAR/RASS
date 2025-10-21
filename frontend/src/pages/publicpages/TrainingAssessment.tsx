@@ -273,31 +273,7 @@ const TrainingAssessment: React.FC = () => {
             </div>
           </div>
 
-          {/* CTA Section */}
-          <motion.div 
-            className="text-center mt-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 2.2 }}
-          >
-            <motion.button
-              className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-12 rounded-2xl transition-all duration-300 shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 overflow-hidden"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="relative z-10 flex items-center gap-3">
-                <span>Start Your Journey Today</span>
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </div>
-              
-              {/* Shine Effect */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-            </motion.button>
-            
-            <p className="text-gray-600 text-sm mt-4">
-              Join 1000+ successful professionals who transformed their careers
-            </p>
-          </motion.div>
+
         </div>
       </motion.div>
     </div>
