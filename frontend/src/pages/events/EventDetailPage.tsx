@@ -49,6 +49,7 @@ export default function EventDetailPage() {
   });
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [paymentData, setPaymentData] = useState<any>(null);
+  const [openFaqItems, setOpenFaqItems] = useState<Set<number>>(new Set()); // Track open FAQ items
 
   useEffect(() => {
     fetchEvent();
@@ -198,6 +199,18 @@ export default function EventDetailPage() {
     });
   };
 
+  const toggleFaqItem = (index: number) => {
+    setOpenFaqItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -343,9 +356,26 @@ export default function EventDetailPage() {
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {event.faq.map((item, index) => (
-                  <div key={index} className="border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{item.question}</h3>
-                    <p className="text-gray-600">{item.answer}</p>
+                  <div key={index} className="border border-gray-200 rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => toggleFaqItem(index)}
+                      className="w-full flex justify-between items-center p-6 text-left bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <h3 className="text-lg font-semibold text-gray-800">{item.question}</h3>
+                      <svg 
+                        className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${openFaqItems.has(index) ? 'rotate-180' : ''}`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {openFaqItems.has(index) && (
+                      <div className="p-6 bg-white border-t border-gray-200">
+                        <p className="text-gray-600">{item.answer}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
