@@ -17,6 +17,7 @@ import {
   Zap,
   Award,
   TrendingUp,
+  Mail,
 } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
@@ -372,12 +373,30 @@ const Companies: React.FC = () => {
               Zero-cost, pre-trained professionals — certified and ready for your
               projects. Join our hiring network today.
             </p>
-            <a
-              href="/company-partnership"
-              className="inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 text-sm md:text-base"
-            >
-              <Phone className="h-5 w-5" /> Become a Partner
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+              <a
+                href="/company-partnership"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-lg hover:bg-yellow-300 transition transform hover:scale-105 text-sm md:text-base"
+              >
+                <Phone className="h-5 w-5" /> Become a Partner
+              </a>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => window.location.href = 'tel:+919063194887'}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium rounded-lg hover:bg-white/20 transition-all duration-300"
+              >
+                <Phone className="h-5 w-5" />
+                Call: +91 9063194887
+              </button>
+              <button
+                onClick={() => window.open('mailto:partnerships@raasacademy.com', '_blank')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium rounded-lg hover:bg-white/20 transition-all duration-300"
+              >
+                <Mail className="h-5 w-5" />
+                Email: partnerships@raasacademy.com
+              </button>
+            </div>
           </div>
         </section>
 
