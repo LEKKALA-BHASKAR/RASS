@@ -4,64 +4,178 @@ import { Mail, Phone, User, Send, CheckCircle, X, MessageCircle } from "lucide-r
 import { useContact } from "./ContactContext";
 
 const countryCodes = [
-  { code: "+93", country: "Afghanistan" }, { code: "+355", country: "Albania" }, { code: "+213", country: "Algeria" },
-  { code: "+376", country: "Andorra" }, { code: "+244", country: "Angola" }, { code: "+54", country: "Argentina" },
-  { code: "+374", country: "Armenia" }, { code: "+61", country: "Australia" }, { code: "+43", country: "Austria" },
-  { code: "+994", country: "Azerbaijan" }, { code: "+973", country: "Bahrain" }, { code: "+880", country: "Bangladesh" },
-  { code: "+375", country: "Belarus" }, { code: "+32", country: "Belgium" }, { code: "+501", country: "Belize" },
-  { code: "+229", country: "Benin" }, { code: "+975", country: "Bhutan" }, { code: "+591", country: "Bolivia" },
-  { code: "+387", country: "Bosnia and Herzegovina" }, { code: "+267", country: "Botswana" }, { code: "+55", country: "Brazil" },
-  { code: "+673", country: "Brunei" }, { code: "+359", country: "Bulgaria" }, { code: "+226", country: "Burkina Faso" },
-  { code: "+257", country: "Burundi" }, { code: "+855", country: "Cambodia" }, { code: "+237", country: "Cameroon" },
-  { code: "+1", country: "Canada" }, { code: "+238", country: "Cape Verde" }, { code: "+236", country: "Central African Republic" },
-  { code: "+235", country: "Chad" }, { code: "+56", country: "Chile" }, { code: "+86", country: "China" },
-  { code: "+57", country: "Colombia" }, { code: "+269", country: "Comoros" }, { code: "+242", country: "Congo" },
-  { code: "+506", country: "Costa Rica" }, { code: "+385", country: "Croatia" }, { code: "+53", country: "Cuba" },
-  { code: "+357", country: "Cyprus" }, { code: "+420", country: "Czech Republic" }, { code: "+45", country: "Denmark" },
-  { code: "+253", country: "Djibouti" }, { code: "+593", country: "Ecuador" }, { code: "+20", country: "Egypt" },
-  { code: "+503", country: "El Salvador" }, { code: "+240", country: "Equatorial Guinea" }, { code: "+291", country: "Eritrea" },
-  { code: "+372", country: "Estonia" }, { code: "+251", country: "Ethiopia" }, { code: "+679", country: "Fiji" },
-  { code: "+358", country: "Finland" }, { code: "+33", country: "France" }, { code: "+241", country: "Gabon" },
-  { code: "+220", country: "Gambia" }, { code: "+995", country: "Georgia" }, { code: "+49", country: "Germany" },
-  { code: "+233", country: "Ghana" }, { code: "+30", country: "Greece" }, { code: "+502", country: "Guatemala" },
-  { code: "+224", country: "Guinea" }, { code: "+245", country: "Guinea-Bissau" }, { code: "+592", country: "Guyana" },
-  { code: "+509", country: "Haiti" }, { code: "+504", country: "Honduras" }, { code: "+852", country: "Hong Kong" },
-  { code: "+36", country: "Hungary" }, { code: "+354", country: "Iceland" }, { code: "+91", country: "India" },
-  { code: "+62", country: "Indonesia" }, { code: "+98", country: "Iran" }, { code: "+964", country: "Iraq" },
-  { code: "+353", country: "Ireland" }, { code: "+972", country: "Israel" }, { code: "+39", country: "Italy" },
-  { code: "+225", country: "Ivory Coast" }, { code: "+81", country: "Japan" }, { code: "+962", country: "Jordan" },
-  { code: "+7", country: "Kazakhstan" }, { code: "+254", country: "Kenya" }, { code: "+965", country: "Kuwait" },
-  { code: "+996", country: "Kyrgyzstan" }, { code: "+856", country: "Laos" }, { code: "+371", country: "Latvia" },
-  { code: "+961", country: "Lebanon" }, { code: "+266", country: "Lesotho" }, { code: "+231", country: "Liberia" },
-  { code: "+218", country: "Libya" }, { code: "+423", country: "Liechtenstein" }, { code: "+370", country: "Lithuania" },
-  { code: "+352", country: "Luxembourg" }, { code: "+853", country: "Macau" }, { code: "+389", country: "Macedonia" },
-  { code: "+261", country: "Madagascar" }, { code: "+265", country: "Malawi" }, { code: "+60", country: "Malaysia" },
-  { code: "+960", country: "Maldives" }, { code: "+223", country: "Mali" }, { code: "+356", country: "Malta" },
-  { code: "+222", country: "Mauritania" }, { code: "+230", country: "Mauritius" }, { code: "+52", country: "Mexico" },
-  { code: "+373", country: "Moldova" }, { code: "+377", country: "Monaco" }, { code: "+976", country: "Mongolia" },
-  { code: "+382", country: "Montenegro" }, { code: "+212", country: "Morocco" }, { code: "+258", country: "Mozambique" },
-  { code: "+95", country: "Myanmar" }, { code: "+264", country: "Namibia" }, { code: "+977", country: "Nepal" },
-  { code: "+31", country: "Netherlands" }, { code: "+64", country: "New Zealand" }, { code: "+505", country: "Nicaragua" },
-  { code: "+227", country: "Niger" }, { code: "+234", country: "Nigeria" }, { code: "+47", country: "Norway" },
-  { code: "+968", country: "Oman" }, { code: "+92", country: "Pakistan" }, { code: "+507", country: "Panama" },
-  { code: "+675", country: "Papua New Guinea" }, { code: "+595", country: "Paraguay" }, { code: "+51", country: "Peru" },
-  { code: "+63", country: "Philippines" }, { code: "+48", country: "Poland" }, { code: "+351", country: "Portugal" },
-  { code: "+974", country: "Qatar" }, { code: "+40", country: "Romania" }, { code: "+7", country: "Russia" },
-  { code: "+250", country: "Rwanda" }, { code: "+966", country: "Saudi Arabia" }, { code: "+221", country: "Senegal" },
-  { code: "+381", country: "Serbia" }, { code: "+248", country: "Seychelles" }, { code: "+232", country: "Sierra Leone" },
-  { code: "+65", country: "Singapore" }, { code: "+421", country: "Slovakia" }, { code: "+386", country: "Slovenia" },
-  { code: "+677", country: "Solomon Islands" }, { code: "+252", country: "Somalia" }, { code: "+27", country: "South Africa" },
-  { code: "+82", country: "South Korea" }, { code: "+211", country: "South Sudan" }, { code: "+34", country: "Spain" },
-  { code: "+94", country: "Sri Lanka" }, { code: "+249", country: "Sudan" }, { code: "+597", country: "Suriname" },
-  { code: "+268", country: "Swaziland" }, { code: "+46", country: "Sweden" }, { code: "+41", country: "Switzerland" },
-  { code: "+963", country: "Syria" }, { code: "+886", country: "Taiwan" }, { code: "+992", country: "Tajikistan" },
-  { code: "+255", country: "Tanzania" }, { code: "+66", country: "Thailand" }, { code: "+228", country: "Togo" },
-  { code: "+216", country: "Tunisia" }, { code: "+90", country: "Turkey" }, { code: "+993", country: "Turkmenistan" },
-  { code: "+256", country: "Uganda" }, { code: "+380", country: "Ukraine" }, { code: "+971", country: "United Arab Emirates" },
-  { code: "+44", country: "United Kingdom" }, { code: "+1", country: "United States" }, { code: "+598", country: "Uruguay" },
-  { code: "+998", country: "Uzbekistan" }, { code: "+678", country: "Vanuatu" }, { code: "+58", country: "Venezuela" },
-  { code: "+84", country: "Vietnam" }, { code: "+967", country: "Yemen" }, { code: "+260", country: "Zambia" },
-  { code: "+263", country: "Zimbabwe" }
+  { code: "+93", country: "Afghanistan", length: 9 },
+  { code: "+355", country: "Albania", length: 9 },
+  { code: "+213", country: "Algeria", length: 9 },
+  { code: "+376", country: "Andorra", length: 6 },
+  { code: "+244", country: "Angola", length: 9 },
+  { code: "+54", country: "Argentina", length: 10 },
+  { code: "+374", country: "Armenia", length: 8 },
+  { code: "+61", country: "Australia", length: 9 },
+  { code: "+43", country: "Austria", length: 10 },
+  { code: "+994", country: "Azerbaijan", length: 9 },
+  { code: "+973", country: "Bahrain", length: 8 },
+  { code: "+880", country: "Bangladesh", length: 10 },
+  { code: "+375", country: "Belarus", length: 9 },
+  { code: "+32", country: "Belgium", length: 9 },
+  { code: "+501", country: "Belize", length: 7 },
+  { code: "+229", country: "Benin", length: 8 },
+  { code: "+975", country: "Bhutan", length: 8 },
+  { code: "+591", country: "Bolivia", length: 8 },
+  { code: "+387", country: "Bosnia and Herzegovina", length: 8 },
+  { code: "+267", country: "Botswana", length: 8 },
+  { code: "+55", country: "Brazil", length: 11 },
+  { code: "+673", country: "Brunei", length: 7 },
+  { code: "+359", country: "Bulgaria", length: 9 },
+  { code: "+226", country: "Burkina Faso", length: 8 },
+  { code: "+257", country: "Burundi", length: 8 },
+  { code: "+855", country: "Cambodia", length: 9 },
+  { code: "+237", country: "Cameroon", length: 9 },
+  { code: "+1", country: "Canada", length: 10 },
+  { code: "+238", country: "Cape Verde", length: 7 },
+  { code: "+236", country: "Central African Republic", length: 8 },
+  { code: "+235", country: "Chad", length: 8 },
+  { code: "+56", country: "Chile", length: 9 },
+  { code: "+86", country: "China", length: 11 },
+  { code: "+57", country: "Colombia", length: 10 },
+  { code: "+269", country: "Comoros", length: 7 },
+  { code: "+242", country: "Congo", length: 9 },
+  { code: "+506", country: "Costa Rica", length: 8 },
+  { code: "+385", country: "Croatia", length: 9 },
+  { code: "+53", country: "Cuba", length: 8 },
+  { code: "+357", country: "Cyprus", length: 8 },
+  { code: "+420", country: "Czech Republic", length: 9 },
+  { code: "+45", country: "Denmark", length: 8 },
+  { code: "+253", country: "Djibouti", length: 8 },
+  { code: "+593", country: "Ecuador", length: 9 },
+  { code: "+20", country: "Egypt", length: 10 },
+  { code: "+503", country: "El Salvador", length: 8 },
+  { code: "+240", country: "Equatorial Guinea", length: 9 },
+  { code: "+291", country: "Eritrea", length: 7 },
+  { code: "+372", country: "Estonia", length: 8 },
+  { code: "+251", country: "Ethiopia", length: 9 },
+  { code: "+679", country: "Fiji", length: 7 },
+  { code: "+358", country: "Finland", length: 10 },
+  { code: "+33", country: "France", length: 9 },
+  { code: "+241", country: "Gabon", length: 7 },
+  { code: "+220", country: "Gambia", length: 7 },
+  { code: "+995", country: "Georgia", length: 9 },
+  { code: "+49", country: "Germany", length: 10 },
+  { code: "+233", country: "Ghana", length: 9 },
+  { code: "+30", country: "Greece", length: 10 },
+  { code: "+502", country: "Guatemala", length: 8 },
+  { code: "+224", country: "Guinea", length: 9 },
+  { code: "+245", country: "Guinea-Bissau", length: 7 },
+  { code: "+592", country: "Guyana", length: 7 },
+  { code: "+509", country: "Haiti", length: 8 },
+  { code: "+504", country: "Honduras", length: 8 },
+  { code: "+852", country: "Hong Kong", length: 8 },
+  { code: "+36", country: "Hungary", length: 9 },
+  { code: "+354", country: "Iceland", length: 7 },
+  { code: "+91", country: "India", length: 10 },
+  { code: "+62", country: "Indonesia", length: 10 },
+  { code: "+98", country: "Iran", length: 10 },
+  { code: "+964", country: "Iraq", length: 10 },
+  { code: "+353", country: "Ireland", length: 9 },
+  { code: "+972", country: "Israel", length: 9 },
+  { code: "+39", country: "Italy", length: 10 },
+  { code: "+225", country: "Ivory Coast", length: 8 },
+  { code: "+81", country: "Japan", length: 10 },
+  { code: "+962", country: "Jordan", length: 9 },
+  { code: "+7", country: "Kazakhstan", length: 10 },
+  { code: "+254", country: "Kenya", length: 10 },
+  { code: "+965", country: "Kuwait", length: 8 },
+  { code: "+996", country: "Kyrgyzstan", length: 9 },
+  { code: "+856", country: "Laos", length: 9 },
+  { code: "+371", country: "Latvia", length: 8 },
+  { code: "+961", country: "Lebanon", length: 8 },
+  { code: "+266", country: "Lesotho", length: 8 },
+  { code: "+231", country: "Liberia", length: 7 },
+  { code: "+218", country: "Libya", length: 10 },
+  { code: "+423", country: "Liechtenstein", length: 7 },
+  { code: "+370", country: "Lithuania", length: 8 },
+  { code: "+352", country: "Luxembourg", length: 9 },
+  { code: "+853", country: "Macau", length: 8 },
+  { code: "+389", country: "Macedonia", length: 8 },
+  { code: "+261", country: "Madagascar", length: 9 },
+  { code: "+265", country: "Malawi", length: 9 },
+  { code: "+60", country: "Malaysia", length: 9 },
+  { code: "+960", country: "Maldives", length: 7 },
+  { code: "+223", country: "Mali", length: 8 },
+  { code: "+356", country: "Malta", length: 8 },
+  { code: "+222", country: "Mauritania", length: 8 },
+  { code: "+230", country: "Mauritius", length: 8 },
+  { code: "+52", country: "Mexico", length: 10 },
+  { code: "+373", country: "Moldova", length: 8 },
+  { code: "+377", country: "Monaco", length: 8 },
+  { code: "+976", country: "Mongolia", length: 8 },
+  { code: "+382", country: "Montenegro", length: 8 },
+  { code: "+212", country: "Morocco", length: 9 },
+  { code: "+258", country: "Mozambique", length: 9 },
+  { code: "+95", country: "Myanmar", length: 9 },
+  { code: "+264", country: "Namibia", length: 9 },
+  { code: "+977", country: "Nepal", length: 10 },
+  { code: "+31", country: "Netherlands", length: 9 },
+  { code: "+64", country: "New Zealand", length: 9 },
+  { code: "+505", country: "Nicaragua", length: 8 },
+  { code: "+227", country: "Niger", length: 8 },
+  { code: "+234", country: "Nigeria", length: 10 },
+  { code: "+47", country: "Norway", length: 8 },
+  { code: "+968", country: "Oman", length: 8 },
+  { code: "+92", country: "Pakistan", length: 10 },
+  { code: "+507", country: "Panama", length: 8 },
+  { code: "+675", country: "Papua New Guinea", length: 8 },
+  { code: "+595", country: "Paraguay", length: 9 },
+  { code: "+51", country: "Peru", length: 9 },
+  { code: "+63", country: "Philippines", length: 10 },
+  { code: "+48", country: "Poland", length: 9 },
+  { code: "+351", country: "Portugal", length: 9 },
+  { code: "+974", country: "Qatar", length: 8 },
+  { code: "+40", country: "Romania", length: 10 },
+  { code: "+7", country: "Russia", length: 10 },
+  { code: "+250", country: "Rwanda", length: 9 },
+  { code: "+966", country: "Saudi Arabia", length: 9 },
+  { code: "+221", country: "Senegal", length: 9 },
+  { code: "+381", country: "Serbia", length: 9 },
+  { code: "+248", country: "Seychelles", length: 7 },
+  { code: "+232", country: "Sierra Leone", length: 8 },
+  { code: "+65", country: "Singapore", length: 8 },
+  { code: "+421", country: "Slovakia", length: 9 },
+  { code: "+386", country: "Slovenia", length: 9 },
+  { code: "+677", country: "Solomon Islands", length: 7 },
+  { code: "+252", country: "Somalia", length: 8 },
+  { code: "+27", country: "South Africa", length: 9 },
+  { code: "+82", country: "South Korea", length: 10 },
+  { code: "+211", country: "South Sudan", length: 9 },
+  { code: "+34", country: "Spain", length: 9 },
+  { code: "+94", country: "Sri Lanka", length: 9 },
+  { code: "+249", country: "Sudan", length: 9 },
+  { code: "+597", country: "Suriname", length: 7 },
+  { code: "+268", country: "Swaziland", length: 8 },
+  { code: "+46", country: "Sweden", length: 9 },
+  { code: "+41", country: "Switzerland", length: 9 },
+  { code: "+963", country: "Syria", length: 9 },
+  { code: "+886", country: "Taiwan", length: 9 },
+  { code: "+992", country: "Tajikistan", length: 9 },
+  { code: "+255", country: "Tanzania", length: 9 },
+  { code: "+66", country: "Thailand", length: 9 },
+  { code: "+228", country: "Togo", length: 8 },
+  { code: "+216", country: "Tunisia", length: 8 },
+  { code: "+90", country: "Turkey", length: 10 },
+  { code: "+993", country: "Turkmenistan", length: 8 },
+  { code: "+256", country: "Uganda", length: 9 },
+  { code: "+380", country: "Ukraine", length: 9 },
+  { code: "+971", country: "United Arab Emirates", length: 9 },
+  { code: "+44", country: "United Kingdom", length: 10 },
+  { code: "+1", country: "United States", length: 10 },
+  { code: "+598", country: "Uruguay", length: 8 },
+  { code: "+998", country: "Uzbekistan", length: 9 },
+  { code: "+678", country: "Vanuatu", length: 7 },
+  { code: "+58", country: "Venezuela", length: 10 },
+  { code: "+84", country: "Vietnam", length: 9 },
+  { code: "+967", country: "Yemen", length: 9 },
+  { code: "+260", country: "Zambia", length: 9 },
+  { code: "+263", country: "Zimbabwe", length: 9 }
 ];
 
 const GlobalContactForm = () => {
@@ -87,12 +201,15 @@ const GlobalContactForm = () => {
 
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-    if (value.length <= 10) {
+    const selectedCountry = countryCodes.find(c => c.code === countryCode);
+    const maxLength = selectedCountry?.length || 10;
+    
+    if (value.length <= maxLength) {
       setFormData({ ...formData, mobileNumber: value });
       
-      if (value.length > 0 && value.length < 10) {
-        setMobileError('Mobile number must be exactly 10 digits');
-      } else if (value.length === 10) {
+      if (value.length > 0 && value.length < maxLength) {
+        setMobileError(`Mobile number must be exactly ${maxLength} digits for ${selectedCountry?.country}`);
+      } else if (value.length === maxLength) {
         setMobileError('');
       } else {
         setMobileError('');
@@ -103,9 +220,13 @@ const GlobalContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate mobile number
-    if (!/^[0-9]{10}$/.test(formData.mobileNumber)) {
-      setMobileError('Mobile number must be exactly 10 digits');
+    // Validate mobile number based on selected country
+    const selectedCountry = countryCodes.find(c => c.code === countryCode);
+    const requiredLength = selectedCountry?.length || 10;
+    const phoneRegex = new RegExp(`^[0-9]{${requiredLength}}$`);
+    
+    if (!phoneRegex.test(formData.mobileNumber)) {
+      setMobileError(`Mobile number must be exactly ${requiredLength} digits for ${selectedCountry?.country}`);
       return;
     }
     
@@ -332,7 +453,11 @@ const GlobalContactForm = () => {
                       <div className="flex gap-2">
                         <select
                           value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
+                          onChange={(e) => {
+                            setCountryCode(e.target.value);
+                            setFormData({ ...formData, mobileNumber: '' });
+                            setMobileError('');
+                          }}
                           className="w-20 px-2 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm"
                         >
                           {countryCodes.map((item) => (
@@ -350,8 +475,8 @@ const GlobalContactForm = () => {
                             value={formData.mobileNumber}
                             onChange={handlePhoneChange}
                             className={`w-full pl-10 pr-3 border ${mobileError ? 'border-red-500' : 'border-gray-300'} rounded-xl py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
-                            placeholder="Enter 10 digit number"
-                            maxLength={10}
+                            placeholder={`Enter ${countryCodes.find(c => c.code === countryCode)?.length || 10} digit number`}
+                            maxLength={countryCodes.find(c => c.code === countryCode)?.length || 10}
                           />
                         </div>
                       </div>
