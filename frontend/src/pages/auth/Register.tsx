@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, Eye, EyeOff, UserPlus, ArrowLeft, Shield, GraduationCap } from 'lucide-react';
+import { BookOpen, Eye, EyeOff, UserPlus, ArrowLeft, Shield, GraduationCap, Star, Rocket } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import ScrollToTop from '../ScrollToTop';
+
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -26,7 +28,6 @@ const Register: React.FC = () => {
     setLoading(true);
     setError('');
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -43,271 +44,425 @@ const Register: React.FC = () => {
     }
   };
 
+  // Company logo component with iOS-inspired design
+  const CompanyLogo = () => (
+    <motion.div
+      initial={{ scale: 0, rotate: -180 }}
+      animate={{ scale: 1, rotate: 0 }}
+      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      className="relative p-2 bg-white/80 backdrop-blur-md rounded-2xl shadow-sm"
+    >
+      <div className="flex items-center justify-center space-x-2">
+        <div className="flex flex-col items-center">
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+          </div>
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-700 rounded-full"></div>
+          </div>
+        </div>
+        <span className="font-bold text-2xl text-gray-900">RAAS</span>
+      </div>
+    </motion.div>
+  );
+
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 relative overflow-hidden">
+      {/* Subtle iOS-style gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-100"></div>
+
+      {/* Animated particles for iOS-like sparkle effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-blue-300/30"
+            style={{
+              width: Math.random() * 6 + 3,
+              height: Math.random() * 6 + 3,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: Math.random() * 4 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
       <Navbar />
       <ScrollToTop />
-    <div className="min-h-screen flex">
-      {/* Left side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white">
-        <div className="mx-auto w-full max-w-md lg:max-w-lg">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 mb-8 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to home
-          </Link>
-          
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center p-3 bg-indigo-100 rounded-2xl shadow-sm mb-6">
-              <BookOpen className="h-8 w-8 text-indigo-600" />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900">
-              Join RASS Academy
-            </h2>
-            <p className="mt-2 text-lg text-gray-600">
-              Create your account and start learning today
-            </p>
-          </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm">{error}</p>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-4">
+      <div className="min-h-screen flex items-center justify-center px-4 py-12 relative z-10">
+        <div className="w-full max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            {/* Left Side - Register Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-lg p-8 lg:p-12 flex flex-col justify-between"
+            >
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                  placeholder="Enter your full name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
+                <Link
+                  to="/"
+                  className="inline-flex items-center text-sm text-gray-600 hover:text-blue-600 mb-8 transition group"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                  Back to home
+                </Link>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors pr-12"
-                    placeholder="Create a password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
+                <div className="text-center mb-10">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="inline-block mb-6"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Must be at least 8 characters
-                </p>
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors pr-12"
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    <CompanyLogo />
+                  </motion.div>
+                  <motion.h2
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-4xl font-bold text-gray-900"
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
+                    Join RASS Academy
+                  </motion.h2>
+                  <motion.p
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-lg text-gray-500"
+                  >
+                    Create your account and start learning today
+                  </motion.p>
                 </div>
-              </div>
 
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                  I want to join as a
-                </label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  <div>
-                    <input
-                      type="radio"
-                      id="student"
-                      name="role"
-                      value="student"
-                      checked={formData.role === 'student'}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="sr-only"
-                    />
-                    <label
-                      htmlFor="student"
-                      className={`flex flex-row items-center justify-center p-3 border rounded-lg cursor-pointer transition-colors ${
-                        formData.role === 'student'
-                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                          : 'border-gray-300 text-gray-700 hover:border-indigo-300'
-                      }`}
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm"
                     >
-                      <GraduationCap className="h-5 w-5 mb-2" />
-                      <span className="text-center">Student</span>
+                      {error}
+                    </motion.div>
+                  )}
+
+                  {/* Name Field */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name
                     </label>
-                  </div>
+                    <div className="relative">
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        required
+                        placeholder="Enter your full name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white/50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Email Field */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white/50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Password Field */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Create a password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white/50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 pr-12"
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-blue-600 transition-colors"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <motion.div whileTap={{ scale: 0.9 }}>
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </motion.div>
+                      </button>
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Must be at least 8 characters
+                    </p>
+                  </motion.div>
+
+                  {/* Confirm Password Field */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white/50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 pr-12"
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-blue-600 transition-colors"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        <motion.div whileTap={{ scale: 0.9 }}>
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </motion.div>
+                      </button>
+                    </div>
+                  </motion.div>
+
+                  {/* Role Selection */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      I want to join as a
+                    </label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      <div>
+                        <input
+                          type="radio"
+                          id="student"
+                          name="role"
+                          value="student"
+                          checked={formData.role === 'student'}
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                          className="sr-only"
+                        />
+                        <label
+                          htmlFor="student"
+                          className={`flex flex-row items-center justify-center p-3 border rounded-xl cursor-pointer transition-colors ${
+                            formData.role === 'student'
+                              ? 'border-blue-400 bg-blue-50 text-blue-700'
+                              : 'border-gray-200 text-gray-700 hover:border-blue-200'
+                          }`}
+                        >
+                          <GraduationCap className="h-5 w-5 mb-2" />
+                          <span className="text-center">Student</span>
+                        </label>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Terms Checkbox */}
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.9 }}
+                    className="flex items-center"
+                  >
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      required
+                      className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-200 rounded"
+                    />
+                    <label htmlFor="terms" className="ml-2 block text-sm text-gray-600">
+                      I agree to the{' '}
+                      <Link to="/terms" className="text-blue-500 hover:text-blue-700 hover:underline transition-colors">
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link to="/privacy" className="text-blue-500 hover:text-blue-700 hover:underline transition-colors">
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </motion.div>
+
+                  {/* Submit Button */}
+                  <motion.button
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 1.0 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 px-6 rounded-xl font-semibold text-white bg-blue-500 shadow-md hover:bg-blue-600 transition-all duration-300 disabled:opacity-50"
+                  >
+                    <div className="flex items-center justify-center">
+                      {loading ? (
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                        />
+                      ) : (
+                        <>
+                          <UserPlus className="h-5 w-5 mr-2" />
+                          Create Account
+                        </>
+                      )}
+                    </div>
+                  </motion.button>
+
+                  {/* Login Link */}
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 1.1 }}
+                    className="text-center text-sm text-gray-600"
+                  >
+                    Already have an account?{' '}
+                    <Link
+                      to="/login"
+                      className="font-semibold text-blue-500 hover:text-blue-700 hover:underline transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                  </motion.div>
+                </form>
+              </div>
+            </motion.div>
+
+            {/* Right Side - Features */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="hidden lg:flex relative bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-200/50 shadow-lg p-8 lg:p-12 flex-col justify-between"
+            >
+              <div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center mb-10"
+                >
+                  <CompanyLogo />
+                  <motion.h3
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-4xl font-bold text-gray-900 mt-6"
+                  >
+                    Why Choose RAAS?
+                  </motion.h3>
+                  <motion.p
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-lg text-gray-500"
+                  >
+                    Empowering your learning with cutting-edge tools
+                  </motion.p>
+                </motion.div>
+
+                <div className="space-y-4">
+                  {[
+                    { icon: Rocket, color: "blue", title: "200+ Courses", desc: "From beginner to advanced levels" },
+                    { icon: Shield, color: "blue", title: "Expert Instructors", desc: "Learn from industry professionals" },
+                    { icon: GraduationCap, color: "blue", title: "Certificates", desc: "Earn recognized credentials" },
+                    { icon: Star, color: "blue", title: "Community Support", desc: "Join a vibrant learning community" },
+                  ].map((feature, index) => (
+                    <motion.div
+                      key={feature.title}
+                      initial={{ x: 40, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.5 + index * 0.1 }}
+                      whileHover={{ scale: 1.02 }}
+                      className="bg-white/50 p-4 rounded-xl border border-gray-200/50 hover:border-blue-200 transition-all duration-300"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`flex-shrink-0 bg-${feature.color}-100 rounded-xl p-2`}>
+                          <feature.icon className={`h-6 w-6 text-${feature.color}-500`} />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{feature.title}</h4>
+                          <p className="text-sm text-gray-500">{feature.desc}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                required
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-600">
-                I agree to the{' '}
-                <Link to="/terms" className="text-indigo-600 hover:text-indigo-500">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="text-indigo-600 hover:text-indigo-500">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              {/* Trust Badge */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="flex items-center justify-center space-x-2 mt-8 pt-6 border-t border-gray-200/50"
               >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Creating account...
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="h-5 w-5 mr-2" />
-                    Create account
-                  </>
-                )}
-              </button>
-            </div>
-
-            <div className="text-center pt-4">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                  Sign in here
-                </Link>
-              </p>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* Right side - Illustration */}
-      <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center lg:bg-gradient-to-br lg:from-indigo-50 lg:to-indigo-100 lg:p-12">
-        <div className="max-w-md text-center">
-          <div className="p-6 bg-white rounded-2xl shadow-lg inline-block mb-8">
-            <BookOpen className="h-16 w-16 text-indigo-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">Start Your Learning Journey</h3>
-          <p className="text-lg text-gray-600 mb-6">
-            Join thousands of students and instructors who are advancing their skills with RASS Academy.
-          </p>
-          <div className="space-y-4 text-left">
-            <div className="flex items-start">
-              <div className="bg-indigo-100 p-2 rounded-lg mr-4">
-                <GraduationCap className="h-5 w-5 text-indigo-600" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900">200+ Courses</h4>
-                <p className="text-sm text-gray-600">From beginner to advanced levels</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="bg-indigo-100 p-2 rounded-lg mr-4">
-                <Shield className="h-5 w-5 text-indigo-600" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900">Expert Instructors</h4>
-                <p className="text-sm text-gray-600">Learn from industry professionals</p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="bg-indigo-100 p-2 rounded-lg mr-4">
-                <BookOpen className="h-5 w-5 text-indigo-600" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900">Certificates</h4>
-                <p className="text-sm text-gray-600">Earn recognized credentials</p>
-              </div>
-            </div>
+                <div className="flex space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-blue-400 fill-current" />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">Rated 4.9/5 by 10,000+ learners</span>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
-    <Footer />
     </div>
   );
 };
