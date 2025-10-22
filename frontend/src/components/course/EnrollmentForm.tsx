@@ -90,7 +90,7 @@ const EnrollmentForm: React.FC<EnrollmentFormProps> = ({ course, onSubmit, onCan
       const submissionData = {
         courseId: course._id,
         ...formData,
-        mobileNumber: `${formData.countryCode}${formData.mobileNumber}`
+        mobileNumber: `${formData.countryCode} ${formData.mobileNumber}`
       };
       await onSubmit(submissionData);
     } catch (error) {

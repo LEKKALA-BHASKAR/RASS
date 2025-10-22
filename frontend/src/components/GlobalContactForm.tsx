@@ -235,7 +235,7 @@ const GlobalContactForm = () => {
     try {
       const submissionData = {
         ...formData,
-        mobileNumber: `${countryCode}${formData.mobileNumber}`
+        mobileNumber: `${countryCode} ${formData.mobileNumber}`
       };
       
       const response = await fetch("https://rass-2.onrender.com/send-mail", {

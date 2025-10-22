@@ -101,7 +101,7 @@ const CompanyPartnershipForm: React.FC = () => {
     try {
       const submissionData = {
         ...formData,
-        mobile: `${formData.countryCode}${formData.mobile}`
+        mobile: `${formData.countryCode} ${formData.mobile}`
       };
       delete submissionData.countryCode;
       

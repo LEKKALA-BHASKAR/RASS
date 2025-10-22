@@ -212,7 +212,7 @@ export default function EventDetailPage() {
       const registrationData = {
         name: registrationForm.name,
         email: registrationForm.email,
-        phone: registrationForm.phone ? `${registrationForm.countryCode}${registrationForm.phone}` : '',
+        phone: registrationForm.phone ? `${registrationForm.countryCode} ${registrationForm.phone}` : '',
         ...(paymentData && { paymentId: paymentData.razorpay_payment_id })
       };
 

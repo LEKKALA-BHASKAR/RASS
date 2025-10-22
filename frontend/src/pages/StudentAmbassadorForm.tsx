@@ -146,7 +146,7 @@ const CampusPartnerForm: React.FC = () => {
       // Combine country code with phone number before submission
       const submissionData = {
         ...formData,
-        phone: `${formData.countryCode}${formData.phone}`
+        phone: `${formData.countryCode} ${formData.phone}`
       };
 
       const response = await fetch("https://rass-h2s1.onrender.com/api/student-ambassador-form", {

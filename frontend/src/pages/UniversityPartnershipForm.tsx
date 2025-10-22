@@ -100,7 +100,7 @@ const UniversityPartnershipForm: React.FC = () => {
     try {
       const submissionData = {
         ...formData,
-        phone: `${formData.countryCode}${formData.phone}`
+        phone: `${formData.countryCode} ${formData.phone}`
       };
       delete submissionData.countryCode;
       

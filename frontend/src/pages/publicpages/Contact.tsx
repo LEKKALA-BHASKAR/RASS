@@ -70,7 +70,7 @@ const ContactUs = () => {
     try {
       const submissionData = {
         ...formData,
-        mobileNumber: `${formData.countryCode}${formData.mobileNumber}`
+        mobileNumber: `${formData.countryCode} ${formData.mobileNumber}`
       };
       delete submissionData.countryCode;
       
