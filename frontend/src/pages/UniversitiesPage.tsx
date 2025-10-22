@@ -318,7 +318,7 @@ const UniversitiesPage: React.FC = () => {
                   Bridging the Gap Between Classroom and Career
                 </h2>
                 <p className="text-xl text-gray-600 mb-8">
-                  Our university partnerships help students apply academic knowledge to real-world challenges through certifications, projects, and placement-oriented training—without adding burden to faculty or existing syllabi.
+                  Our university partnerships help students apply academic knowledge to real-world challenges through certifications, projects, and placement-oriented training-without adding burden to faculty or existing syllabi.
                 </p>
               </div>
               
@@ -440,55 +440,7 @@ const UniversitiesPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Success Stories Section */}
-      <section className="py-20 bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-4">
-              <Star className="h-4 w-4" />
-              Success Stories
-            </div>
-            <h2 className="text-4xl font-bold mb-4">
-              Transforming Education into Career Success
-            </h2>
-            <p className="text-xl text-indigo-100 max-w-3xl mx-auto">
-              Hear from our university partners about their experience
-            </p>
-          </motion.div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
-              >
-                <Quote className="h-10 w-10 text-yellow-400 mb-6" />
-                <p className="text-lg mb-6 italic">"{testimonial.content}"</p>
-                <div className="flex items-center gap-4">
-                  <img
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white/30"
-                  />
-                  <div>
-                    <h4 className="font-bold">{testimonial.name}</h4>
-                    <p className="text-indigo-200 text-sm">{testimonial.position}</p>
-                    <p className="text-indigo-300 text-sm">{testimonial.university}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Final CTA Section */}
       <section className="relative py-24 bg-gradient-to-br from-indigo-900 to-purple-900 text-white overflow-hidden">
