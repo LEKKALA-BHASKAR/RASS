@@ -190,8 +190,8 @@ const CoursePlayer: React.FC = () => {
             </div>
 
             {/* Controls */}
-            <div className="bg-white border px-6 py-4 flex items-center justify-between rounded-lg shadow-sm">
-              <div>
+            <div className="bg-white border px-6 py-4 rounded-lg shadow-sm">
+              <div className="mb-4">
                 <h3 className="text-lg font-bold text-gray-900">
                   {currentModuleData?.title}
                 </h3>
@@ -199,34 +199,34 @@ const CoursePlayer: React.FC = () => {
                   {currentModuleData?.description}
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
-                {!isCurrentModuleCompleted && (
-                  <button
-                    onClick={() =>
-                      handleModuleComplete(currentModuleData._id)
-                    }
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center shadow hover:bg-indigo-700 transition"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Mark Complete
-                  </button>
-                )}
-                <div className="flex space-x-2">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
                   <button
                     disabled={currentModule === 0}
                     onClick={() => setCurrentModule(currentModule - 1)}
-                    className="px-4 py-2 rounded-lg border text-sm disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[100px]"
                   >
                     Previous
                   </button>
                   <button
                     disabled={currentModule === course.modules.length - 1}
                     onClick={() => setCurrentModule(currentModule + 1)}
-                    className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm disabled:opacity-50 hover:bg-indigo-700 transition"
+                    className="px-5 py-2.5 rounded-lg border border-indigo-600 bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[100px]"
                   >
                     Next
                   </button>
                 </div>
+                {!isCurrentModuleCompleted && (
+                  <button
+                    onClick={() =>
+                      handleModuleComplete(currentModuleData._id)
+                    }
+                    className="px-5 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium flex items-center gap-2 hover:bg-green-700 transition-colors min-w-[160px] justify-center"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    Mark Complete
+                  </button>
+                )}
               </div>
             </div>
 
