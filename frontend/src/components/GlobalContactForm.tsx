@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, User, Send, CheckCircle, X, MessageCircle } from "lucide-react";
 import { useContact } from "./ContactContext";
@@ -14,6 +14,8 @@ const GlobalContactForm = () => {
     isSubmitted,
     setIsSubmitted,
   } = useContact();
+  
+  const [showOptions, setShowOptions] = useState(false);
 
   // Generic input handler
   const handleChange = (e) => {
@@ -52,23 +54,101 @@ const GlobalContactForm = () => {
     setFormData({ name: "", email: "", mobileNumber: "" });
     setIsSubmitted(false);
   };
+  
+  const handleWhatsAppClick = () => {
+    window.open('https://wa.me/919063194887', '_blank');
+    setShowOptions(false);
+  };
+  
+  const handleEmailClick = () => {
+    setShowOptions(false);
+    setIsContactFormOpen(true);
+  };
 
   return (
     <>
       {/* Trigger Button */}
       <AnimatePresence>
-        {!isContactFormOpen && (
+        {!isContactFormOpen && !showOptions && (
           <motion.button
             initial={{ opacity: 0, scale: 0, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0, y: 100 }}
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => setIsContactFormOpen(true)}
+            onClick={() => setShowOptions(true)}
             className="fixed bottom-8 right-8 z-[9999] w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-2xl flex items-center justify-center"
           >
             <MessageCircle className="w-7 h-7 text-white" />
           </motion.button>
+        )}
+      </AnimatePresence>
+      
+      {/* Options Menu */}
+      <AnimatePresence>
+        {showOptions && !isContactFormOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowOptions(false)}
+              className="fixed inset-0 z-[9998]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              className="fixed bottom-28 right-8 z-[9999] bg-white rounded-2xl shadow-2xl overflow-hidden w-64"
+            >
+              <div className="p-2">
+                {/* WhatsApp Option */}
+                <motion.button
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleWhatsAppClick}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-green-50 transition-colors group"
+                >
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center group-hover:bg-green-600 transition-colors overflow-hidden flex-shrink-0">
+                    <img src="/whatsapp.jpg" alt="WhatsApp" className="w-16 h-16 object-cover" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-gray-900">WhatsApp</p>
+                    <p className="text-xs text-gray-600">Chat with us instantly</p>
+                  </div>
+                </motion.button>
+                
+                {/* Email Option */}
+                <motion.button
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleEmailClick}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-indigo-50 transition-colors group"
+                >
+                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center group-hover:bg-indigo-200 transition-colors flex-shrink-0">
+                    <Mail className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-gray-900">Email</p>
+                    <p className="text-xs text-gray-600">Get course details</p>
+                  </div>
+                </motion.button>
+              </div>
+            </motion.div>
+            
+            {/* Close Button */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0, y: 100 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0, y: 100 }}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowOptions(false)}
+              className="fixed bottom-8 right-8 z-[9999] w-16 h-16 bg-gray-800 rounded-full shadow-2xl flex items-center justify-center"
+            >
+              <X className="w-7 h-7 text-white" />
+            </motion.button>
+          </>
         )}
       </AnimatePresence>
 

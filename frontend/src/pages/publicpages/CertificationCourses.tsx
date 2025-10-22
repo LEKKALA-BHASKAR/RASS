@@ -69,7 +69,7 @@ const CertificationCourses: React.FC = () => {
     {
       id: 4,
       title: "Central Learning Hub",
-      description: "Navigate your entire learning journey from lessons to peer collaboration—on one intuitive, state-of-the-art platform.",
+      description: "Navigate your entire learning journey from lessons to peer collaboration on one intuitive, state-of-the-art platform.",
       icon: <BookOpen className="w-6 h-6" />,
       color: "from-orange-500 to-red-400"
     },

@@ -148,7 +148,7 @@ const MediaPresenceSection: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-4xl font-bold mb-4"
           >
-            Our <span className="text-emerald-600">media</span> presence
+            Our <span className="text-blue-700">media</span> Highlights
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -156,7 +156,7 @@ const MediaPresenceSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-gray-600 text-lg"
           >
-            We make careers... and headlines
+            Featured in leading publications for transforming education and careers
           </motion.p>
         </div>
 

@@ -92,7 +92,7 @@ const SkillInsightsDashboard = () => {
       source: "https://manpowergroup.co.in/talent-shortage/talent-shortage-files/MPG-Talent-Shortage-2025-Findings.pdf",
       image: "/images/Home/talentshortage.png", // Added image
       highlights: [
-        "80% of Indian employers struggle to find skilled talent in 2025—a 25% rise since 2014.",
+        "80% of Indian employers struggle to find skilled talent in 2025 a 25% rise since 2014.",
         "Talent shortage spans all company sizes, peaking at 85% among firms with under 10 employees.",
         "India tops the world in demand for IT and data skills.",
         "All Indian regions face severe talent shortages, ranging from 77%"
