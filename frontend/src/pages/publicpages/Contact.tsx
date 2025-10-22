@@ -206,7 +206,7 @@ const ContactUs = () => {
                 </a>
 
                 <a 
-                  href="https://wa.me/919063194887" 
+                  href="https://api.whatsapp.com/send?phone=919063194887" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-start group hover:bg-green-50 p-3 rounded-lg transition-all duration-300"
@@ -287,7 +287,7 @@ const ContactUs = () => {
                   Call Now
                 </a>
                 <a 
-                  href="https://wa.me/919063194887"
+                  href="https://api.whatsapp.com/send?phone=919063194887"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 bg-green-500 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-600 transition-all duration-300 flex items-center justify-center"

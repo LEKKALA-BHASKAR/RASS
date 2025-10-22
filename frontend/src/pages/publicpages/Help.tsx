@@ -120,7 +120,7 @@ const HelpCenter = () => {
       color: 'bg-green-500',
       onClick: () => {
         // WhatsApp link for the support number
-        window.open('https://wa.me/919063194887', '_blank');
+        window.open('https://api.whatsapp.com/send?phone=919063194887', '_blank');
       }
     },
     {
