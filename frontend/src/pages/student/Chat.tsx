@@ -28,7 +28,7 @@ interface Mentor {
 }
 
 interface ChatProps {
-  courseId?: string;   // optional - filters to specific course
+  courseId?: string;   //onal - filters to specific course
   embedded?: boolean;  // hide navbar/footer if true
 }
 
@@ -41,13 +41,19 @@ const Chat: React.FC<ChatProps> = ({ courseId, embedded = false }) => {
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [courseChats, setCourseChats] = useState<Record<string, ChatMessage[]>>({});
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo({ top: 0, behavior: 'auto' });
     fetchMentorsAndChats();
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    // Only scroll to bottom of messages after initial load
+    if (!isInitialLoad) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   const fetchMentorsAndChats = async () => {
@@ -84,6 +90,8 @@ const Chat: React.FC<ChatProps> = ({ courseId, embedded = false }) => {
       }
 
       setCourseChats(chatMap);
+      // Set flag after initial data load
+      setTimeout(() => setIsInitialLoad(false), 500);
     } catch (error) {
       console.error("Error fetching mentors/chats:", error);
     } finally {

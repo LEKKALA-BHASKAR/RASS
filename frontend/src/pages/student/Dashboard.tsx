@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   enrollmentAPI,
@@ -31,11 +31,17 @@ import Navbar from "../../components/layout/Navbar";
 
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [statsOpen, setStatsOpen] = useState(true);
+
+  const handleNavigate = (path: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(path);
+  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -121,7 +127,7 @@ const StudentDashboard: React.FC = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent pb-3 leading-tight">
             Your Learning Dashboard
           </h1>
 
@@ -178,13 +184,13 @@ const StudentDashboard: React.FC = () => {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Link
-                    to={item.path}
-                    className={`block p-4 bg-gradient-to-br ${colorClasses} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center`}
+                  <button
+                    onClick={() => handleNavigate(item.path)}
+                    className={`block w-full p-4 bg-gradient-to-br ${colorClasses} text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center`}
                   >
                     <Icon className="h-6 w-6 mb-2 mx-auto" />
                     <span className="text-xs font-semibold">{item.name}</span>
-                  </Link>
+                  </button>
                 </motion.div>
               );
             })}

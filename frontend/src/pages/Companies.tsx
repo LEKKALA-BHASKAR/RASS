@@ -370,7 +370,7 @@ const Companies: React.FC = () => {
               Ready to Access Job-Ready Talent?
             </h2>
             <p className="text-base md:text-lg text-white/90 mb-8">
-              Zero-cost, pre-trained professionals — certified and ready for your
+              Zero-cost, pre-trained professionals certified and ready for your
               projects. Join our hiring network today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">

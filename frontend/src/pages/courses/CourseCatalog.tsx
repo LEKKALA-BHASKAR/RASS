@@ -134,16 +134,20 @@ const CourseCatalog: React.FC = () => {
           className="flex flex-col items-center"
         >
           <motion.div
-            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
+            animate={{ 
+              y: [-20, 0, -20]
+            }}
+            transition={{ 
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
           >
-            <BookOpen className="h-16 w-16 text-indigo-600" />
-            <motion.div
-              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 bg-indigo-200 rounded-full blur-xl"
-            ></motion.div>
+            <img 
+              src="/logo.webp" 
+              alt="RAAS Academy" 
+              className="h-24 w-24 object-contain"
+            />
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
