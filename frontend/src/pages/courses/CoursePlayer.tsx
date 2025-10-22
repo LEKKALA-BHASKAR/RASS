@@ -179,6 +179,22 @@ const CoursePlayer: React.FC = () => {
                   controls
                   width="100%"
                   height="540px"
+                  playing={false}
+                  config={{
+                    file: {
+                      attributes: {
+                        preload: 'auto',
+                        controlsList: 'nodownload',
+                      },
+                    },
+                    youtube: {
+                      playerVars: {
+                        modestbranding: 1,
+                        rel: 0,
+                        showinfo: 0,
+                      },
+                    },
+                  }}
                   onEnded={() => handleModuleComplete(currentModuleData._id)}
                 />
               ) : (
