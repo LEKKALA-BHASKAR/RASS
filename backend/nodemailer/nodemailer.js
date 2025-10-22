@@ -70,7 +70,7 @@ app.post("/send-mail/support", async (req, res) => {
 
     await resend.emails.send({
       from: "RASS Academy <onboarding@resend.dev>",
-      to: [process.env.NODEMAILER_USER_EMAIL, process.env.NODEMAILER_USER_EMAIL1],
+      to: [process.env.NODEMAILER_USER_EMAIL],
       subject: `🚀 New Course Inquiry - ${name}`,
       html: htmlContent,
     });
