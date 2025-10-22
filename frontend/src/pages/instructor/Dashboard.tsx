@@ -7,7 +7,6 @@ import {
   liveSessionAPI,
   chatAPI,
   forumAPI,
-  supportTicketAPI,
 } from "../../services/api";
 import {
   BookOpen,
@@ -19,10 +18,9 @@ import {
   MessagesSquare,
   Calendar,
   Clock,
-  LifeBuoy,
   FolderOpen,
 } from "lucide-react";
-import { Course, Assignment, LiveSession, SupportTicket } from "../../types";
+import { Course, Assignment, LiveSession } from "../../types";
 import { motion } from "framer-motion";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
@@ -46,12 +44,10 @@ const InstructorDashboard: React.FC = () => {
   const [upcomingSessions, setUpcomingSessions] = useState<LiveSession[]>([]);
   const [recentChats, setRecentChats] = useState<any[]>([]);
   const [recentDiscussions, setRecentDiscussions] = useState<any[]>([]);
-  const [recentTickets, setRecentTickets] = useState<SupportTicket[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadDashboard();
-    loadTickets();
   }, []);
 
   const loadDashboard = async () => {
@@ -155,18 +151,7 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
-  const loadTickets = async () => {
-    try {
-      const res = await supportTicketAPI.getAllTickets();
-      const sorted = (res.data || []).sort(
-        (a: any, b: any) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setRecentTickets(sorted.slice(0, 3));
-    } catch (err) {
-      console.error("Error loading tickets:", err);
-    }
-  };
+
 
   if (loading) {
     return (
@@ -376,52 +361,7 @@ const InstructorDashboard: React.FC = () => {
             )}
           </motion.div>
 
-          {/* Support Tickets */}
-          <motion.div className="bg-white rounded-2xl shadow-md p-6">
-            <div className="flex justify-between mb-4">
-              <h3 className="text-lg font-semibold flex items-center">
-                <LifeBuoy className="h-5 w-5 mr-2 text-red-600" /> Support
-                Tickets
-              </h3>
-              <Link
-                to="/instructor/tickets"
-                className="text-sm text-indigo-600 hover:underline"
-              >
-                View All
-              </Link>
-            </div>
-            {recentTickets.length === 0 ? (
-              <p className="text-gray-500 text-center py-6">
-                Manage all the Support Tickets Here.
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {recentTickets.map((t) => (
-                  <li
-                    key={t._id}
-                    className="p-3 border rounded-lg bg-gray-50 hover:bg-gray-100 flex justify-between items-center"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {t.subject}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(t.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700 capitalize">
-                        {t.status}
-                      </span>
-                      <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full capitalize">
-                        {t.priority}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
+
 
           {/* Students */}
           <motion.div className="bg-white rounded-2xl shadow-md p-6">

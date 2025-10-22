@@ -29,7 +29,6 @@ import AddUserPage from './pages/admin/AddUserPage';
 import AddCoursePage from "./pages/admin/AddCoursePage";
 import InstructorDiscussions from './pages/instructor/InstructorDiscussions';
 import InstructorChats from './pages/instructor/InstructorChats';
-import InstructorTickets from './pages/instructor/InstructorTickets';
 import HelpCenter from './pages/publicpages/Help';
 import BlogPage from './pages/publicpages/Blog';
 import About from './pages/publicpages/About';
@@ -205,7 +204,6 @@ const AppRoutes: React.FC = () => {
         } />
         <Route path="/instructor/chats" element={<InstructorChats />} />
         <Route path="/instructor/discussions" element={<InstructorDiscussions />} />
-        <Route path="/instructor/tickets" element={<InstructorTickets />} />
 
 
         {/* Admin Routes */}
