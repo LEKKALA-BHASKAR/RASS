@@ -19,7 +19,7 @@ const CourseShowcase = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://rass-cq8t.onrender.com/api/courses");
+      const response = await fetch("https://rass1.onrender.com/api/courses");
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

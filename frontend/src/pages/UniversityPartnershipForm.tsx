@@ -104,7 +104,7 @@ const UniversityPartnershipForm: React.FC = () => {
       };
       delete submissionData.countryCode;
       
-      const response = await fetch("https://rass-cq8t.onrender.com/api/university-partnership", {
+      const response = await fetch("https://rass1.onrender.com/api/university-partnership", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),

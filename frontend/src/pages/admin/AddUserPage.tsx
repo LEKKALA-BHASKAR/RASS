@@ -64,7 +64,7 @@ const AddUserPage: React.FC = () => {
 
     try {
       await axios.post(
-        "https://rass-cq8t.onrender.com/api/auth/register",
+        "https://rass1.onrender.com/api/auth/register",
         formData
       );
       setSuccess(

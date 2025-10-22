@@ -305,7 +305,7 @@ const AddCoursePage: React.FC = () => {
         learningOutcomes
       };
       
-      const response = await fetch('https://rass-cq8t.onrender.com/api/courses', {
+      const response = await fetch('https://rass1.onrender.com/api/courses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

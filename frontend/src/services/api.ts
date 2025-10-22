@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use a simpler approach for environment variable
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "https://rass-cq8t.onrender.com/api";
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || "https://rass1.onrender.com/api";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

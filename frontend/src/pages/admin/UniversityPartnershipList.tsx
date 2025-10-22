@@ -46,7 +46,7 @@ const UniversityPartnershipList: React.FC = () => {
   const [sortBy, setSortBy] = useState<keyof Partnership>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const API_URL = 'https://rass-cq8t.onrender.com/api/university-partnership';
+  const API_URL = 'https://rass1.onrender.com/api/university-partnership';
 
   // Fetch all partnership data
   const fetchPartnerships = async () => {
