@@ -238,7 +238,7 @@ const GlobalContactForm = () => {
         mobileNumber: `${countryCode} ${formData.mobileNumber}`
       };
       
-      const response = await fetch("https://rass-2.onrender.com/send-mail", {
+      const response = await fetch("https://nodemailer-abnc.onrender.com/send-mail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),
