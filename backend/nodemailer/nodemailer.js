@@ -58,7 +58,6 @@ app.post("/send-mail", async (req, res) => {
 });
 
 
-
 app.post("/send-mail/support", async (req, res) => {
   try {
     const { name, email, mobileNumber } = req.body;
