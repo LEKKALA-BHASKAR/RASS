@@ -219,7 +219,7 @@ const Assignments: React.FC = () => {
             </span>
           </motion.div>
           
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-indigo-700 bg-clip-text text-transparent pb-3 leading-tight">
             Your Assignments
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
