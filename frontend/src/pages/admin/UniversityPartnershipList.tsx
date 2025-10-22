@@ -21,7 +21,7 @@ import {
   Building
 } from 'lucide-react';
 import Navbar from "../../components/layout/Navbar";
-
+import Footer from "../../components/layout/Footer";
 interface Partnership {
   _id: string;
   name: string;
@@ -563,6 +563,7 @@ const UniversityPartnershipList: React.FC = () => {
         </div>
       )}
     </div>
+    <Footer/>
     </div>
   );
 };
