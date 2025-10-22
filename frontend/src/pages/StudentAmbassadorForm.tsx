@@ -149,7 +149,7 @@ const CampusPartnerForm: React.FC = () => {
         phone: `${formData.countryCode} ${formData.phone}`
       };
 
-      const response = await fetch("https://rass-h2s1.onrender.com/api/student-ambassador-form", {
+      const response = await fetch("https://rass-cq8t.onrender.com/api/student-ambassador-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),

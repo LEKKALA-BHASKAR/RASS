@@ -105,7 +105,7 @@ const CompanyPartnershipForm: React.FC = () => {
       };
       delete submissionData.countryCode;
       
-      const response = await fetch("https://rass-h2s1.onrender.com/api/company-partnership", {
+      const response = await fetch("https://rass-cq8t.onrender.com/api/company-partnership", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData)

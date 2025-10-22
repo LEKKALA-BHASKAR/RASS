@@ -48,7 +48,7 @@ const CompanyPartnershipList: React.FC = () => {
   useEffect(() => {
     const fetchForms = async () => {
       try {
-        const res = await fetch("https://rass-h2s1.onrender.com/api/company-partnership");
+        const res = await fetch("https://rass-cq8t.onrender.com/api/company-partnership");
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch forms");
         setForms(data.data || []);
