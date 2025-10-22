@@ -56,16 +56,15 @@ const Login: React.FC = () => {
     >
       <div className="flex items-center justify-center space-x-2">
         <div className="flex flex-col items-center">
+        
           <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-          </div>
-          <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <div className="w-2 h-2 bg-blue-700 rounded-full"></div>
           </div>
         </div>
-        <span className="font-bold text-2xl text-gray-900">RAAS</span>
+        <img
+          src="./logo.webp"
+          alt="RAAS logo"
+          className="h-12 w-auto object-contain"
+        />
       </div>
     </motion.div>
   );
