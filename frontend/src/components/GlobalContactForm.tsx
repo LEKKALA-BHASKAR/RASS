@@ -282,39 +282,36 @@ const GlobalContactForm = () => {
 
   return (
     <>
-      {/* Trigger Button */}
-      <AnimatePresence>
-        {!isContactFormOpen && !showOptions && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0, y: 100 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0, y: 100 }}
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setShowOptions(true)}
-            className="fixed bottom-8 right-8 z-[9999] w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-2xl flex items-center justify-center"
-          >
-            <MessageCircle className="w-7 h-7 text-white" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-      
-      {/* Options Menu */}
-      <AnimatePresence>
-        {showOptions && !isContactFormOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowOptions(false)}
-              className="fixed inset-0 z-[9998]"
-            />
+      {/* Hover Container */}
+      <div
+        onMouseEnter={() => setShowOptions(true)}
+        onMouseLeave={() => setShowOptions(false)}
+        className="fixed bottom-8 right-8 z-[9999]"
+      >
+        {/* Trigger Button */}
+        <AnimatePresence>
+          {!isContactFormOpen && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0, y: 100 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0, y: 100 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-2xl flex items-center justify-center"
+            >
+              <MessageCircle className="w-7 h-7 text-white" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+        
+        {/* Options Menu */}
+        <AnimatePresence>
+          {showOptions && !isContactFormOpen && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 20 }}
-              className="fixed bottom-28 right-8 z-[9999] bg-white rounded-2xl shadow-2xl overflow-hidden w-64"
+              className="absolute bottom-20 right-0 bg-white rounded-2xl shadow-2xl overflow-hidden w-64"
             >
               <div className="p-2">
                 {/* WhatsApp Option */}
@@ -350,22 +347,9 @@ const GlobalContactForm = () => {
                 </motion.button>
               </div>
             </motion.div>
-            
-            {/* Close Button */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0, y: 100 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0, y: 100 }}
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setShowOptions(false)}
-              className="fixed bottom-8 right-8 z-[9999] w-16 h-16 bg-gray-800 rounded-full shadow-2xl flex items-center justify-center"
-            >
-              <X className="w-7 h-7 text-white" />
-            </motion.button>
-          </>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Modal */}
       <AnimatePresence>
