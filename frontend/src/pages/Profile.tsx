@@ -1,27 +1,58 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Calendar, BookOpen, Award, Edit3, Save, X, GraduationCap, Briefcase } from 'lucide-react';
+import { User, Mail, Phone, BookOpen, Award, Edit3, Save, X, GraduationCap, Briefcase } from 'lucide-react';
 import Footer from '../components/layout/Footer';
 import Navbar from '../components/layout/Navbar';
 const Profile: React.FC = () => {
   const { user, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
   const [formData, setFormData] = useState({
     name: user?.name || '',
     profile: {
       bio: user?.profile?.bio || '',
       phone: user?.profile?.phone || '',
-      dateOfBirth: user?.profile?.dateOfBirth || '',
       education: user?.profile?.education || '',
       experience: user?.profile?.experience || ''
     }
   });
 
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      setFormData({
+        ...formData,
+        profile: { ...formData.profile, phone: value }
+      });
+      
+      if (value.length > 0 && value.length < 10) {
+        setPhoneError('Phone number must be exactly 10 digits');
+      } else if (value.length === 10) {
+        setPhoneError('');
+      } else {
+        setPhoneError('');
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone number if provided
+    if (formData.profile.phone && !validatePhone(formData.profile.phone)) {
+      setPhoneError('Phone number must be exactly 10 digits');
+      return;
+    }
+    
     try {
       await updateProfile(formData);
       setEditing(false);
+      setPhoneError('');
     } catch (error) {
       console.error('Error updating profile:', error);
     }
@@ -100,7 +131,7 @@ const Profile: React.FC = () => {
                     <User className="h-5 w-5 mr-2 text-blue-600" />
                     Basic Information
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Full Name
@@ -135,44 +166,25 @@ const Profile: React.FC = () => {
                         Phone Number
                       </label>
                       {editing ? (
-                        <input
-                          type="tel"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={formData.profile.phone}
-                          onChange={(e) => setFormData({
-                            ...formData,
-                            profile: { ...formData.profile, phone: e.target.value }
-                          })}
-                        />
+                        <div>
+                          <input
+                            type="tel"
+                            className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                              phoneError ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            value={formData.profile.phone}
+                            onChange={handlePhoneChange}
+                            placeholder="Enter 10 digit mobile number"
+                            maxLength={10}
+                          />
+                          {phoneError && (
+                            <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                          )}
+                        </div>
                       ) : (
                         <div className="flex items-center text-gray-900 p-2.5 bg-gray-50 rounded-lg">
                           <Phone className="h-5 w-5 mr-3 text-gray-400" />
                           {user?.profile?.phone || 'Not provided'}
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Date of Birth
-                      </label>
-                      {editing ? (
-                        <input
-                          type="date"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={formData.profile.dateOfBirth}
-                          onChange={(e) => setFormData({
-                            ...formData,
-                            profile: { ...formData.profile, dateOfBirth: e.target.value }
-                          })}
-                        />
-                      ) : (
-                        <div className="flex items-center text-gray-900 p-2.5 bg-gray-50 rounded-lg">
-                          <Calendar className="h-5 w-5 mr-3 text-gray-400" />
-                          {user?.profile?.dateOfBirth ? 
-                            new Date(user.profile.dateOfBirth).toLocaleDateString() : 
-                            'Not provided'
-                          }
                         </div>
                       )}
                     </div>
