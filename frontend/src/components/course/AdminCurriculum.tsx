@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Clock, Mail, Phone, Play, User, Zap } from "lucide-react";
+import { countryCodes } from "../../utils/countryCodes";
 
 interface CurriculumSection {
   subtitle: string;
@@ -28,6 +29,7 @@ interface ContactFormData {
   name: string;
   email: string;
   mobileNumber: string;
+  countryCode: string;
 }
 
 interface Props {
@@ -53,12 +55,14 @@ const AdminCurriculum: React.FC<Props> = ({
   const [contactForm, setContactForm] = useState<ContactFormData>({
     name: "",
     email: "",
-    mobileNumber: ""
+    mobileNumber: "",
+    countryCode: "+91"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [activeTab, setActiveTab] = useState<"curriculum">("curriculum");
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState("");
 
   if (!curriculum || curriculum.length === 0) return null;
 
@@ -98,16 +102,58 @@ const AdminCurriculum: React.FC<Props> = ({
     setOpenItems(newOpenItems);
   };
 
+  const validatePhone = (phone: string): boolean => {
+    const selectedCountry = countryCodes.find(c => c.code === contactForm.countryCode);
+    const requiredLength = selectedCountry?.length || 10;
+    const phoneRegex = new RegExp(`^[0-9]{${requiredLength}}$`);
+    return phoneRegex.test(phone);
+  };
+
   const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setContactForm(prev => ({
       ...prev,
       [name]: value
     }));
+    if (phoneError && name === 'mobileNumber') {
+      setPhoneError('');
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    const selectedCountry = countryCodes.find(c => c.code === contactForm.countryCode);
+    const maxLength = selectedCountry?.length || 10;
+    
+    if (value.length <= maxLength) {
+      setContactForm(prev => ({ ...prev, mobileNumber: value }));
+      
+      if (value.length > 0 && value.length < maxLength) {
+        setPhoneError(`Mobile number must be exactly ${maxLength} digits for ${selectedCountry?.country}`);
+      } else if (value.length === maxLength) {
+        setPhoneError('');
+      } else {
+        setPhoneError('');
+      }
+    }
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone number
+    if (!contactForm.mobileNumber.trim()) {
+      setPhoneError("Mobile number is required");
+      return;
+    }
+    
+    if (!validatePhone(contactForm.mobileNumber)) {
+      const selectedCountry = countryCodes.find(c => c.code === contactForm.countryCode);
+      const requiredLength = selectedCountry?.length || 10;
+      setPhoneError(`Mobile number must be exactly ${requiredLength} digits for ${selectedCountry?.country}`);
+      return;
+    }
+    
     setIsSubmitting(true);
     setSubmitMessage("");
 
@@ -115,15 +161,23 @@ const AdminCurriculum: React.FC<Props> = ({
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Combine country code with mobile number
+      const submissionData = {
+        ...contactForm,
+        mobileNumber: `${contactForm.countryCode} ${contactForm.mobileNumber}`
+      };
+      
       // Here you would typically send the data to your backend
-      console.log("Contact form submitted:", contactForm);
+      console.log("Contact form submitted:", submissionData);
       
       setSubmitMessage("Thank you! We'll contact you soon.");
       setContactForm({
         name: "",
         email: "",
-        mobileNumber: ""
+        mobileNumber: "",
+        countryCode: "+91"
       });
+      setPhoneError("");
     } catch (error) {
       setSubmitMessage("Something went wrong. Please try again.");
     } finally {
@@ -424,19 +478,39 @@ const AdminCurriculum: React.FC<Props> = ({
                     <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700 mb-2">
                       Mobile Number *
                     </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        id="mobileNumber"
-                        name="mobileNumber"
-                        value={contactForm.mobileNumber}
-                        onChange={handleContactChange}
-                        required
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50/50"
-                        placeholder="Enter your mobile number"
-                      />
+                    <div className="flex gap-2">
+                      <select
+                        value={contactForm.countryCode}
+                        onChange={(e) => {
+                          setContactForm(prev => ({ ...prev, countryCode: e.target.value, mobileNumber: '' }));
+                          setPhoneError('');
+                        }}
+                        className="w-32 px-2 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm"
+                      >
+                        {countryCodes.map((item) => (
+                          <option key={item.code} value={item.code}>
+                            {item.code} - {item.country}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="flex-1 relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          type="tel"
+                          id="mobileNumber"
+                          name="mobileNumber"
+                          value={contactForm.mobileNumber}
+                          onChange={handlePhoneChange}
+                          required
+                          className={`w-full pl-10 pr-4 py-3 border ${phoneError ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50/50`}
+                          placeholder={`Enter ${countryCodes.find(c => c.code === contactForm.countryCode)?.length || 10} digit number`}
+                          maxLength={countryCodes.find(c => c.code === contactForm.countryCode)?.length || 10}
+                        />
+                      </div>
                     </div>
+                    {phoneError && (
+                      <p className="mt-1 text-sm text-red-600">{phoneError}</p>
+                    )}
                   </div>
 
                   {submitMessage && (
