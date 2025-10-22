@@ -44,17 +44,17 @@ const Footer = () => {
           <div>
             <h3 className="text-white text-xl font-semibold mb-4">Stay Connected</h3>
             <div className="flex space-x-4 mb-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-blue-600 transition">
+              <a href="https://www.facebook.com/people/RAAS-Academy/61575206894118/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-blue-600 transition">
                 <FaFacebookF className="text-white w-4 h-4" />
+              </a>
+              <a href="https://www.instagram.com/raas_academy_/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-pink-500 transition">
+                <FaInstagram className="text-white w-4 h-4" />
+              </a>
+              <a href="https://www.linkedin.com/company/raasacademy/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-blue-700 transition">
+                <FaLinkedinIn className="text-white w-4 h-4" />
               </a>
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-blue-400 transition">
                 <FaTwitter className="text-white w-4 h-4" />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-pink-500 transition">
-                <FaInstagram className="text-white w-4 h-4" />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-full hover:bg-blue-700 transition">
-                <FaLinkedinIn className="text-white w-4 h-4" />
               </a>
             </div>
             <p className="text-sm">
